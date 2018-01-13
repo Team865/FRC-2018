@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
+@SuppressWarnings("deprecation")
 public class Robot extends SampleRobot {
 	
 	public static Drive drive;
