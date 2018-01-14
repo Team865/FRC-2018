@@ -14,11 +14,11 @@ def load_build_config(fName):
 		path = ""
 		for val in vals:
 			if val in globals():
-				path += globals()[val]+'/'
+				path += globals()[va]
 			else:
-				path += val+'/'
+				path += val
 		
-		return path
+		return path+'/'
 	
 	def path_gen(mainItem):
 		print('Building paths...')
