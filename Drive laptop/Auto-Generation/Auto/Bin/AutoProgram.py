@@ -13,7 +13,7 @@ class Renderer:
 	def renderFrame(self,elmList):
 		self.screen.fill((0,0,0))
 		for eg in elmList:
-			for layer,objlst in eg.lSearch.items():	
+			for objlst in eg.lSearch.values():	
 				for obj in objlst:
 					if obj.visible:
 						self.screen.blit(obj.pyimage,obj.cords)
@@ -53,9 +53,9 @@ class elementMannger:
 		self.check_min_max_size(a.minSize,a.maxSize)
 		
 	def check_min_max_size(self,minSize,maxSize):
-		if self.maxSize[0] < maxSize[0]:
+		if self.maxSize[0]  < maxSize[0]:
 			self.maxSize[0] = maxSize[0]
-		if self.maxSize[1] < maxSize[1]:
+		if self.maxSize[1]  < maxSize[1]:
 			self.maxSize[1] = maxSize[1]
 		if self.minSize[0] >= minSize[0]:
 			self.minSize[0] = minSize[0]
@@ -71,7 +71,7 @@ elements = getConfigfile('config.json')
 
 a = elementMannger('bobr00s')
 b = elementMannger.emSearch['bobr00s']
-b.add_group('wow',0,elements=elements,visible=False)
+b.add_group('wow',0,elements=elements)
 
 myRenderer = Renderer(pygame.display,b.maxSize)
 draw_on=False
