@@ -1,2 +1,0 @@
-python35 asset_generation.py
-pause

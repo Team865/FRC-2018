@@ -1,2 +1,0 @@
-python35 AutoProgram.py
-pause
