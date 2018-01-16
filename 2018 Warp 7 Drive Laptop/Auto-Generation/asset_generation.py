@@ -6,6 +6,7 @@ from PIL import Image, ImageChops
 from colorthief import ColorThief
 from copy import deepcopy
 from collections import OrderedDict
+from numpy import subtract as tupleSubtract
 import json
 
 def load_build_config(fName):
@@ -41,43 +42,45 @@ def get_image_sum(imgpath,color_count=10, quality=10):
 	palette = color_thief.get_palette(color_count, quality)
 	return(palette)
 
-def trim(im):
+def getBbox(im):
     bg = Image.new(im.mode, im.size, im.getpixel((0,0)))
     diff = ImageChops.difference(im, bg)
     diff = ImageChops.add(diff, diff, 2.0, -100)
     bbox = diff.getbbox()
     if bbox:
-        return im.crop(bbox)
-	
-def crop_smallest(im,imp):
-	im = trim(im)
-	im.save(imp)
-	return im
+        return bbox
 	
 def find_object(imp):
-	im = Image.open(imp)
-	pix = im.load()
-	picx , picy = im.size
-	avgxy=[0,0]
-	count=0
-	for x in range(0, picx,2):
-		for y in range(0, picy,2):
-			val = pix[x,y]
-			val += (0,)*(4-len(val))
-			if val[3] > 10:
-				avgxy[0]+=x
-				avgxy[1]+=y
-				count+=1
+	im = Image.open(imp)	
+	bbox = getBbox(im)
+	im1 = im.crop(bbox)
+	im.close()
+	color_thief=None
+	color_thief = ColorThief('pdn/1x1.png')
+	color_thief.image = im1
+	orgVal = color_thief.get_palette(color_count=2, quality=10)[0]
+	a = [tuple(tupleSubtract(orgVal,(val+((0,)*(4-len(val))))[:-1]))+val[-1:] for val in im1.getdata()]
+	size = im1.size
+	mode = im1.mode
+	im1.close()
+	with open(imp,'wb') as f:
+		f.write(mode.encode())
+		f.write(bytes([0]))
+		for tup in a:
+			data = b''
+			positive = '1111'
+			for i in range(4):
+				rgba = tup[i]
+				if rgba < 0:
+					rgba = abs(rgba)
+					positive = positive[:i] + '0' + positive[i+1:]
+				data += bytes([rgba])
 
-	im = crop_smallest(im,imp)
-	s = im.size
-	x = avgxy[0]/count
-	y = avgxy[1]/count
-	x = round(x-s[0]/2)
-	y = round(y-s[1]/2)
-	if count == 0:
-		return ([-1,-1],s)
-	return ([int(x),int(y)],s)
+			data += bytes([int(positive,2)])
+			f.write(data)
+			data=b''
+			
+	return (bbox[:2],size,orgVal)
 
 def extract_pdn(pdnfile,loc):
 	print('Extracting pdn...')
@@ -110,7 +113,7 @@ def generate_assets(elementConfig):
 				if c>=0:
 					value = deepcopy(elementConfig[element])#FeelsDeepMan
 					print('\t'+b)
-					value['cords'], value['size'] = find_object(b)
+					value['cords'], value['size'],p = find_object(b)
 					
 					if 'moveable' not in value:
 						value['moveable'] = False
@@ -118,15 +121,14 @@ def generate_assets(elementConfig):
 					if 'state' not in value:
 						value['state'] = 0
 						
-					p = get_image_sum((b,),color_count=2)[0]
 					if 'state_colour' in value:
 						value['state_colour'][:] = [p] + value['state_colour']
 					else:
 						value['state_colour'] = [p]
 					
-					value['src'] = '//'.join(b.split('//')[2:])
+					value['src'] = b.replace(directoryGame,'',1)
 					value['layer'] = layer
-					objects[''.join(d[c])] = value
+					objects[(''.join(d[c])).split('.')[0]] = value
 					break
 	return objects
 		

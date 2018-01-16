@@ -1,17 +1,64 @@
 from copy import deepcopy
-from pygame.locals import*
-import sys
-import pygame
+from sys import maxsize as maxInt
+from pygame.image import fromstring as loadImage
+from pygame.transform import rotate as pyRotate
+from functools import partial
+from numpy import add as tupleAdd
+from PIL import Image
+import os
 
 def Create_Element_Group(visible):
 	a = deepcopy(elementGroup)
 	a.visible = visible
 	return a
 
+	
+def getColourdImage(src):
+	print(src)
+	with open(src,'rb') as f:
+		byte=b''
+		data = b''
+		while not byte == b'\x00':
+			data += byte
+			byte = f.read(1)
+			
+		mode = data.decode()
+		imageOffsets = []
+		for data in iter(partial(f.read, 5), b''):	
+			positive = '{:08b}'.format(data[-1])[-4:]
+			tup=()
+			for i in range(4):
+				rgba = data[i]
+				if positive[i] == '1':
+					tup += (-1*rgba,)
+				else:
+					tup += (rgba,)
+			imageOffsets.append(tup)
+	print('done loading')
+	return {'image':imageOffsets,'mode':mode}
+
+def makeColourdImage(imageOffsets,rgb,size):
+	print('offsets apply')
+	data = imageOffsets['image']
+	rgb += (0,)*(4-len(rgb))
+	for i in range(len(data)):
+		stuff=data[i]
+		stuff = tupleAdd(stuff,rgb)
+		stuff[3]=abs(stuff[3])
+		data[i]=tuple(stuff)
+		
+	b = Image.new(imageOffsets['mode'],size)
+	b.putdata(data)
+	data = b.tobytes()
+	b.close()
+	print('done offsets apply')
+	this_image = loadImage(data, size, imageOffsets['mode'])
+	return this_image
+	
 class elementGroup:
 	visible = True
-	maxSize = [-1,-1]
-	minSize = [sys.maxsize,sys.maxsize]
+	maxSize = [-1*maxInt,-1*maxInt]
+	minSize = [maxInt,maxInt]
 	lSearch = {}
 	nSearch = {}
 	def __init__(self,name,data):
@@ -24,9 +71,19 @@ class elementGroup:
 		
 		self.layer -= 1
 		self.name = name
+		self.rot = 0
 		
-		self.pyimage = pygame.image.load(self.src)
-		elementGroup.lSearch[self.layer] = [self]
+		self.imageOffsets = getColourdImage(self.src)
+		
+		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[0],self.size)
+		self.tranImage = self.pyimage
+		
+		
+		if self.layer in self.lSearch.keys():
+			elementGroup.lSearch[self.layer].append(self)
+		else:
+			elementGroup.lSearch[self.layer] = [self]
+		
 		elementGroup.nSearch[self.name] = self
 		
 		a = self.size
@@ -41,6 +98,17 @@ class elementGroup:
 		
 		self.canStateChange = len(self.state_colour) > 1
 		self.visible = elementGroup.visible
+	
+	def renderFrame(self,screen,resizeOffset):
+		for objlst in self.lSearch.values():	
+			for obj in objlst:
+				if obj.visible:
+					screen.blit(obj.tranImage,obj.cords)
+				obj.size[0] = round(obj.size[0]*resizeOffset[0])
+				obj.size[1] = round(obj.size[1]*resizeOffset[1])
+				obj.cords[0] = round(obj.cords[0]*resizeOffset[0])
+				obj.cords[1] = round(obj.cords[1]*resizeOffset[1])
+	
 	
 	def contains_point(self, point):
 		return (self.cords[0] <= point[0] <= self.cords[0] + self.size[0] and
@@ -66,7 +134,15 @@ class elementGroup:
 		return None
 	
 	def stateUpdate(self):
-		pass	
+		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[self.state],self.size)	
+		self.imageUpdate()
+	
+	def imageUpdate():
+		orig_rect = self.pyimage.get_rect()
+		rot_image = pyRotate(self.pyimage, self.rot)
+		rot_rect = orig_rect.copy()
+		rot_rect.center = rot_image.get_rect().center
+		self.tranImage = rot_image.subsurface(rot_rect).copy()
 	
 	def stateChangeNext(self):
 		self.state += 1
@@ -91,7 +167,42 @@ class elementGroup:
 		for obj in elementGroup.nSearch.values():
 			obj.visible = elementGroup.visible
 	
-	def init_elements(elements):
+	def rotate(self, angle):
+		self.rot += angle
+		if self.rot >= 360:
+			self.rot -= 360
+		elif self.rot <= 0:
+			self.rot += 360
+
+		self.imageUpdate()
+	
+	def contains_point(self, point):
+		return (self.cords[0] <= point[0] <= self.cords[0] + self.size[0] and
+				self.cords[1] <= point[1] <= self.cords[1] + self.size[1])
+	
+	def init_elements(em, elements):
+		def cmpMax():
+			if em.maxSize[0]  < elementGroup.maxSize[0]:
+				em.maxSize[0] = elementGroup.maxSize[0]
+			if em.maxSize[1]  < elementGroup.maxSize[1]:
+				em.maxSize[1] = elementGroup.maxSize[1]
+				
+		def cmpMin():
+			if em.minSize[0] >= elementGroup.minSize[0]:
+				em.minSize[0] = elementGroup.minSize[0]
+			if em.minSize[1] >= elementGroup.minSize[1]:
+				em.minSize[1] = elementGroup.minSize[1]
+		
 		for key, item in elements.items():
 			elementGroup(key,item)
+		
+		if 'maxSize' in em.__dict__.values():
+			cmpMax()
+		else:
+			em.maxSize = elementGroup.maxSize
+			
+		if 'minSize' in em.__dict__.values():
+			cmpMin()
+		else:
+			em.minSize = elementGroup.minSize
 	

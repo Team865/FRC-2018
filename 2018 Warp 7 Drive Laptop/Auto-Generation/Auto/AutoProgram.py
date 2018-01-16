@@ -3,35 +3,41 @@ import os, sys, json
 from Libs.element_group import Create_Element_Group
 
 class Renderer:
-	def __init__(self,display,size):
+	def __init__(self,display):
 		self.display = display
-		self.screen = self.display.set_mode(size, pygame.RESIZABLE)
-		self.emList = {}
-		self.resizeOffset = [float(size[0]),float(size[1])]
+		self.emList = []
+		self.nSearch = {}		
 	
 	def renderFrame(self,egList=[]):
 		if len(egList) == 0:
-			egList = self.emList.values()
-		
-		
-		a = pygame.Surface(self.screen.get_size())
+			egList = self.emList
+			
 		for em in egList:
 			for eg in em.nSearch.values():
-				for objlst in eg.lSearch.values():	
-					for obj in objlst:
-						if obj.visible:
-							print(obj.cords)
-							a.blit(obj.pyimage,obj.cords)
-						obj.size[0] = round(obj.size[0]*self.resizeOffset[0])
-						obj.size[1] = round(obj.size[1]*self.resizeOffset[1])
-						obj.cords[0] = round(obj.cords[0]*self.resizeOffset[0])
-						obj.cords[1] = round(obj.cords[1]*self.resizeOffset[1])
-						
-		self.screen.blit(pygame.transform.scale(a,a.get_size()),(0,0))
+				eg.renderFrame(eg,self.screen,self.resizeOffset)
+				
+		a=pygame.transform.scale(self.screen,self.screen.get_size())
+		self.screen.blit(a,(0,0))
 		self.update()
+
+		
+	def setSize(self,size):
+		self.resizeOffset = [float(size[0]),float(size[1])]
+		self.screen = self.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+		
+	def sizeWindowUpdate(self,size):
+		self.resizeOffset[0] = size[0]/self.resizeOffset[0]
+		self.resizeOffset[1] = size[1]/self.resizeOffset[1]
+		self.screen = self.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
 	
-	def em_regiser(self,em):
-		self.emList[em.name] = em
+	def em_regiser(self,em,renderQueue):
+		try:
+			layer = int(renderQueue)
+		except:
+			raise ValueError('renderQueue cant be letters!')
+			
+		self.emList[renderQueue:renderQueue] = [em]
+		self.nSearch[em.name] = em
 	
 	def find_obj_at_cords(self,cords,em=None, group=None,layer=None):
 		def temp(em):
@@ -41,45 +47,41 @@ class Renderer:
 			return None
 			
 		if em is None:
-			for em in self.emList.values():
+			for em in self.nSearch.values():
 				item = temp(em)
 				if item is not None:
 					return item
 		else:
-			if em in self.emList.keys():
-				return temp(self.emList[em])
+			if em in self.nSearch.keys():
+				return temp(self.nSearch[em])
 			
 		return None
-		
-	def setSize(self,size):
-		self.resizeOffset[0] = size[0]/self.resizeOffset[0]
-		self.resizeOffset[1] = size[1]/self.resizeOffset[1]
-		self.screen = self.display.set_mode(size, pygame.RESIZABLE)
-		
+	
 	def update(self):
 		self.display.flip()
 
-class elementMannger:
+class ElementMannger:
 	emSearch = {}
 	def __init__(self,name):
 		self.gSearch = {} 
 		self.nSearch = {}
 		self.name = name
-		elementMannger.emSearch[self.name] = self
-		self.maxSize = [-1,-1]
-		self.minSize = [sys.maxsize,sys.maxsize]
+		ElementMannger.emSearch[self.name] = self
 		
-	def add_group(self,name,group,visible=True,elements=None):
+	def add_group(self,name,group,func):
 		try:
 			group = int(group)
 		except:
 			raise ValueError('Groups cant be letters!')
-		a = Create_Element_Group(visible)
-		self.gSearch[group] = {name:a}
-		self.nSearch[name] = a
-		if elements != None:
-			a.init_elements(elements)
-			self.check_min_max_size(a.minSize,a.maxSize)
+		
+		if group in self.gSearch.keys():
+			self.gSearch[group].update({name:func})
+		else:
+			self.gSearch[group] = {name:func}
+			
+		self.nSearch[name] = func
+		
+		return func
 	
 	def find_obj_at_cords(self,cords,group=None,layer=None):
 		def temp(group):
@@ -101,20 +103,12 @@ class elementMannger:
 			
 		return None
 	
-	def init_group(self,name,elements):
-		a = self.nSearch['name']
-		a.init_elements(elements)
-		self.check_min_max_size(a.minSize,a.maxSize)
-		
-	def check_min_max_size(self,minSize,maxSize):
-		if self.maxSize[0]  < maxSize[0]:
-			self.maxSize[0] = maxSize[0]
-		if self.maxSize[1]  < maxSize[1]:
-			self.maxSize[1] = maxSize[1]
-		if self.minSize[0] >= minSize[0]:
-			self.minSize[0] = minSize[0]
-		if self.minSize[1] >= minSize[1]:
-			self.minSize[1] = minSize[1]
+	def init_item(self,elements, name=None, obj=None):
+		if obj is None:
+			if name is None:
+				raise IndexError('Name is type None')
+			obj = self.nSearch[name]
+		obj.init_elements(self,elements)
 		
 def getConfigfile(fName):
 	with open(directoryConfig+fName, 'r') as f:
@@ -131,6 +125,30 @@ SD  = 5
 def main():
 	def left_mouse_down():
 		nonlocal e
+		obj = myRenderer.find_obj_at_cords(e.pos,em='bobr00s',group=0)
+		if obj.moveable:
+			draging = True
+			mouse_x, mouse_y = e.pos
+			offset_x = obj.cords[0] - mouse_x
+			offset_y = obj.cords[1] - mouse_y
+			while draging:
+				e = pygame.event.wait()
+				if e.type == pygame.MOUSEBUTTONUP:
+					if e.button == 1:            
+						draging = False
+
+				elif e.type == pygame.MOUSEMOTION:
+					if draging:
+						mouse_x, mouse_y = e.pos
+						obj.cords[0] = mouse_x + offset_x
+						obj.cords[1] = mouse_y + offset_y
+				elif e.button == SU:
+					obj.rotate(10)
+				elif e.button == SD:
+					obj.rotate(-10)
+				
+				myRenderer.renderFrame()
+				myRenderer.update()
 	
 	def middle_mouse_down():
 		nonlocal e
@@ -145,12 +163,12 @@ def main():
 		nonlocal e
 	
 	elements = getConfigfile('config.json')
-	a = elementMannger('bobr00s')
-	a.add_group('wow',0,elements=elements)
-	
-	global myRenderer
-	myRenderer = Renderer(pygame.display,a.maxSize)
-	myRenderer.em_regiser(a)
+	a = ElementMannger('bobr00s')
+	b = a.add_group('wow',0,Create_Element_Group(visible=True))
+	myRenderer = Renderer(pygame.display)
+	a.init_item(elements,obj=b)
+	myRenderer.setSize(a.maxSize)
+	myRenderer.em_regiser(a,0)
 
 	try:
 		myRenderer.renderFrame()
@@ -170,7 +188,7 @@ def main():
 					
 				myRenderer.update()
 			elif e.type == pygame.VIDEORESIZE:
-				#myRenderer.setSize((e.w, e.h))
+				myRenderer.sizeWindowUpdate((e.w, e.h))
 				pass
 				
 	except StopIteration:
