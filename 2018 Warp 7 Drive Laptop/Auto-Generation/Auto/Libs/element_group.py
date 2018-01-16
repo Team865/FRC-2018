@@ -39,7 +39,7 @@ class elementGroup:
 		if elementGroup.minSize[1] >= a[1]:
 			elementGroup.minSize[1] = a[1]
 		
-		self.canStateChange = len(self.state_colour) >= 1
+		self.canStateChange = len(self.state_colour) > 1
 		self.visible = elementGroup.visible
 	
 	def contains_point(self, point):
@@ -64,11 +64,22 @@ class elementGroup:
 				return temp(self.lSearch[layer])
 			
 		return None
-		
-	def state_change(self):
+	
+	def stateUpdate(self):
+		pass	
+	
+	def stateChangeNext(self):
 		self.state += 1
-		if len(self.state_colour) >= self.state:
+		if len(self.state_colour) <= self.state:
 			self.state = 0
+			
+	def stateChangeTo(self,val):
+		self.state = val
+		a = len(self.state_colour)
+		if a <= self.state:
+			self.state = 0
+		elif self.state < 0:
+			self.state = a-1
 	
 	def toogleVisible():
 		elementGroup.visible = not elementGroup.visible

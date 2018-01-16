@@ -14,7 +14,7 @@ def load_build_config(fName):
 		path = ""
 		for val in vals:
 			if val in globals():
-				path += globals()[va]
+				path += globals()[val]
 			else:
 				path += val
 		

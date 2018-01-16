@@ -1,25 +1,33 @@
 import pygame
-from pygame.locals import*
 import os, sys, json
 from Libs.element_group import Create_Element_Group
 
 class Renderer:
 	def __init__(self,display,size):
 		self.display = display
-		self.screen = self.display.set_mode(size)
+		self.screen = self.display.set_mode(size, pygame.RESIZABLE)
 		self.emList = {}
+		self.resizeOffset = [float(size[0]),float(size[1])]
 	
 	def renderFrame(self,egList=[]):
 		if len(egList) == 0:
 			egList = self.emList.values()
-			
+		
+		
+		a = pygame.Surface(self.screen.get_size())
 		for em in egList:
 			for eg in em.nSearch.values():
 				for objlst in eg.lSearch.values():	
 					for obj in objlst:
 						if obj.visible:
-							self.screen.blit(obj.pyimage,obj.cords)
-		
+							print(obj.cords)
+							a.blit(obj.pyimage,obj.cords)
+						obj.size[0] = round(obj.size[0]*self.resizeOffset[0])
+						obj.size[1] = round(obj.size[1]*self.resizeOffset[1])
+						obj.cords[0] = round(obj.cords[0]*self.resizeOffset[0])
+						obj.cords[1] = round(obj.cords[1]*self.resizeOffset[1])
+						
+		self.screen.blit(pygame.transform.scale(a,a.get_size()),(0,0))
 		self.update()
 	
 	def em_regiser(self,em):
@@ -44,8 +52,10 @@ class Renderer:
 		return None
 		
 	def setSize(self,size):
-		self.screen = self.display.set_mode(size)
-	
+		self.resizeOffset[0] = size[0]/self.resizeOffset[0]
+		self.resizeOffset[1] = size[1]/self.resizeOffset[1]
+		self.screen = self.display.set_mode(size, pygame.RESIZABLE)
+		
 	def update(self):
 		self.display.flip()
 
@@ -118,21 +128,22 @@ RMB = 3
 SU  = 4
 SD  = 5
 
-def left_mouse_down(pos):
-	obj = myRenderer.find_obj_at_cords(pos,em='bobr00s',group=0)
-	print(obj)
-	if obj != None:
-		print(obj.name)
-	else:
-		print(None)
-	
-def middle_mouse_down(pos):
-	pass
-	
-def right_mouse_down(pos):
-	pass
-
 def main():
+	def left_mouse_down():
+		nonlocal e
+	
+	def middle_mouse_down():
+		nonlocal e
+		obj = myRenderer.find_obj_at_cords(e.pos,em='bobr00s',group=0)
+		print(obj)
+		if obj.canStateChange:
+			obj.stateChangeNext()
+			obj.stateUpdate()
+			print(obj.state)
+		
+	def right_mouse_down():
+		nonlocal e
+	
 	elements = getConfigfile('config.json')
 	a = elementMannger('bobr00s')
 	a.add_group('wow',0,elements=elements)
@@ -151,14 +162,17 @@ def main():
 			if e.type == pygame.MOUSEBUTTONDOWN:
 				myRenderer.renderFrame()
 				if e.button == LMB:
-					left_mouse_down(e.pos)
+					left_mouse_down()
 				elif e.button == MMB:
-					middle_mouse_down(e.pos)
+					middle_mouse_down()
 				elif e.button == RMB:
-					right_mouse_down(e.pos)
+					right_mouse_down()
 					
 				myRenderer.update()
-			
+			elif e.type == pygame.VIDEORESIZE:
+				#myRenderer.setSize((e.w, e.h))
+				pass
+				
 	except StopIteration:
 		pass
 
