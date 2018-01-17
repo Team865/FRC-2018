@@ -151,7 +151,7 @@ def main():
 				
 				myRenderer.renderFrame()
 				myRenderer.update()
-		elif :
+		
 			
 	
 	def middle_mouse_down():

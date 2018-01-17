@@ -1,6 +1,7 @@
 from copy import deepcopy
 from sys import maxsize as maxInt
-from pygame.image import fromstring as loadImage
+#from pygame.image import fromstring as loadImage
+from pygame.image import load as loadImage
 from pygame.transform import rotate as pyRotate
 from functools import partial
 from numpy import add as tupleAdd
@@ -80,9 +81,10 @@ class elementGroup:
 		self.name = name
 		self.rot = 0
 		
-		self.imageOffsets = getColourdImage(self.src)
+		#self.imageOffsets = getColourdImage(self.src)
 		
-		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[0],self.size)
+		#self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[0],self.size)
+		self.pyimage = loadImage(self.src)
 		self.tranImage = self.pyimage
 		
 		
@@ -141,9 +143,10 @@ class elementGroup:
 		return None
 	
 	def stateUpdate(self):
-		print(self.state_colour[self.state])
-		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[self.state],self.orgSize)	
-		self.imageUpdate()
+		#print(self.state_colour[self.state])
+		#self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[self.state],self.orgSize)	
+		#self.imageUpdate()
+		pass
 	
 	def imageUpdate(self):
 		orig_rect = self.pyimage.get_rect()

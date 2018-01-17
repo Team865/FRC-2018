@@ -6,11 +6,12 @@ class Path:
 		self.points = [Points((0,0)),Points((0,0))]
 		self.calculated = None
 		
-	def renderFrame(self):
+	def renderFrame(self,screen):
 		for z in range(len(points)):
 			for point in points:
-				x = point[0](z)
-				y = point[1](z)
+				x = round(point[0](z))
+				y = round(point[1](z))
+				
 				
 	
 	def recalculatePath(self,points):

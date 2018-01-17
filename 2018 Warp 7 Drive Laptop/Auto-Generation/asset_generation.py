@@ -58,11 +58,13 @@ def find_object(imp):
 	color_thief=None
 	color_thief = ColorThief('pdn/1x1.png')
 	color_thief.image = im1
+	im1.save(imp)
 	orgVal = color_thief.get_palette(color_count=2, quality=10)[0]
-	a = [tuple(tupleSubtract(orgVal,(val+((0,)*(4-len(val))))[:-1]))+val[-1:] for val in im1.getdata()]
+	#a = [tuple(tupleSubtract(orgVal,(val+((0,)*(4-len(val))))[:-1]))+val[-1:] for val in im1.getdata()]
 	size = im1.size
 	mode = im1.mode
 	im1.close()
+	'''
 	with open(imp,'wb') as f:
 		f.write(mode.encode())
 		f.write(bytes([0]))
@@ -79,7 +81,7 @@ def find_object(imp):
 			data += bytes([int(positive,2)])
 			f.write(data)
 			data=b''
-			
+	'''
 	return (bbox[:2],size,orgVal)
 
 def extract_pdn(pdnfile,loc):
