@@ -1,6 +1,7 @@
 import pygame
 import os, sys, json
 from Libs.element_group import Create_Element_Group
+#from Libs.paths import 
 
 class Renderer:
 	def __init__(self,display):
@@ -11,7 +12,7 @@ class Renderer:
 	def renderFrame(self,egList=[]):
 		if len(egList) == 0:
 			egList = self.emList
-			
+		
 		for em in egList:
 			for eg in em.nSearch.values():
 				eg.renderFrame(eg,self.screen,self.resizeOffset)
@@ -22,13 +23,14 @@ class Renderer:
 
 		
 	def setSize(self,size):
-		self.resizeOffset = [float(size[0]),float(size[1])]
-		self.screen = self.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+		self.orgSize = [float(size[0]),float(size[1])]
+		self.resizeOffset = [1.0,1.0]
+		self.screen = self.display.set_mode(size, pygame.HWSURFACE | pygame.RESIZABLE)
 		
 	def sizeWindowUpdate(self,size):
-		self.resizeOffset[0] = size[0]/self.resizeOffset[0]
-		self.resizeOffset[1] = size[1]/self.resizeOffset[1]
-		self.screen = self.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+		self.resizeOffset[0] = size[0]/self.orgSize[0]
+		self.resizeOffset[1] = size[1]/self.orgSize[1]
+		self.screen = self.display.set_mode(size, pygame.HWSURFACE |pygame.RESIZABLE)
 	
 	def em_regiser(self,em,renderQueue):
 		try:
@@ -126,7 +128,7 @@ def main():
 	def left_mouse_down():
 		nonlocal e
 		obj = myRenderer.find_obj_at_cords(e.pos,em='bobr00s',group=0)
-		if obj.moveable:
+		if type(obj).__name__ == 'elementGroup' and obj.moveable:
 			draging = True
 			mouse_x, mouse_y = e.pos
 			offset_x = obj.cords[0] - mouse_x
@@ -149,11 +151,12 @@ def main():
 				
 				myRenderer.renderFrame()
 				myRenderer.update()
+		elif :
+			
 	
 	def middle_mouse_down():
 		nonlocal e
 		obj = myRenderer.find_obj_at_cords(e.pos,em='bobr00s',group=0)
-		print(obj)
 		if obj.canStateChange:
 			obj.stateChangeNext()
 			obj.stateUpdate()
@@ -162,6 +165,7 @@ def main():
 	def right_mouse_down():
 		nonlocal e
 	
+	pygame.init()
 	elements = getConfigfile('config.json')
 	a = ElementMannger('bobr00s')
 	b = a.add_group('wow',0,Create_Element_Group(visible=True))
@@ -189,7 +193,7 @@ def main():
 				myRenderer.update()
 			elif e.type == pygame.VIDEORESIZE:
 				myRenderer.sizeWindowUpdate((e.w, e.h))
-				pass
+				myRenderer.update()
 				
 	except StopIteration:
 		pass

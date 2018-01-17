@@ -12,6 +12,13 @@ def Create_Element_Group(visible):
 	a.visible = visible
 	return a
 
+def clamp(n, minn, maxn):
+	if n < minn:
+		return minn
+	elif n > maxn:
+		return maxn
+	else:
+		return n
 	
 def getColourdImage(src):
 	print(src)
@@ -34,24 +41,22 @@ def getColourdImage(src):
 				else:
 					tup += (rgba,)
 			imageOffsets.append(tup)
-	print('done loading')
 	return {'image':imageOffsets,'mode':mode}
 
 def makeColourdImage(imageOffsets,rgb,size):
-	print('offsets apply')
 	data = imageOffsets['image']
 	rgb += (0,)*(4-len(rgb))
 	for i in range(len(data)):
 		stuff=data[i]
 		stuff = tupleAdd(stuff,rgb)
-		stuff[3]=abs(stuff[3])
+		stuff[3]=abs(stuff[3])		
 		data[i]=tuple(stuff)
 		
 	b = Image.new(imageOffsets['mode'],size)
 	b.putdata(data)
 	data = b.tobytes()
+	print(data[-5:])
 	b.close()
-	print('done offsets apply')
 	this_image = loadImage(data, size, imageOffsets['mode'])
 	return this_image
 	
@@ -63,13 +68,15 @@ class elementGroup:
 	nSearch = {}
 	def __init__(self,name,data):
 		try:
-			data['layer'] = int(data['layer'])
+			data['layer'] = int(data['layer'])-1
 		except:
 			raise ValueError('Layers cant be letters!')
 		
 		self.__dict__.update(data)
 		
-		self.layer -= 1
+		
+		self.orgCords = self.cords
+		self.orgSize = self.size
 		self.name = name
 		self.rot = 0
 		
@@ -104,10 +111,10 @@ class elementGroup:
 			for obj in objlst:
 				if obj.visible:
 					screen.blit(obj.tranImage,obj.cords)
-				obj.size[0] = round(obj.size[0]*resizeOffset[0])
-				obj.size[1] = round(obj.size[1]*resizeOffset[1])
-				obj.cords[0] = round(obj.cords[0]*resizeOffset[0])
-				obj.cords[1] = round(obj.cords[1]*resizeOffset[1])
+				obj.size[0] = round(obj.orgSize[0]*resizeOffset[0])
+				obj.size[1] = round(obj.orgSize[1]*resizeOffset[1])
+				obj.cords[0] = round(obj.orgCords[0]*resizeOffset[0])
+				obj.cords[1] = round(obj.orgCords[1]*resizeOffset[1])
 	
 	
 	def contains_point(self, point):
@@ -134,10 +141,11 @@ class elementGroup:
 		return None
 	
 	def stateUpdate(self):
-		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[self.state],self.size)	
+		print(self.state_colour[self.state])
+		self.pyimage = makeColourdImage(self.imageOffsets,self.state_colour[self.state],self.orgSize)	
 		self.imageUpdate()
 	
-	def imageUpdate():
+	def imageUpdate(self):
 		orig_rect = self.pyimage.get_rect()
 		rot_image = pyRotate(self.pyimage, self.rot)
 		rot_rect = orig_rect.copy()
