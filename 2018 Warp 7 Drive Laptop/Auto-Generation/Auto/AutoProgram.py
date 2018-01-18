@@ -1,7 +1,7 @@
 import pygame
 import os, sys, json
 from Libs.element_group import Create_Element_Group
-#from Libs.paths import 
+from Libs.paths import Path
 
 class Renderer:
 	def __init__(self,display):
@@ -14,8 +14,11 @@ class Renderer:
 			egList = self.emList
 		
 		for em in egList:
-			for eg in em.nSearch.values():
-				eg.renderFrame(eg,self.screen,self.resizeOffset)
+			a = sorted(em.gSearch.keys())
+			for key in a:
+				eL = em.gSearch[key]
+				for eg in eL.values():
+					eg.renderFrame(eg,self.screen,self.resizeOffset)
 				
 		a=pygame.transform.scale(self.screen,self.screen.get_size())
 		self.screen.blit(a,(0,0))
@@ -129,18 +132,18 @@ def main():
 		nonlocal e
 		obj = myRenderer.find_obj_at_cords(e.pos,em='bobr00s',group=0)
 		if type(obj).__name__ == 'elementGroup' and obj.moveable:
-			draging = True
+			dragging = True
 			mouse_x, mouse_y = e.pos
 			offset_x = obj.cords[0] - mouse_x
 			offset_y = obj.cords[1] - mouse_y
-			while draging:
+			while dragging:
 				e = pygame.event.wait()
 				if e.type == pygame.MOUSEBUTTONUP:
 					if e.button == 1:            
-						draging = False
+						dragging = False
 
 				elif e.type == pygame.MOUSEMOTION:
-					if draging:
+					if dragging:
 						mouse_x, mouse_y = e.pos
 						obj.cords[0] = mouse_x + offset_x
 						obj.cords[1] = mouse_y + offset_y
@@ -151,8 +154,26 @@ def main():
 				
 				myRenderer.renderFrame()
 				myRenderer.update()
-		
-			
+		elif type(obj).__name__ == 'Point':
+			dragging = True
+			mouse_x, mouse_y = e.pos
+			offset_x = obj.cords[0] - mouse_x
+			offset_y = obj.cords[1] - mouse_y
+			while dragging:
+				e = pygame.event.wait()
+				if e.type == pygame.MOUSEBUTTONUP:
+					if e.button == 1:
+						dragging = False
+						obj.path.calculatePath()
+
+				elif e.type == pygame.MOUSEMOTION:
+					if dragging:
+						mouse_x, mouse_y = e.pos
+						obj.cords[0] = mouse_x + offset_x
+						obj.cords[1] = mouse_y + offset_y
+				
+				myRenderer.renderFrame()
+				myRenderer.update()
 	
 	def middle_mouse_down():
 		nonlocal e
@@ -177,23 +198,31 @@ def main():
 	try:
 		myRenderer.renderFrame()
 		while True:
-			e = pygame.event.wait()
-			if e.type == pygame.QUIT:
-				raise StopIteration
-				
-			if e.type == pygame.MOUSEBUTTONDOWN:
-				myRenderer.renderFrame()
-				if e.button == LMB:
-					left_mouse_down()
-				elif e.button == MMB:
-					middle_mouse_down()
-				elif e.button == RMB:
-					right_mouse_down()
+			for e in pygame.event.get():
+				if e.type == pygame.QUIT:
+					raise StopIteration
 					
-				myRenderer.update()
-			elif e.type == pygame.VIDEORESIZE:
-				myRenderer.sizeWindowUpdate((e.w, e.h))
-				myRenderer.update()
+				if e.type == pygame.MOUSEBUTTONDOWN:
+					myRenderer.renderFrame()
+					if e.button == LMB:
+						left_mouse_down()
+					elif e.button == MMB:
+						middle_mouse_down()
+					elif e.button == RMB:
+						right_mouse_down()
+						
+					myRenderer.update()
+				elif e.type == pygame.VIDEORESIZE:
+					myRenderer.sizeWindowUpdate((e.w, e.h))
+					myRenderer.update()
+				
+				elif e.type == pygame.KEYDOWN:
+					if e.key == pygame.K_p:
+						b = a.add_group('PointCurve',1,Path(pygame.mouse.get_pos(),(255,255,255),(255,255,255)))
+					elif e.key == pygame.K_a:	
+						b.showg = True
+					elif e.key == pygame.K_n:	
+						b.addPoint(pygame.mouse.get_pos())
 				
 	except StopIteration:
 		pass

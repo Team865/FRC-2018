@@ -12,14 +12,6 @@ def Create_Element_Group(visible):
 	a = deepcopy(elementGroup)
 	a.visible = visible
 	return a
-
-def clamp(n, minn, maxn):
-	if n < minn:
-		return minn
-	elif n > maxn:
-		return maxn
-	else:
-		return n
 	
 def getColourdImage(src):
 	print(src)
@@ -109,7 +101,9 @@ class elementGroup:
 		self.visible = elementGroup.visible
 	
 	def renderFrame(self,screen,resizeOffset):
-		for objlst in self.lSearch.values():	
+		a = sorted(self.lSearch.keys())
+		for key in a:
+			objlst = self.lSearch[key]
 			for obj in objlst:
 				if obj.visible:
 					screen.blit(obj.tranImage,obj.cords)

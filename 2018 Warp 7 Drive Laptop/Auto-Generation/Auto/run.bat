@@ -1,2 +1,3 @@
-python35 AutoProgram.py
+python35.exe AutoProgram.py
+
 pause

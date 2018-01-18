@@ -1,39 +1,82 @@
 import numpy as np
+import pygame
+import matplotlib.pyplot as plt
+from scipy import interpolate
+
+def pixel(surface, color, pos):
+    surface.fill(color, (pos, (5, 5)))
 
 class Path:
-	def __init__(self,colour):
-		self.colour = colour
-		self.points = [Points((0,0)),Points((0,0))]
-		self.calculated = None
+	def __init__(self,points,lineColour,dotColour):
+		self.dotColour = dotColour
+		self.lineColour = lineColour
+		self.rad = 10
+		self.points = [Point(points,self.rad,self),Point(points,self.rad,self)]
+		self.calculatePath()
+		self.showg = False
 		
-	def renderFrame(self,screen):
-		for z in range(len(points)):
-			for point in points:
-				x = round(point[0](z))
-				y = round(point[1](z))
-				
-				
+	def renderFrame(self,a,screen,b):
+		for point in self.points:
+			point.renderFrame(screen,self.dotColour)
+		
+		if self.showg:
+			xp = np.linspace(0, len(self.points)-1)
+			_ = plt.plot(xp, self.calculated[0](xp), '-', xp, self.calculated[1](xp), '--')
+			plt.ylim(0,2000)
+			plt.show()
+			plt.gcf().clear()
+			self.showg = False
+			
+		m=len(self.points)-1
+		z=0
+		n = 1/10
+		while z<m:
+			pointX = self.calculated[0](z)
+			pointY =  self.calculated[1](z)
+			pixel(screen,self.lineColour,(pointX,pointY))
+			z += n
 	
-	def recalculatePath(self,points):
-		for point in points:
-			x1.append(point.x)
-			y1.append(point.y)
+	def calculatePath(self):
+		x=[]
+		y=[]
+		for point in self.points:
+			x.append(point.cords[0])
+			y.append(point.cords[1])
 		
 		x = np.array(x)
 		y = np.array(y)
-		num = len(points)
+		num = len(self.points)
 		n = range(0,num)
 		num *= 5
-		x = np.poly1d(np.polyfit(n, x, num))
-		y = np.poly1d(np.polyfit(n, y, num))
-			
-		return np.column_stack(x,y)
+		#x = np.poly1d(np.polyfit(n, x, num))
+		#y = np.poly1d(np.polyfit(n, y, num))
+		x = interpolate.CubicSpline(n,x)
+		y = interpolate.CubicSpline(n,y)
+		
+		self.calculated = (x,y)
 	
 	def addPoint(self,point):
-		self.points.append(Points(point))
+		self.points.append(Point(point,self.rad,self))
+		self.calculatePath()		
+
+	def find_element_at_cords(self,a, cords, layer=None):
+		for point in self.points:
+			if point.inCircle(cords[0],cords[1]):
+				return point
 		
-class Points:
-	def __init__(self,val):
-		self.x = val[0]
-		self.y = val[1]
+		return None 
+		
+class Point:
+	def __init__(self,cords,size,path):
+		self.path = path
+		self.cords = list(cords)
+		self.rad = size
+	
+	def inCircle(self, x, y):
+		distancesquared = (x - self.cords[0]) * (x - self.cords[0]) + (y - self.cords[1]) * (y - self.cords[1]);
+		return distancesquared <= self.rad * self.rad;
+	
+	def renderFrame(self,screen,colour):
+		pygame.draw.circle(screen, colour, self.cords, self.rad, 0)
+		
 		
