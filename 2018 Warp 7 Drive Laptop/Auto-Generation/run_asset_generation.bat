@@ -1,2 +1,3 @@
-python35 asset_generation.py
+python35.exe asset_generation.py
+
 pause
