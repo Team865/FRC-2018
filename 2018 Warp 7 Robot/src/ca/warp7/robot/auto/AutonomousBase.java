@@ -4,7 +4,6 @@ import static ca.warp7.robot.Constants.pixelOffset;
 
 import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.DataPool;
-import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -13,12 +12,10 @@ public abstract class AutonomousBase {
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
 	
-	protected Climber climber;
 	protected Drive drive;
 	
 	
 	public AutonomousBase(){
-		climber = Robot.climber;
 		drive = Robot.drive;
 		step = 1;
 		reset();
