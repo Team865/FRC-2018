@@ -9,11 +9,12 @@ import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 
 
-public class Robot extends IterativeRobotBase {
+public class Robot extends IterativeRobot  {
 	
 	public static Drive drive;
 	public static Climber climber;
@@ -27,12 +28,11 @@ public class Robot extends IterativeRobotBase {
 	private DriverStation driverStation;
 		
 	
-	@Override
 	public void robotInit() {
 		System.out.println("Hello me is robit");
 		
 		drive = new Drive();
-		climber = new Climber();
+		//climber = new Climber();
 		
 		//shutup >:(
 		compressor = new Compressor(COMPRESSOR_PIN);
@@ -41,36 +41,20 @@ public class Robot extends IterativeRobotBase {
 		
 	}
 
-	@Override
-	public void autonomousInit() {
-	
-	}
-	
-	@Override
-	public void autonomousPeriodic() {
-	
-	}
-	
-	@Override
-	public void teleopPeriodic() {
-		controls = new DualRemote();
+	public void operatorControl(){
+        controls = new DualRemote();
+
 		if(driverStation.isFMSAttached())
 			compressor.setClosedLoopControl(false);
         else 
         	compressor.setClosedLoopControl(true);
-		
+        
 		 while (isOperatorControl() && isEnabled()) {
 			 controls.periodic();
 			 periodic();
 			 
 	         Timer.delay(0.005);
 		 }
-	
-	}
-
-	@Override
-	public void testPeriodic() {
-	
 	}
 	
 	public void disabled(){
@@ -85,9 +69,4 @@ public class Robot extends IterativeRobotBase {
 		compressor.setClosedLoopControl(false);
 	}
 
-	@Override
-	public void startCompetition() {
-		// TODO Auto-generated method stub
-		
-	}
 }

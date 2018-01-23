@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class Drive {
@@ -24,16 +25,16 @@ public class Drive {
 	
 	private double quickstop_accumulator = 0;
 	private double old_wheel = 0;
-    private boolean driveReversed = false;
+    private boolean driveReversed = true;
     
     
     public Drive() {
 		drivePool = new DataPool("Drive");
 
 		// setup drive train motors
-		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_PINS, VictorSP.class);
+		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_PINS, Talon.class);
 		rightDrive.setInverted(true);
-		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_PINS, VictorSP.class);
+		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_PINS, Talon.class);
 
 		// setup drive train gear shifter
         shifter = new Solenoid(DRIVE_SHIFTER_PORT);

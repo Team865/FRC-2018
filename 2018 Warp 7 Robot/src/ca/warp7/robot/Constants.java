@@ -5,8 +5,8 @@ package ca.warp7.robot;
 public class Constants {
 	//TODO Update Constants!
 	// PWM Pins
-	public static final int[] RIGHT_DRIVE_MOTOR_PINS = { 0, 1 };
-	public static final int[] LEFT_DRIVE_MOTOR_PINS = { 2, 3 };
+	public static final int[] RIGHT_DRIVE_MOTOR_PINS = { 4, 5 };
+	public static final int[] LEFT_DRIVE_MOTOR_PINS = { 0, 1 };
 	public static final int[] INTAKE_MOTOR_PINS = { 6 };
 	public static final int[] ELEVATOR_MOTOR_PINS = { 7 };
 	public static final int[] CLIMBER_MOTOR_PINS = { 4, 5 };
