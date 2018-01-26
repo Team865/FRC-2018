@@ -1,19 +1,13 @@
 package ca.warp7.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import ca.warp7.robot.misc.RTS;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 
 public class Navx {
 	private AHRS ahrs;
-	
-	//variables to calculate distace and velocity
-	private double time = Timer.getMatchTime();
-	private double velX = 0.0;
-	private double velY = 0.0;
-	private double distX = 0.0;
-	private double distY = 0.0;
-	
+	private RTS updater;
 	public Navx(){
 		ahrs = new AHRS(SPI.Port.kMXP);
 		
@@ -25,20 +19,34 @@ public class Navx {
 		}
 	}
 	
-	public double getAccelX() {
+	public float getAccelX() {
 		return ahrs.getRawAccelX();
 	}
 	
-	public double getAccelY() {
+	public float getAccelY() {
 		return ahrs.getRawAccelY();
 	}
 	
-	public double getDistX() {
-		double temp = Timer.getMatchTime() - time;
-		time = temp + time;
-		
-		
-		
-		return 1.0;
+	public float getDistX() {		
+		return ahrs.getDisplacementX();
+	}
+	
+	public float getDistY(){
+		return ahrs.getDisplacementY();
+	}
+	
+	private boolean isMoving(){
+		return ahrs.isMoving();
+	}
+	
+	public void startUpdateDisplacement(int refesh) {
+		updater = new RTS(refesh,5);
+		Runnable methodCall = () -> ahrs.updateDisplacement(getAccelX(), getAccelY(), refesh, isMoving());
+		updater.addTask(methodCall);
+		updater.start();
+	}
+	
+	public void stopUpdateDisplacement(){
+		updater.stop();
 	}
 }
