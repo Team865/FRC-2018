@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.VictorSP;
 public class Climber {
 
 	private MotorGroup climbMotors;
-	
+	private final double rampSpeed = 6;
 	
 	public Climber(){
 		climbMotors = new MotorGroup(CLIMBER_MOTOR_PINS, VictorSP.class);
@@ -17,7 +17,6 @@ public class Climber {
 	private double ramp = 0.0;
 	public void setSpeed(double speed){
 		// Ramp to prevent brown outs
-		double rampSpeed = 6;
 		ramp += (speed - ramp)/rampSpeed;
 		climbMotors.set(ramp);
 	}

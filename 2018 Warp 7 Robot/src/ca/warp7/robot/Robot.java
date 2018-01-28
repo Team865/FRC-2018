@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot  {
@@ -33,6 +34,8 @@ public class Robot extends IterativeRobot  {
 		System.out.println("Hello me is robit");
 		
 		drive = new Drive();
+		navx = new Navx();
+		auto = new AutonomousBase(drive,navx);
 		//climber = new Climber();
 		
 		//shutup >:(
@@ -40,26 +43,32 @@ public class Robot extends IterativeRobot  {
 		
 		driverStation = DriverStation.getInstance();
 		
-		navx = new Navx();
-		
+	}
+	
+	public void autonomousInit(){
+		auto.autonomousInit();
+	}
+	
+	public void autonomousPeriodic(){
+		auto.periodic();
 	}
 	
 	public void teleopInit() {
 		navx.startUpdateDisplacement(60);
+		compressor.setClosedLoopControl(false);
 	}
 
 	public void teleopPeriodic(){
         controls = new DualRemote();
 
-		if(driverStation.isFMSAttached())
-			compressor.setClosedLoopControl(false);
-        else 
-        	compressor.setClosedLoopControl(true);
+		if(driverStation.isFMSAttached()){}
+			
         
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			drive.periodic();
-			compressor.setClosedLoopControl(false);
+			SmartDashboard.putNumber("DispX", navx.getDispX());
+			SmartDashboard.putNumber("DispY", navx.getDispY());
 			Timer.delay(0.005);
 		 }
 	}

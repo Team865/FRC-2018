@@ -9,7 +9,7 @@ public class RTS {
 	private int TICKS_PER_SECOND;
 	private int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
 	private int MAX_FRAMESKIP;
-	private boolean stop = false;
+	private boolean stoped = false;
 	
 	public RTS(int TICKS_PER_SECOND, int MAX_FRAMESKIP){
 		this.TICKS_PER_SECOND = TICKS_PER_SECOND;
@@ -17,14 +17,13 @@ public class RTS {
 	}
 	
 	public void start() {
-		stop = false;
+		stoped = false;
 		Thread t = new Thread(() -> {
-			
 			double next_game_tick = System.currentTimeMillis();
 		    int loops;
 		    int a;
 
-		    while (!stop) {
+		    while (!stoped) {
 		        loops = 0;
 		        while (System.currentTimeMillis() > next_game_tick
 		                && loops < MAX_FRAMESKIP) {
@@ -53,7 +52,7 @@ public class RTS {
 	}
 	
 	public void stop(){
-		stop = true;
+		stoped = true;
 	}
 	
 	public void addTask(Runnable task){

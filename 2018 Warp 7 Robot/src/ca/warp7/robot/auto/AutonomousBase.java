@@ -1,46 +1,38 @@
 package ca.warp7.robot.auto;
 
-import static ca.warp7.robot.Constants.pixelOffset;
-
-import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.subsystems.Drive;
+import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.Timer;
 
-public abstract class AutonomousBase {
+public class AutonomousBase {
 
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
 	
 	protected Drive drive;
+	protected Navx navx;
 	
-	
-	public AutonomousBase(){
-		drive = Robot.drive;
-		step = 1;
-		reset();
+	public AutonomousBase(Drive drivetrain, Navx navxController){
+		drive = drivetrain;
+		navx = navxController;
+		/*
+		 load all possible paths
+		 */
 	}
 	
-	public abstract void periodic();
-
-	public void reset(){
-		drive.moveRamped(0, 0);
-		stopShooter();
-		//gearMech.hold();
-		drive.autoShift(false);
-		resetValues();
+	public void autonomousInit() {
+		/*
+		 load autonomous data (robot types)
+		 load FMS data here
+		 calculate best fit path
+		 */
 	}
 	
-	protected void endAuto(){
-		step = -1;
-	}
-	
-	protected boolean gearGoalVisible() throws NullPointerException{
-		return DataPool.getBooleanData("vision", "D_found");
-	}
-	
-	protected boolean highGoalVisible() throws NullPointerException{
-		return DataPool.getBooleanData("vision", "S_found");
+	public void periodic(){
+		/*
+		 run best fit path
+		 */
 	}
 	
 	private double errorOld = 0.0;
@@ -49,6 +41,7 @@ public abstract class AutonomousBase {
 	private double errorSum = 0.0;
 	private int counterR = 0;
 	private int done = 0;
+	
 	/**
 	 * Rotate relative to current rotation
 	 * 
@@ -213,106 +206,6 @@ public abstract class AutonomousBase {
 		return travel(toTravel, 0.75);
 	}
 	
-	private int sCounter = 0;
-	protected boolean lineUpShooter(Direction dir) throws NullPointerException{
-		if(visionTurn(dir)){
-			sCounter++;
-			if(sCounter >= 20){
-				sCounter = 0;
-				return true;
-			}
-		}else{
-			sCounter = 0;
-		}
-		
-		return false;
-	}
-	
-	private boolean temp = true;
-	protected boolean visionTurn(Direction dir) throws NullPointerException{
-		if(DataPool.getBooleanData("vision", "S_found"))
-			if(temp){
-				drive.autoMove(DataPool.getDoubleData("vision", "S_left"), DataPool.getDoubleData("vision", "S_right"));
-				Timer.delay(0.01);
-				temp = false;
-			}else{
-				drive.moveRamped(0, 0);
-				Timer.delay(0.01);
-				temp = true;
-			}
-				
-		else
-			if(dir == Direction.CLOCKWISE)
-				drive.autoMove(0.5, -0.5);
-			else
-				drive.autoMove(-0.5, 0.5);
-		
-		return DataPool.getBooleanData("vision", "S_found") && Math.abs(DataPool.getDoubleData("vision", "S_right")) < 0.23;
-	}
-	
-	protected boolean visionMove() throws NullPointerException{
-		drive.autoMove(Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_left"), -0.75)), Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_right"), -0.75)));
-		return !DataPool.getBooleanData("vision", "D_found");
-	}
-	
-	protected boolean gearMove() throws NullPointerException{
-		if(visionMove()){
-			drive.autoMove(-0.3, -0.3);
-			Timer.delay(0.8);
-			if(!DataPool.getBooleanData("vision", "D_found") || Math.abs(DataPool.getDoubleData("vision", "D_right")) < 0.15){ // if we don't see the target... finish
-				drive.moveRamped(0, 0);
-				return true;
-			}
-		}
-		return false;
-	}
-	/*
-	protected void shoot(double shooterRPM){
-		shooter.setRPM(shooterRPM);
-		shooter.setHopperSpeed(1.0);
-		shooter.setIntakeSpeed(1.0);
-		if(shooter.withinRange(25) && shooter.getSetPoint() > 0.0){
-			shooter.setTowerSpeed(1.0);
-		}else if(shooter.getSensor()){
-			shooter.setTowerSpeed(0.0);
-		}else{
-			shooter.setTowerSpeed(0.0);
-		}
-	}*/
-	
-	protected boolean shoot(double shooterRPM, double seconds){
-		//shoot(shooterRPM);
-		if(timePassed(seconds)){
-			stopShooter();
-			return true;
-		}
-		return false;
-	}
-	
-	private double rpm = 0.0;
-	protected boolean visionShoot(double seconds) throws NullPointerException{
-		if(rpm <= 0.0){
-			double pixelHeight = DataPool.getDoubleData("vision", "S_dist") + pixelOffset;
-			rpm = 0.018*Math.pow(pixelHeight, 2)-19.579*pixelHeight+9675.03;
-		}
-		
-		if(shoot(rpm, seconds)){
-			rpm = 0.0;
-			stopShooter();
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	protected void stopShooter(){
-		/*
-		shooter.setHopperSpeed(0.0);
-		shooter.setIntakeSpeed(0.0);
-		shooter.setRPM(0.0);
-		shooter.setTowerSpeed(0.0);
-		*/
-	}
 	
 	private double timer = -1;
 	protected boolean timePassed(double seconds) {
@@ -325,22 +218,6 @@ public abstract class AutonomousBase {
 		}else{
 			return false;
 		}
-	}
-	
-	protected void nextStep(){
-		nextStep(0.0);
-	}
-	
-	protected void nextStep(double delaySeconds){
-		step++;
-		resetValues();
-		drive.moveRamped(0, 0);
-		Timer.delay(delaySeconds);
-	}
-	
-	protected void nextStep(double delaySeconds, int steps){
-		nextStep(delaySeconds);
-		step+=steps-1;
 	}
 	
 	private void resetValues(){
@@ -359,10 +236,7 @@ public abstract class AutonomousBase {
 		oldErrorL = 0.0;
 		oldErrorR = 0.0;
 		offset = 0.0;
-		temp = true;
 		errorOld = 0.0;
-		sCounter = 0;
-		rpm = 0.0;
 	}
 	
 	protected enum Direction{

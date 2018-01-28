@@ -21,8 +21,8 @@ public class Constants {
 	
 	//TODO Update Constants!
 	// Solenoids (manifold ports)
-	public static final int FLIP_PORT = 4;
-	public static final int DRIVE_SHIFTER_PORT = 1;
+	public static final int DRIVE_SHIFTER_PORT = 0;
+	public static final int INTAKE_PISTONS = 1;
 	
 	//TODO Update Constants!
 	// Compressor
