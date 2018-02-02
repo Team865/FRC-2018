@@ -46,7 +46,8 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void autonomousInit(){
-		auto.autonomousInit();
+		String gameData = driverStation.getGameSpecificMessage();
+		auto.autonomousInit(gameData);
 	}
 	
 	public void autonomousPeriodic(){

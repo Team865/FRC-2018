@@ -21,7 +21,7 @@ public class AutonomousBase {
 		 */
 	}
 	
-	public void autonomousInit() {
+	public void autonomousInit(String gameData) {
 		/*
 		 load autonomous data (robot types)
 		 load FMS data here
