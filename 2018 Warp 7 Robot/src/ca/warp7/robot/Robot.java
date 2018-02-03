@@ -5,6 +5,7 @@ import static ca.warp7.robot.Constants.*;
 import ca.warp7.robot.auto.AutonomousBase;
 import ca.warp7.robot.controls.ControlsBase;
 import ca.warp7.robot.controls.DualRemote;
+import ca.warp7.robot.misc.RTS;
 import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
@@ -67,15 +68,19 @@ public class Robot extends IterativeRobot  {
         
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
-			drive.periodic();
+			//drive.periodic();
 			SmartDashboard.putNumber("DispX", navx.getDispX());
 			SmartDashboard.putNumber("DispY", navx.getDispY());
+			
+			RTS dispUpdater = navx.getDisplacementUpdater();
+			SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
 			Timer.delay(0.005);
 		 }
 	}
 	
 	public void disabledInit() {
-		navx.stopUpdateDisplacement();
+		if (navx.getDisplacementUpdater().isRunning())
+			navx.stopUpdateDisplacement();
 	}
 
 }

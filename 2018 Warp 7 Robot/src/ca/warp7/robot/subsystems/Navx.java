@@ -23,14 +23,16 @@ public class Navx {
 		}
 	}
 	
-	private void updateDisplacement(int update_rate_hz) {
-        if (isMoving()) {
+	private void updateDisplacement() {
+        if (ahrs.isMoving()) {
             float accel_g[] = new float[2];
             float accel_m_s2[] = new float[2];
             float curr_velocity_m_s[] = new float[2];
-            float sample_time = (1.0f / update_rate_hz);
-            accel_g[0] = ahrs.getRawAccelX();
-            accel_g[1] = ahrs.getRawAccelY();
+            float sample_time = (1.0f / updater.getHz());
+            //accel_g[0] = ahrs.getRawAccelX();
+            //accel_g[1] = ahrs.getRawAccelY();
+            accel_g[0] = ahrs.getWorldLinearAccelX();
+            accel_g[1] = ahrs.getWorldLinearAccelY();
             for (int i = 0; i < 2; i++) {
                 accel_m_s2[i] = accel_g[i] * 9.80665f;
                 curr_velocity_m_s[i] = last_velocity[i] + (accel_m_s2[i] * sample_time);
@@ -44,8 +46,8 @@ public class Navx {
      }
 	
 	public void startUpdateDisplacement(int refesh) {
-		updater = new RTS(refesh,5,"DisplacementUpdater");
-		Runnable methodCall = () -> updateDisplacement(refesh);
+		updater = new RTS("DisplacementUpdater",refesh);
+		Runnable methodCall = () -> updateDisplacement();
 		updater.addTask(methodCall);
 		updater.start();
 	}
@@ -86,8 +88,11 @@ public class Navx {
         return 0;
     }
 	
-    
 	public boolean isMoving(){
 		return ahrs.isMoving();
+	}
+	
+	public RTS getDisplacementUpdater(){
+		return updater;
 	}
 }
