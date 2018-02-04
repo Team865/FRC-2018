@@ -57,6 +57,8 @@ public class Robot extends IterativeRobot  {
 	
 	public void teleopInit() {
 		navx.startUpdateDisplacement(60);
+		navx.resetDisplacement();
+		navx.resetDisplacementLoc();
 		compressor.setClosedLoopControl(false);
 	}
 
@@ -70,7 +72,11 @@ public class Robot extends IterativeRobot  {
 			controls.periodic();
 			//drive.periodic();
 			SmartDashboard.putNumber("DispX", navx.getDispX());
+			SmartDashboard.putNumber("DispXLoc", navx.getDispXLoc());
+			SmartDashboard.putNumber("DispXDiff", navx.getDispDiffX());
 			SmartDashboard.putNumber("DispY", navx.getDispY());
+			SmartDashboard.putNumber("DispYLoc", navx.getDispYLoc());
+			SmartDashboard.putNumber("DispYDiff", navx.getDispDiffY());
 			
 			RTS dispUpdater = navx.getDisplacementUpdater();
 			SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
