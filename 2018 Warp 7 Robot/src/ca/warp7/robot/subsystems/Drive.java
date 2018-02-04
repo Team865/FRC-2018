@@ -2,6 +2,8 @@ package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.*;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.misc.MotorGroup;
 import ca.warp7.robot.misc.Util;
@@ -10,7 +12,6 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.VictorSP;
 
 public class Drive {
 	
@@ -32,9 +33,9 @@ public class Drive {
 		drivePool = new DataPool("Drive");
 
 		// setup drive train motors
-		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_PINS, Talon.class);
+		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_IDS, Talon.class);
 		rightDrive.setInverted(true);
-		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_PINS, Talon.class);
+		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_IDS, Talon.class);
 
 		// setup drive train gear shifter
         shifter = new Solenoid(DRIVE_SHIFTER_PORT);

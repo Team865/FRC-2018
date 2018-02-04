@@ -1460,8 +1460,8 @@ public class AHRS extends SensorBase implements PIDSource, Sendable {
             
             AHRS.this.last_sensor_timestamp      = sensor_timestamp;           
             
-            updateDisplacement( AHRS.this.world_linear_accel_x, 
-                    AHRS.this.world_linear_accel_y, 
+            updateDisplacement( AHRS.this.raw_accel_x, 
+                    AHRS.this.raw_accel_y, 
                     update_rate_hz,
                     AHRS.this.is_moving);
             

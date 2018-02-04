@@ -40,10 +40,10 @@ public class Navx {
             double accel_m_s2[] = new double[2];
             double curr_velocity_m_s[] = new double[2];
             double sample_time = (1.0 / updater.getHz());
-            //accel_g[0] = ahrs.getRawAccelX();
-            //accel_g[1] = ahrs.getRawAccelY();
-            accel_g[0] = ahrs.getWorldLinearAccelX();
-            accel_g[1] = ahrs.getWorldLinearAccelY();
+            accel_g[0] = ahrs.getRawAccelX();
+            accel_g[1] = ahrs.getRawAccelY();
+            //accel_g[0] = ahrs.getWorldLinearAccelX();
+            //accel_g[1] = ahrs.getWorldLinearAccelY();
             for (int i = 0; i < 2; i++) {
                 accel_m_s2[i] = accel_g[i] * 9.80665;
                 curr_velocity_m_s[i] = last_velocity[i] + accel_m_s2[i] * sample_time;

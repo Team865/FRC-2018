@@ -43,6 +43,7 @@ public class Robot extends IterativeRobot  {
 		compressor = new Compressor(COMPRESSOR_PIN);
 		
 		driverStation = DriverStation.getInstance();
+		navx.startUpdateDisplacement(60);
 		
 	}
 	
