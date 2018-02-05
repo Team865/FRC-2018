@@ -50,6 +50,14 @@ public class Robot extends IterativeRobot  {
 	public void autonomousInit(){
 		String gameData = driverStation.getGameSpecificMessage();
 		auto.autonomousInit(gameData);
+		navx.startUpdateDisplacement(60);
+		navx.resetDisplacement();
+		navx.resetDisplacementLoc();
+		drive.tankDrive(0.5,0.5);
+		Timer.delay(0.7);
+		drive.tankDrive(0,0);
+		Timer.delay(0.5);
+		updateStuffs();
 	}
 	
 	public void autonomousPeriodic(){
@@ -72,18 +80,25 @@ public class Robot extends IterativeRobot  {
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			//drive.periodic();
-			SmartDashboard.putNumber("DispX", navx.getDispX());
-			SmartDashboard.putNumber("DispXLoc", navx.getDispXLoc());
-			SmartDashboard.putNumber("DispXDiff", navx.getDispDiffX());
-			SmartDashboard.putNumber("DispY", navx.getDispY());
-			SmartDashboard.putNumber("DispYLoc", navx.getDispYLoc());
-			SmartDashboard.putNumber("DispYDiff", navx.getDispDiffY());
-			
-			RTS dispUpdater = navx.getDisplacementUpdater();
-			SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
+			updateStuffs();
 			Timer.delay(0.005);
 		 }
 	}
+	
+	public void updateStuffs() {
+		SmartDashboard.putNumber("DispX", navx.getDispX());
+		SmartDashboard.putNumber("DispXLoc", navx.getDispXLoc());
+		SmartDashboard.putNumber("DispXDiff", navx.getDispDiffX());
+		SmartDashboard.putNumber("DispY", navx.getDispY());
+		SmartDashboard.putNumber("DispYLoc", navx.getDispYLoc());
+		SmartDashboard.putNumber("DispYDiff", navx.getDispDiffY());
+		
+		RTS dispUpdater = navx.getDisplacementUpdater();
+		SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
+		SmartDashboard.putNumber("Avg", (Math.abs(navx.getDispXLoc())+Math.abs(navx.getDispYLoc()))/2);
+		SmartDashboard.putNumber("Hyp", Math.hypot(navx.getDispXLoc(), navx.getDispYLoc()));
+	}
+	
 	
 	public void disabledInit() {
 		if (navx.getDisplacementUpdater().isRunning())
