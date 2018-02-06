@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot  {
 	public void autonomousInit(){
 		String gameData = driverStation.getGameSpecificMessage();
 		auto.autonomousInit(gameData);
+		/*
 		navx.startUpdateDisplacement(60);
 		navx.resetDisplacement();
 		navx.resetDisplacementLoc();
@@ -57,7 +58,17 @@ public class Robot extends IterativeRobot  {
 		Timer.delay(0.7);
 		drive.tankDrive(0,0);
 		Timer.delay(0.5);
-		updateStuffs();
+		
+		double distance = 4;
+		double loc = 0.0;
+		
+		drive.tankDrive(0.3,0.3);
+		while (distance >= loc) {
+			loc = Math.hypot(navx.getDispXLoc(), navx.getDispYLoc());
+			updateStuffs();
+		}
+		drive.tankDrive(0,0);
+		*/
 	}
 	
 	public void autonomousPeriodic(){
@@ -96,7 +107,8 @@ public class Robot extends IterativeRobot  {
 		RTS dispUpdater = navx.getDisplacementUpdater();
 		SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
 		SmartDashboard.putNumber("Avg", (Math.abs(navx.getDispXLoc())+Math.abs(navx.getDispYLoc()))/2);
-		SmartDashboard.putNumber("Hyp", Math.hypot(navx.getDispXLoc(), navx.getDispYLoc()));
+		SmartDashboard.putNumber("Hyp loc", Math.hypot(navx.getDispXLoc(), navx.getDispYLoc()));
+		SmartDashboard.putNumber("Hyp ahrs", Math.hypot(navx.getDispX(), navx.getDispY()));
 	}
 	
 	
