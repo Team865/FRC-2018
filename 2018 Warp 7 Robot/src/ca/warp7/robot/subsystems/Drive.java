@@ -2,12 +2,10 @@ package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.*;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
+import ca.warp7.robot.subsystems.Navx;
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.misc.MotorGroup;
 import ca.warp7.robot.misc.Util;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -20,7 +18,7 @@ public class Drive {
 	private MotorGroup rightDrive;
 	private MotorGroup leftDrive;
 	private Solenoid shifter;
-	private ADXRS450_Gyro gyro;
+	private Navx navx;
 	private Encoder leftEncoder;
 	private Encoder rightEncoder;
 	
@@ -49,8 +47,8 @@ public class Drive {
 		rightEncoder.setReverseDirection(false);
 		rightEncoder.setDistancePerPulse(DRIVE_INCHES_PER_TICK);
 		
-		// setup gyro
-		gyro = new ADXRS450_Gyro();
+		//navx stuff
+		navx = new Navx();
 	}
 
 	public void setGear(boolean gear) {
@@ -199,7 +197,7 @@ public class Drive {
     }
 	
 	public double getRotation() {
-		return gyro.getAngle();
+		return navx.getAngle();
 	}
 	
 	public double getLeftDistance(){
