@@ -1,13 +1,13 @@
 package ca.warp7.robot.misc;
 
 import java.util.ArrayList;
-
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEntry;
 
 public class DataPool{
 	
-	private static NetworkTable table = NetworkTable.getTable("data");
+	private static NetworkTable table = NetworkTableInstance.getDefault().getTable("data");
 	private static ArrayList<DataPool> allPools = new ArrayList<>();
 	private ArrayList<Object> data;
 	private ArrayList<String> keys;
@@ -56,18 +56,19 @@ public class DataPool{
 			return;
 		for (DataPool pool : allPools) {
 			if (!pool.data.isEmpty()) {
-				ITable poolTable = table.getSubTable(pool.name);
+				NetworkTable poolTable = table.getSubTable(pool.name);
 				for (int i = 0; i < pool.data.size(); i++) {
-					poolTable.putValue(pool.keys.get(i), pool.data.get(i));
+					NetworkTableEntry binTable = poolTable.getEntry(pool.keys.get(i));
+					binTable.setValue(pool.data.get(i));
 				}
 			}
 		}
 	}
 	
 	public static Object getObjectData(String subTableName, String valueName){
-		NetworkTable table_ = NetworkTable.getTable("data");
-		ITable poolTable = table_.getSubTable(subTableName);
-		return poolTable.getValue(valueName, null);
+		NetworkTable data = NetworkTableInstance.getDefault().getTable("data").getSubTable(subTableName);
+		NetworkTableEntry stuff = data.getEntry(valueName);
+		return stuff.getValue().getValue();
 	}
 	
 	public static String getStringData(String subTableName, String valueName){
