@@ -11,8 +11,6 @@ public class Navx {
 	
 	private double last_velocity[] = new double[2];
     private double displacement[] = new double[2];
-    
-    private double sample[] = new double[2];
 	
 	public Navx(int rate){
 		ahrs = new AHRS(SPI.Port.kMXP,(byte) rate);
@@ -23,6 +21,7 @@ public class Navx {
 		else if (ahrs.isCalibrating()) {
 			System.out.println("Calibrating Navx");
 		}
+		ahrs.zeroYaw();
 	}
 	
 	public Navx(){
@@ -34,6 +33,7 @@ public class Navx {
 		else if (ahrs.isCalibrating()) {
 			System.out.println("Calibrating Navx");
 		}
+		ahrs.zeroYaw();
 	}
 	
 	private void updateDisplacement() {
@@ -44,8 +44,6 @@ public class Navx {
             double sample_time = 1.0 / updater.getHz();
             accel_g[0] = ahrs.getRawAccelX();
             accel_g[1] = ahrs.getRawAccelY();
-            //accel_g[0] = ahrs.getWorldLinearAccelX();
-            //accel_g[1] = ahrs.getWorldLinearAccelY();
             for (int i = 0; i < 2; i++) {
                 accel_m_s2[i] = accel_g[i] * 9.80665;
                 curr_velocity_m_s[i] = last_velocity[i] + accel_m_s2[i] * sample_time;
@@ -59,8 +57,6 @@ public class Navx {
      }
 	
 	public void startUpdateDisplacement(int refesh) {
-		//sample[0] = ahrs.getRawAccelX();
-		//sample[1] = ahrs.getRawAccelY();
 		updater = new RTS("DisplacementUpdater",refesh);
 		Runnable methodCall = () -> updateDisplacement();
 		updater.addTask(methodCall);
@@ -73,6 +69,10 @@ public class Navx {
             displacement[i] = 0.0;
         }        
     }
+	
+	public double getAngle() {
+		return ahrs.getAngle();
+	}
 	
 	public void resetDisplacement() {
         ahrs.resetDisplacement();       
@@ -113,10 +113,6 @@ public class Navx {
 	public double getDispY(){
 		return ahrs.getDisplacementY();
 	}
-	
-	public double getDispZ() {
-        return 0;
-   }
 	
 	public double getVelX() {
         return last_velocity[0];
