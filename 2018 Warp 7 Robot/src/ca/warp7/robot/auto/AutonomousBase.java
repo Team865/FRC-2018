@@ -1,5 +1,13 @@
 package ca.warp7.robot.auto;
 
+import java.io.FileReader;
+import java.io.IOException;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
@@ -13,6 +21,8 @@ public class AutonomousBase {
 	protected Drive drive;
 	protected Navx navx;
 	
+	private JSONArray[] data;
+	
 	public AutonomousBase(Drive drivetrain, Navx navxController){
 		drive = drivetrain;
 		navx = navxController;
@@ -22,6 +32,7 @@ public class AutonomousBase {
 	}
 	
 	public void autonomousInit(String gameData) {
+		loadAutonomusData();
 		/*
 		 load autonomous data (robot types)
 		 load FMS data here
@@ -33,6 +44,25 @@ public class AutonomousBase {
 		/*
 		 run best fit path
 		 */
+	}
+	
+	public void loadAutonomusData() {
+		
+	}
+	
+	public void loadJsonParser() {
+		JSONParser parser = new JSONParser();
+		Object obj = null;
+		try {
+			obj = parser.parse(new FileReader("2018 Warp 7 Robot/src/ca/warp7/robot/auto/SampleData"));
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		
+		data = (JSONArray[]) jsonObject.get("data");
+		
+		
 	}
 	
 	private double errorOld = 0.0;
