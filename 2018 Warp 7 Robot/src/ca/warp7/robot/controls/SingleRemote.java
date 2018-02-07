@@ -9,6 +9,7 @@ import ca.warp7.robot.misc.DataPool;
 
 public class SingleRemote extends ControlsBase{
 	
+	/*
 	private double rpm = 4450;
 	
 	
@@ -17,7 +18,8 @@ public class SingleRemote extends ControlsBase{
 		
 		rpm = 4450;
 	}
-
+	*/
+	@SuppressWarnings("unused")
 	@Override
 	public void periodic() {
 		if(driver.getTrigger(kLeft) == UP || true){ // are we doing auto stuff

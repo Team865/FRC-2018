@@ -23,7 +23,7 @@ public class Navx {
 		}
 		ahrs.zeroYaw();
 	}
-	
+
 	public Navx(){
 		ahrs = new AHRS(SPI.Port.kMXP);
 		
@@ -63,13 +63,15 @@ public class Navx {
 		updater.start();
 	}
 	
-	public void resetDisplacementLoc() {
+	public void resetDisplacement() {
         for ( int i = 0; i < 2; i++ ) {
             last_velocity[i] = 0.0;
             displacement[i] = 0.0;
         }        
     }
 	
+<<<<<<< HEAD
+=======
 	public double getAngle() {
 		return ahrs.getAngle();
 	}
@@ -78,40 +80,17 @@ public class Navx {
         ahrs.resetDisplacement();       
     }
 	
+>>>>>>> e179867cec32072e36460fa43595bdc161183486
 	public void stopUpdateDisplacement(){
 		updater.stop();
 	}
 	
-	public float getAccelX() {
-		return ahrs.getWorldLinearAccelX();
-	}
-	
-	public float getAccelY() {
-		return ahrs.getWorldLinearAccelY();
-	}
-	
-	public double getDispDiffX(){
-		return Math.abs(ahrs.getDisplacementX() - displacement[0]);
-	}
-	
-	public double getDispDiffY(){
-		return Math.abs(ahrs.getDisplacementY() - displacement[1]);
-	}
-	
-	public double getDispXLoc() {		
+	public double getDispX() {		
 		return displacement[0];
 	}
 	
-	public double getDispYLoc(){
-		return displacement[1];
-	}
-	
-	public double getDispX() {		
-		return ahrs.getDisplacementX();
-	}
-	
 	public double getDispY(){
-		return ahrs.getDisplacementY();
+		return displacement[1];
 	}
 	
 	public double getVelX() {
@@ -121,10 +100,6 @@ public class Navx {
     public double getVelY() {
         return last_velocity[1];
     }
-    
-    public double getVelZ() {
-        return 0;
-    }
 	
 	public boolean isMoving(){
 		return ahrs.isMoving();
@@ -132,5 +107,9 @@ public class Navx {
 	
 	public RTS getDisplacementUpdater(){
 		return updater;
+	}
+
+	public double getAngle() {
+		return ahrs.getAngle();
 	}
 }

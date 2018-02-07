@@ -762,6 +762,7 @@ public class AHRS extends SensorBase implements PIDSource, Sendable {
      * Zeros the displacement integration variables.   Invoke this at the moment when
      * integration begins.
      */
+    /*
     public void resetDisplacement() {
     	if ( board_capabilities.isDisplacementSupported() ) {
     	    io.zeroDisplacement();
@@ -770,7 +771,7 @@ public class AHRS extends SensorBase implements PIDSource, Sendable {
     	    integrator.resetDisplacement();
     	}
     }
-    
+	*/
     /**
      * Each time new linear acceleration samples are received, this function should be invoked.
      * This function transforms acceleration in G to meters/sec^2, then converts this value to
@@ -778,11 +779,12 @@ public class AHRS extends SensorBase implements PIDSource, Sendable {
      * is converted to displacement in meters, and integrated.
      * @return none.
      */
-    
+    /*
     private void updateDisplacement( float accel_x_g, float accel_y_g, 
     									int update_rate_hz, boolean is_moving ) {
         integrator.updateDisplacement(accel_x_g, accel_y_g, update_rate_hz, is_moving);
     }
+    */
     
     /**
      * Returns the velocity (in meters/sec) of the X axis [Experimental].
@@ -1460,11 +1462,12 @@ public class AHRS extends SensorBase implements PIDSource, Sendable {
             
             AHRS.this.last_sensor_timestamp      = sensor_timestamp;           
             
+            /*
             updateDisplacement( AHRS.this.raw_accel_x, 
                     AHRS.this.raw_accel_y, 
                     update_rate_hz,
                     AHRS.this.is_moving);
-            
+            */
             yaw_angle_tracker.nextAngle(getYaw());
             
             /* Notify external data arrival subscribers, if any. */

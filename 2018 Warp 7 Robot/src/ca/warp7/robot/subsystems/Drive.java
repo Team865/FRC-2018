@@ -2,7 +2,10 @@ package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.*;
 
+
+import ca.warp7.robot.Robot;
 import ca.warp7.robot.subsystems.Navx;
+
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.misc.MotorGroup;
 import ca.warp7.robot.misc.Util;
@@ -18,7 +21,7 @@ public class Drive {
 	private MotorGroup rightDrive;
 	private MotorGroup leftDrive;
 	private Solenoid shifter;
-	private Navx navx;
+
 	private Encoder leftEncoder;
 	private Encoder rightEncoder;
 	
@@ -46,9 +49,6 @@ public class Drive {
 		leftEncoder.setReverseDirection(true);
 		rightEncoder.setReverseDirection(false);
 		rightEncoder.setDistancePerPulse(DRIVE_INCHES_PER_TICK);
-		
-		//navx stuff
-		navx = new Navx();
 	}
 
 	public void setGear(boolean gear) {
@@ -167,8 +167,8 @@ public class Drive {
 		double rampSpeed = 6;
 		leftRamp += (desiredLeft - leftRamp) / rampSpeed;
 		rightRamp += (desiredRight - rightRamp) / rampSpeed;
-		leftDrive.set(leftRamp);
-		rightDrive.set(rightRamp);
+		leftDrive.set(limit(leftRamp,0.99));
+		rightDrive.set(limit(rightRamp,0.99));
 	}
 
 	public void autoMove(double left, double right) {
@@ -197,7 +197,7 @@ public class Drive {
     }
 	
 	public double getRotation() {
-		return navx.getAngle();
+		return Robot.navx.getAngle();
 	}
 	
 	public double getLeftDistance(){

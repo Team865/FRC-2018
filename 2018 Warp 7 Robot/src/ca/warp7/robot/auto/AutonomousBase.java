@@ -1,8 +1,5 @@
 package ca.warp7.robot.auto;
 
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
+
 import edu.wpi.first.wpilibj.Timer;
 
 public class AutonomousBase {
@@ -21,6 +19,7 @@ public class AutonomousBase {
 	protected Drive drive;
 	protected Navx navx;
 	
+	private Point[] points;
 	private JSONArray[] data;
 	
 	public AutonomousBase(Drive drivetrain, Navx navxController){
@@ -29,6 +28,10 @@ public class AutonomousBase {
 		/*
 		 load all possible paths
 		 */
+	}
+	
+	public void autonomousInit(String gameData, String jsonPaths) {
+		loadJson(jsonPaths);
 	}
 	
 	public void autonomousInit(String gameData) {
@@ -40,6 +43,21 @@ public class AutonomousBase {
 		 */
 	}
 	
+	private void loadJson(String jsonPaths){
+		JSONParser parser = new JSONParser();
+		Object obj = null;
+		try {
+			obj = parser.parse(jsonPaths);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = (JSONObject) obj;
+		JSONArray data = (JSONArray) jsonObject.get("data");
+		points = new Point[data.size()];
+		for(int i=0; i<data.size();i++)
+			points[i] = new Point((JSONObject)data.get(i));
+	}
+	
 	public void periodic(){
 		/*
 		 run best fit path
@@ -47,21 +65,6 @@ public class AutonomousBase {
 	}
 	
 	public void loadAutonomusData() {
-		
-	}
-	
-	public void loadJsonParser() {
-		JSONParser parser = new JSONParser();
-		Object obj = null;
-		try {
-			obj = parser.parse(new FileReader("2018 Warp 7 Robot/src/ca/warp7/robot/auto/SampleData"));
-		} catch (IOException | ParseException e) {
-			e.printStackTrace();
-		}
-		JSONObject jsonObject = (JSONObject) obj;
-		
-		data = (JSONArray[]) jsonObject.get("data");
-		
 		
 	}
 	

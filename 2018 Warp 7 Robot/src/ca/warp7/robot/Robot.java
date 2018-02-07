@@ -48,27 +48,15 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void autonomousInit(){
-		String gameData = driverStation.getGameSpecificMessage();
-		auto.autonomousInit(gameData);
-		/*
-		navx.startUpdateDisplacement(60);
-		navx.resetDisplacement();
-		navx.resetDisplacementLoc();
-		drive.tankDrive(0.5,0.5);
-		Timer.delay(0.7);
-		drive.tankDrive(0,0);
-		Timer.delay(0.5);
+		String gameData = null;
+		while (gameData == null)
+			gameData = driverStation.getGameSpecificMessage();
 		
-		double distance = 4;
-		double loc = 0.0;
+		String jsonPaths = null;
+		while (jsonPaths == null)
+			SmartDashboard.getString("PathData", jsonPaths);
 		
-		drive.tankDrive(0.3,0.3);
-		while (distance >= loc) {
-			loc = Math.hypot(navx.getDispXLoc(), navx.getDispYLoc());
-			updateStuffs();
-		}
-		drive.tankDrive(0,0);
-		*/
+		auto.autonomousInit(gameData,jsonPaths);
 	}
 	
 	public void autonomousPeriodic(){
@@ -78,7 +66,6 @@ public class Robot extends IterativeRobot  {
 	public void teleopInit() {
 		navx.startUpdateDisplacement(60);
 		navx.resetDisplacement();
-		navx.resetDisplacementLoc();
 		compressor.setClosedLoopControl(false);
 	}
 
@@ -91,6 +78,11 @@ public class Robot extends IterativeRobot  {
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			//drive.periodic();
+			SmartDashboard.putNumber("DispX", navx.getDispX());
+			SmartDashboard.putNumber("DispY", navx.getDispY());
+			
+			RTS dispUpdater = navx.getDisplacementUpdater();
+			SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
 			updateStuffs();
 			Timer.delay(0.005);
 		 }
@@ -98,16 +90,10 @@ public class Robot extends IterativeRobot  {
 	
 	public void updateStuffs() {
 		SmartDashboard.putNumber("DispX", navx.getDispX());
-		SmartDashboard.putNumber("DispXLoc", navx.getDispXLoc());
-		SmartDashboard.putNumber("DispXDiff", navx.getDispDiffX());
 		SmartDashboard.putNumber("DispY", navx.getDispY());
-		SmartDashboard.putNumber("DispYLoc", navx.getDispYLoc());
-		SmartDashboard.putNumber("DispYDiff", navx.getDispDiffY());
 		
 		RTS dispUpdater = navx.getDisplacementUpdater();
 		SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
-		SmartDashboard.putNumber("Avg", (Math.abs(navx.getDispXLoc())+Math.abs(navx.getDispYLoc()))/2);
-		SmartDashboard.putNumber("Hyp loc", Math.hypot(navx.getDispXLoc(), navx.getDispYLoc()));
 		SmartDashboard.putNumber("Hyp ahrs", Math.hypot(navx.getDispX(), navx.getDispY()));
 	}
 	

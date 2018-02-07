@@ -11,6 +11,7 @@
 	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix-sources.jar"/>
 	<classpathentry kind="var" path="USERLIBS_DIR/CTRE_Phoenix.jar"/>
+	<classpathentry kind="lib" path="Libraries/json-simple/json-simple-1.1.1.jar"/>
 	<classpathentry kind="var" path="navx-mxp"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
