@@ -70,17 +70,10 @@ public class Navx {
         }        
     }
 	
-<<<<<<< HEAD
-=======
 	public double getAngle() {
 		return ahrs.getAngle();
 	}
 	
-	public void resetDisplacement() {
-        ahrs.resetDisplacement();       
-    }
-	
->>>>>>> e179867cec32072e36460fa43595bdc161183486
 	public void stopUpdateDisplacement(){
 		updater.stop();
 	}
@@ -107,9 +100,5 @@ public class Navx {
 	
 	public RTS getDisplacementUpdater(){
 		return updater;
-	}
-
-	public double getAngle() {
-		return ahrs.getAngle();
 	}
 }
