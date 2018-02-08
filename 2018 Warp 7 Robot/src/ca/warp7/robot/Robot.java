@@ -43,28 +43,37 @@ public class Robot extends IterativeRobot  {
 		compressor = new Compressor(COMPRESSOR_PIN);
 		
 		driverStation = DriverStation.getInstance();
-		navx.startUpdateDisplacement(60);
+		//navx.startUpdateDisplacement(60);
 		
+		String jsonPaths = null;
+		while (jsonPaths == null)
+			SmartDashboard.getString("PathData", jsonPaths);
+		
+		auto.autonomousRobotInit(jsonPaths);
 	}
 	
 	public void autonomousInit(){
 		String gameData = null;
 		while (gameData == null)
 			gameData = driverStation.getGameSpecificMessage();
-		
+
+		auto.autonomousInit(gameData);
 		String jsonPaths = null;
 		while (jsonPaths == null)
 			SmartDashboard.getString("PathData", jsonPaths);
 		
-		auto.autonomousInit(gameData,jsonPaths);
+		auto.autonomousInit(gameData);
 	}
 	
 	public void autonomousPeriodic(){
 		auto.periodic();
+		drive.tankDrive(-1,-1);
+		SmartDashboard.putNumber("Right", drive.b);
+		SmartDashboard.putNumber("Left", drive.a);
 	}
 	
 	public void teleopInit() {
-		navx.startUpdateDisplacement(60);
+		//navx.startUpdateDisplacement(60);
 		navx.resetDisplacement();
 		compressor.setClosedLoopControl(false);
 	}
@@ -78,11 +87,6 @@ public class Robot extends IterativeRobot  {
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			//drive.periodic();
-			SmartDashboard.putNumber("DispX", navx.getDispX());
-			SmartDashboard.putNumber("DispY", navx.getDispY());
-			
-			RTS dispUpdater = navx.getDisplacementUpdater();
-			SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
 			updateStuffs();
 			Timer.delay(0.005);
 		 }
@@ -99,8 +103,8 @@ public class Robot extends IterativeRobot  {
 	
 	
 	public void disabledInit() {
-		if (navx.getDisplacementUpdater().isRunning())
-			navx.stopUpdateDisplacement();
+		//if (navx.getDisplacementUpdater().isRunning())
+			//navx.stopUpdateDisplacement();
 	}
 
 }

@@ -5,8 +5,10 @@ package ca.warp7.robot;
 public class Constants {
 	//TODO Update Constants!
 	// PWM Pins
-	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 4, 5 };
-	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 0, 1 };
+	//public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1, 5 };
+	//public static final int[] LEFT_DRIVE_MOTOR_IDS = { 9, 2 };
+	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 3,4 };
+	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 0,1 };
 	public static final int[] INTAKE_MOTOR_PINS = { 6 };
 	public static final int[] ELEVATOR_MOTOR_PINS = { 7 };
 	public static final int[] CLIMBER_MOTOR_PINS = { 4, 5 };
@@ -42,7 +44,7 @@ public class Constants {
 	
 	//TODO Update Constants!
 	// Robot dimensions and stuff
-	public static double WHEEL_DIAMETER = 4; // inches
+	public static double WHEEL_DIAMETER = 6; // inches
 	public static double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 	public static int DRIVE_TICKS_PER_REV = 1024; //256
 	public static double DRIVE_INCHES_PER_TICK = WHEEL_CIRCUMFERENCE / DRIVE_TICKS_PER_REV;

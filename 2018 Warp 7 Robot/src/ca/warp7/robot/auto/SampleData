@@ -1,0 +1,32 @@
+{
+	"id": 0,
+	"description": "describes the auto",
+	"sides": "LLL",
+		
+	"data":[
+	   {
+	      "point":[200, 500],
+	      "methods":[
+	         {
+	            "name":"print",
+	            "args":[
+	               "hello",
+	               "world"
+	            ]
+	         }
+	      ]
+	   },
+	   {
+	      "point":[200, 500],
+	      "methods":[
+	         {
+	            "name":"print",
+	            "args":[
+	               "hello",
+	               "world"
+	            ]
+	         }
+	      ]
+	   }
+	]
+}

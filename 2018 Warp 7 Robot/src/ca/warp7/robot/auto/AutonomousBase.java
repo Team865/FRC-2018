@@ -1,6 +1,5 @@
 package ca.warp7.robot.auto;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -19,8 +18,7 @@ public class AutonomousBase {
 	protected Drive drive;
 	protected Navx navx;
 	
-	private Point[] points;
-	private JSONArray[] data;
+	private Path path;
 	
 	public AutonomousBase(Drive drivetrain, Navx navxController){
 		drive = drivetrain;
@@ -30,12 +28,11 @@ public class AutonomousBase {
 		 */
 	}
 	
-	public void autonomousInit(String gameData, String jsonPaths) {
-		loadJson(jsonPaths);
+	public void autonomousRobotInit(String jsonPaths) {
+		path = loadJson(jsonPaths);
 	}
 	
 	public void autonomousInit(String gameData) {
-		loadAutonomusData();
 		/*
 		 load autonomous data (robot types)
 		 load FMS data here
@@ -43,7 +40,7 @@ public class AutonomousBase {
 		 */
 	}
 	
-	private void loadJson(String jsonPaths){
+	private Path loadJson(String jsonPaths){
 		JSONParser parser = new JSONParser();
 		Object obj = null;
 		try {
@@ -51,11 +48,9 @@ public class AutonomousBase {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
 		JSONObject jsonObject = (JSONObject) obj;
-		JSONArray data = (JSONArray) jsonObject.get("data");
-		points = new Point[data.size()];
-		for(int i=0; i<data.size();i++)
-			points[i] = new Point((JSONObject)data.get(i));
+		return new Path(jsonObject);
 	}
 	
 	public void periodic(){

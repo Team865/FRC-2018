@@ -2,13 +2,15 @@ package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.*;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ca.warp7.robot.Robot;
-import ca.warp7.robot.subsystems.Navx;
 
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.misc.MotorGroup;
+import ca.warp7.robot.misc.MotorGroupCAN;
 import ca.warp7.robot.misc.Util;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -34,9 +36,9 @@ public class Drive {
 		drivePool = new DataPool("Drive");
 
 		// setup drive train motors
-		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_IDS, Talon.class);
+		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_IDS,WPI_VictorSPX.class);
 		rightDrive.setInverted(true);
-		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_IDS, Talon.class);
+		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_IDS,WPI_VictorSPX.class);
 
 		// setup drive train gear shifter
         shifter = new Solenoid(DRIVE_SHIFTER_PORT);
@@ -161,14 +163,18 @@ public class Drive {
 		return Util.limit(wheel, d);
 	}
 
-	private double leftRamp = 0.0;
-	private double rightRamp = 0.0;
+	public double leftRamp = 0.0;
+	public double rightRamp = 0.0;
+	public double a;
+	public double b;
 	public void moveRamped(double desiredLeft, double desiredRight) {
 		double rampSpeed = 6;
 		leftRamp += (desiredLeft - leftRamp) / rampSpeed;
 		rightRamp += (desiredRight - rightRamp) / rampSpeed;
-		leftDrive.set(limit(leftRamp,0.99));
-		rightDrive.set(limit(rightRamp,0.99));
+		a = limit(leftRamp,0.99);
+		b = limit(rightRamp,0.99);
+		leftDrive.set(a*17/17.34);
+		rightDrive.set(b);
 	}
 
 	public void autoMove(double left, double right) {
