@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.DataPool;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
@@ -15,20 +16,12 @@ public class AutonomousBase {
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
 	
-	protected Drive drive;
-	protected Navx navx;
+	protected Drive drive = Robot.drive;
+	protected Navx navx = Robot.navx;
 	
 	private Path path;
 	
-	public AutonomousBase(Drive drivetrain, Navx navxController){
-		drive = drivetrain;
-		navx = navxController;
-		/*
-		 load all possible paths
-		 */
-	}
-	
-	public void autonomousRobotInit(String jsonPaths) {
+	public AutonomousBase(String jsonPaths){
 		path = loadJson(jsonPaths);
 	}
 	

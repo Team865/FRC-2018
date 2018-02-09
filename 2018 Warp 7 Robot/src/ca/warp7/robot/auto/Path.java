@@ -5,18 +5,23 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 public class Path{
 	private static final int MAX_POINTS = 5;
+	private static final AkimaSplineInterpolator splineInterp = new AkimaSplineInterpolator();
 	
 	private Point[] points;
 	private String sides;
 	private double[] groupX;
 	private double[] groupY;
-	private AkimaSplineInterpolator spline = new AkimaSplineInterpolator();
+	private PolynomialSplineFunction splineX;
+	private PolynomialSplineFunction splineY;
+	private double[] numPoints;
+	private UnivariateFunction xderiv;
+	private UnivariateFunction yderiv;
 	
 	public Path(JSONObject json) {
 		JSONArray data = (JSONArray) json.get("data");
@@ -35,10 +40,15 @@ public class Path{
 			points[i] = points[data.size()-1];
 			groupXtemp.add(points[i].x);
 			groupYtemp.add(points[i].y);
+			points[i].methods = new Method[0];
 		}
 		groupX = toDoubleArray(groupXtemp);
 		groupY = toDoubleArray(groupYtemp);
 		
+		numPoints = new double[data.size()+MAX_POINTS];
+	    for (int i = 0; i < data.size()+MAX_POINTS; ++i)
+	    	numPoints[i] = i;
+	    
 	}
 	
 	private double[] toDoubleArray(List<Integer> list) {
@@ -46,7 +56,28 @@ public class Path{
 	}
 	
 	public void calculateSpline() {
-		PolynomialSplineFunction a = AkimaSplineInterpolator.interpolate(groupX,groupY);
+		splineX = splineInterp.interpolate(numPoints,groupX);
+		splineY = splineInterp.interpolate(numPoints,groupY);
+		xderiv = splineX.derivative();
+		yderiv = splineY.derivative();
+	}
+	
+	public double[] derivative(double[] val) {
+		double[] point = new double[2];
+		point[0] = xderiv.value(val[0]);
+		point[1] = yderiv.value(val[1]);
+		return point;
+	}
+	
+	public double[] value(double val) {
+		double[] point = new double[2];
+		point[0] = splineX.value(val);
+		point[1] = splineY.value(val);
+		return point;
+	}
+	
+	public String getSides() {
+		return sides;
 	}
 }
 

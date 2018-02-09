@@ -36,7 +36,6 @@ public class Robot extends IterativeRobot  {
 		
 		drive = new Drive();
 		navx = new Navx();
-		auto = new AutonomousBase(drive,navx);
 		//climber = new Climber();
 		
 		//shutup >:(
@@ -49,7 +48,7 @@ public class Robot extends IterativeRobot  {
 		while (jsonPaths == null)
 			SmartDashboard.getString("PathData", jsonPaths);
 		
-		auto.autonomousRobotInit(jsonPaths);
+		auto = new AutonomousBase(jsonPaths);
 	}
 	
 	public void autonomousInit(){
