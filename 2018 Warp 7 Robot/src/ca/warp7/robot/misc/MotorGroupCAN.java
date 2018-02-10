@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.SpeedController;
 
 
-public class MotorGroupCAN implements SpeedController {
+public class MotorGroupCAN {
 	
 	private VictorSPX[] motors;
 	private boolean isInverted;
@@ -21,20 +21,16 @@ public class MotorGroupCAN implements SpeedController {
 		}
 	}
 
-	@Override
 	public void set(double speed) {
 		for (VictorSPX motor : motors) {
 			motor.set(ControlMode.PercentOutput, speed);
 		}
 	}
 	
-	@Override
 	public double get() {
 		return motors[0].getMotorOutputPercent();
-	
 	}
 
-	@Override
 	public void setInverted(boolean isInverted) {
 		this.isInverted = isInverted;
 		for (VictorSPX motor : motors) {
@@ -48,19 +44,16 @@ public class MotorGroupCAN implements SpeedController {
 	 * motors[index].setInverted(isInverted); }
 	 */
 
-	@Override
 	public boolean getInverted() {
 		return isInverted;
 	}
 
-	@Override
 	public void disable() {
 		for (SpeedController motor : motors) {
 			motor.set(ControlMode.Disabled, 0);
 		}
 	}
 
-	@Override
 	public void stopMotor() {
 		//for (SpeedController motor : motors) {
 			//motor.stopMotor();
