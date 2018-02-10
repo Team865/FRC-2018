@@ -23,6 +23,7 @@ public class Path{
 	private UnivariateFunction xderiv;
 	private UnivariateFunction yderiv;
 	private double distance;
+	private int numberOfPoints;
 	
 	public Path(JSONObject json) {
 		JSONArray data = (JSONArray) json.get("data");
@@ -46,7 +47,7 @@ public class Path{
 		}
 		groupX = toDoubleArray(groupXtemp);
 		groupY = toDoubleArray(groupYtemp);
-		
+		numberOfPoints = data.size();
 		numPoints = new double[data.size()+MAX_POINTS];
 	    for (int i = 0; i < data.size()+MAX_POINTS; ++i)
 	    	numPoints[i] = i;
@@ -84,6 +85,10 @@ public class Path{
 	
 	public String getSides() {
 		return sides;
+	}
+	
+	public int getNumberOfPoints() {
+		return numberOfPoints;
 	}
 }
 

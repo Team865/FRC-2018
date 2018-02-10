@@ -1,11 +1,7 @@
 package ca.warp7.robot.misc;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.wpilibj.SpeedController;
 
 
 public class MotorGroupCAN {
@@ -49,7 +45,7 @@ public class MotorGroupCAN {
 	}
 
 	public void disable() {
-		for (SpeedController motor : motors) {
+		for (VictorSPX motor : motors) {
 			motor.set(ControlMode.Disabled, 0);
 		}
 	}

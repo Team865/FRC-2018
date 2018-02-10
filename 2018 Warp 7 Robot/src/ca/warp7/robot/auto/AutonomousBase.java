@@ -12,8 +12,6 @@ import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.Timer;
 
 public class AutonomousBase {
-
-	public static final double speed = 0.3;
 	
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
@@ -48,15 +46,34 @@ public class AutonomousBase {
 		JSONObject jsonObject = (JSONObject) obj;
 		return new Path(jsonObject);
 	}
-	
+		public static final double speed = 1;
 	public void periodic(){
-		double rightTurnRate = 0;
-		double leftTurnRate = 0;
-		while (path.getDistance() > getOverallDistance()) {
-			double scaleFactor = getOverallDistance()/path.getDistance();
-			double derivatives[] = path.derivative(scaleFactor);
+		double scaleFactor = path.getDistance()/(path.getNumberOfPoints()-1);
+		double lastSlope = 0; 
+		do {
+			double scaledLocation = path.getDistance()/getOverallDistance();
+			double derivatives[] = path.derivative(scaledLocation*scaleFactor);
 			double slope = derivatives[1]/derivatives[0];
-			drive.tankDrive(speed+leftTurnRate,speed+rightTurnRate);
+			double turnSpeed = Math.abs((lastSlope-slope)/slope);
+			turnDirection(derivatives,turnSpeed,slope);
+			lastSlope = slope;
+		}while (path.getDistance() > getOverallDistance());
+		drive.tankDrive(0,0);
+	}
+	
+	private void turnDirection(double derivatives[],double turnSpeed, double slope) { 
+		if (slope >= 0) {
+			if (derivatives[0] >= 0 && derivatives[1] >= 0) {//++ right up
+				drive.tankDrive(speed,speed*(1-turnSpeed));
+			}else if(derivatives[0] < 0 && derivatives[1] >= 0){//-+ left up
+				drive.tankDrive(speed*(1-turnSpeed),speed);
+			}else if(derivatives[0] >= 0 && derivatives[1] < 0) {//+- right down
+				drive.tankDrive(speed,speed*(1-turnSpeed));
+			}else{//-- left down
+				drive.tankDrive(speed*(1-turnSpeed),speed);
+			}
+		}else {
+			drive.tankDrive(speed*(1-turnSpeed),speed);
 		}
 	}
 	
