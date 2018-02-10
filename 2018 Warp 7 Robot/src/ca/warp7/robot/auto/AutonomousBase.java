@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AutonomousBase {
 
+	public static final double speed = 0.3;
+	
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
 	
@@ -31,6 +33,7 @@ public class AutonomousBase {
 		 load FMS data here
 		 calculate best fit path
 		 */
+		path.calculateSpline();
 	}
 	
 	private Path loadJson(String jsonPaths){
@@ -47,13 +50,18 @@ public class AutonomousBase {
 	}
 	
 	public void periodic(){
-		/*
-		 run best fit path
-		 */
+		double rightTurnRate = 0;
+		double leftTurnRate = 0;
+		while (path.getDistance() > getOverallDistance()) {
+			double scaleFactor = getOverallDistance()/path.getDistance();
+			double derivatives[] = path.derivative(scaleFactor);
+			double slope = derivatives[1]/derivatives[0];
+			drive.tankDrive(speed+leftTurnRate,speed+rightTurnRate);
+		}
 	}
 	
-	public void loadAutonomusData() {
-		
+	private double getOverallDistance() {
+		return (drive.getLeftDistance()+drive.getRightDistance())*0.5;
 	}
 	
 	private double errorOld = 0.0;

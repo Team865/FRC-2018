@@ -22,10 +22,12 @@ public class Path{
 	private double[] numPoints;
 	private UnivariateFunction xderiv;
 	private UnivariateFunction yderiv;
+	private double distance;
 	
 	public Path(JSONObject json) {
 		JSONArray data = (JSONArray) json.get("data");
 		sides = (String) json.get("sides");
+		distance = (double) json.get("distance");
 		
 		List<Integer> groupXtemp = new ArrayList<>();
 		List<Integer> groupYtemp = new ArrayList<>();
@@ -62,10 +64,10 @@ public class Path{
 		yderiv = splineY.derivative();
 	}
 	
-	public double[] derivative(double[] val) {
+	public double[] derivative(double val) {
 		double[] point = new double[2];
-		point[0] = xderiv.value(val[0]);
-		point[1] = yderiv.value(val[1]);
+		point[0] = xderiv.value(val);
+		point[1] = yderiv.value(val);
 		return point;
 	}
 	
@@ -74,6 +76,10 @@ public class Path{
 		point[0] = splineX.value(val);
 		point[1] = splineY.value(val);
 		return point;
+	}
+	
+	public double getDistance() {
+		return distance;
 	}
 	
 	public String getSides() {

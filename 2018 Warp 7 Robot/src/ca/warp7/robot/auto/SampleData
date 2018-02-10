@@ -2,6 +2,7 @@
 	"id": 0,
 	"description": "describes the auto",
 	"sides": "LLL",
+	"distance":999999,
 		
 	"data":[
 	   {
