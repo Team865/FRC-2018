@@ -27,18 +27,11 @@ public class MotorGroupCAN implements SpeedController {
 			motor.set(ControlMode.PercentOutput, speed);
 		}
 	}
-
-	@Override
-	public void pidWrite(double output) {
-		//for (SpeedController motor : motors) {
-			//motor.pidWrite(output);
-		//}
-	}
-
+	
 	@Override
 	public double get() {
-		return 0;
-		//return motors[0].get(); // Really, they should all be the same.
+		return motors[0].getMotorOutputPercent();
+	
 	}
 
 	@Override
@@ -62,9 +55,9 @@ public class MotorGroupCAN implements SpeedController {
 
 	@Override
 	public void disable() {
-		//for (SpeedController motor : motors) {
-			//motor.disable();
-		//}
+		for (SpeedController motor : motors) {
+			motor.set(ControlMode.Disabled, 0);
+		}
 	}
 
 	@Override
