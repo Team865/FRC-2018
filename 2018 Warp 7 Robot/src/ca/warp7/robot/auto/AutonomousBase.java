@@ -49,32 +49,31 @@ public class AutonomousBase {
 		public static final double speed = 1;
 	public void periodic(){
 		double scaleFactor = path.getDistance()/(path.getNumberOfPoints()-1);
-		double lastSlope = 0; 
-		do {
+
+		while (path.getDistance() > getOverallDistance()) {//exit out when robot has gone distance
 			double scaledLocation = path.getDistance()/getOverallDistance();
-			double derivatives[] = path.derivative(scaledLocation*scaleFactor);
-			double slope = derivatives[1]/derivatives[0];
-			double turnSpeed = Math.abs((lastSlope-slope)/slope);
-			turnDirection(derivatives,turnSpeed,slope);
-			lastSlope = slope;
-		}while (path.getDistance() > getOverallDistance());
-		drive.tankDrive(0,0);
-	}
-	
-	private void turnDirection(double derivatives[],double turnSpeed, double slope) { 
-		if (slope >= 0) {
-			if (derivatives[0] >= 0 && derivatives[1] >= 0) {//++ right up
-				drive.tankDrive(speed,speed*(1-turnSpeed));
-			}else if(derivatives[0] < 0 && derivatives[1] >= 0){//-+ left up
+			double scaledSpline = scaledLocation*scaleFactor;
+			
+			double derivativesPresent[] = path.derivative(scaledSpline);
+			double derivativesFuture[] = path.derivative(scaledSpline+0.0001);
+			
+			double slopePresent = derivativesPresent[1]/derivativesPresent[0];
+			double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
+			
+			double secondDerivative = slopeFuture-slopePresent;
+			
+			double turnSpeed = Math.abs(secondDerivative/slopePresent);
+			
+			double ratio = navx.getAngle()/Math.atan(slopePresent);
+			
+			if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
 				drive.tankDrive(speed*(1-turnSpeed),speed);
-			}else if(derivatives[0] >= 0 && derivatives[1] < 0) {//+- right down
+			else
 				drive.tankDrive(speed,speed*(1-turnSpeed));
-			}else{//-- left down
-				drive.tankDrive(speed*(1-turnSpeed),speed);
-			}
-		}else {
-			drive.tankDrive(speed*(1-turnSpeed),speed);
+			
 		}
+		
+		drive.tankDrive(0,0);
 	}
 	
 	private double getOverallDistance() {
