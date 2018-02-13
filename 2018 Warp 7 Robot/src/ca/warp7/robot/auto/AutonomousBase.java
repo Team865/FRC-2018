@@ -62,22 +62,21 @@ public class AutonomousBase {
 			
 			double secondDerivative = slopeFuture-slopePresent;
 			
-			double turnSpeed = Math.abs(secondDerivative/slopePresent);
-			
-			double ratio = navx.getAngle()/Math.atan(slopePresent);
+			double turnSpeed = 1-Math.abs((navx.getAngle()-Math.atan(Math.abs(slopePresent)))/navx.getAngle());
 			
 			if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
-				drive.tankDrive(speed*(1-turnSpeed),speed);
+				drive.tankDrive(turnSpeed*speed,speed);
 			else
-				drive.tankDrive(speed,speed*(1-turnSpeed));
+				drive.tankDrive(speed,turnSpeed*speed);
 			
+			//if in range of points run methods
 		}
 		
 		drive.tankDrive(0,0);
 	}
 	
 	private double getOverallDistance() {
-		return (drive.getLeftDistance()+drive.getRightDistance())*0.5;
+		return (drive.getLeftDistance()+drive.getRightDistance())/2;
 	}
 	
 	private double errorOld = 0.0;
