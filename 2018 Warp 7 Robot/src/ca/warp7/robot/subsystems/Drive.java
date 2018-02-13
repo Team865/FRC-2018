@@ -213,4 +213,9 @@ public class Drive {
 	public double getRightDistance(){
 		return rightEncoder.getDistance();
 	}
+	
+	public void resetDistance(){
+		rightEncoder.reset();
+		leftEncoder.reset();
+	}
 }

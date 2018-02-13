@@ -10,10 +10,11 @@ import org.apache.commons.math3.analysis.interpolation.AkimaSplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 public class Path{
+	public Point[] points;
+	
 	private static final int MAX_POINTS = 5;
 	private static final AkimaSplineInterpolator splineInterp = new AkimaSplineInterpolator();
 	
-	private Point[] points;
 	private String sides;
 	private double[] groupX;
 	private double[] groupY;
@@ -22,13 +23,13 @@ public class Path{
 	private double[] numPoints;
 	private UnivariateFunction xderiv;
 	private UnivariateFunction yderiv;
-	private double distance;
+	private double totalDistance;
 	private int numberOfPoints;
 	
 	public Path(JSONObject json) {
 		JSONArray data = (JSONArray) json.get("data");
 		sides = (String) json.get("sides");
-		distance = (double) json.get("distance");
+		totalDistance = (double) json.get("distance");
 		
 		List<Integer> groupXtemp = new ArrayList<>();
 		List<Integer> groupYtemp = new ArrayList<>();
@@ -79,8 +80,8 @@ public class Path{
 		return point;
 	}
 	
-	public double getDistance() {
-		return distance;
+	public double getTotalDistance() {
+		return totalDistance;
 	}
 	
 	public String getSides() {
@@ -96,11 +97,13 @@ class Point {
 	public int x;
 	public int y;
 	public Method[] methods;
+	public double distance;
 	
 	public Point(JSONObject json){
 		int[] a = (int[]) json.get("cord");
 		x = a[0];
 		y = a[1];
+		distance = (double) json.get("distance");
 		JSONArray methodArr = (JSONArray) json.get("methods");
 		methods = new Method[methodArr.size()];
 		for(int i=0; i<methodArr.size();i++)

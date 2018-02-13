@@ -47,29 +47,49 @@ public class AutonomousBase {
 		return new Path(jsonObject);
 	}
 		public static final double speed = 1;
+	public static final double slowThresh = 0.9;
 	public void periodic(){
-		double scaleFactor = path.getDistance()/(path.getNumberOfPoints()-1);
-
-		while (path.getDistance() > getOverallDistance()) {//exit out when robot has gone distance
-			double scaledLocation = path.getDistance()/getOverallDistance();
-			double scaledSpline = scaledLocation*scaleFactor;
+		for(int i=0;i<path.getNumberOfPoints();i++){
+			Point point = path.points[i];
+			drive.resetDistance();
 			
-			double derivativesPresent[] = path.derivative(scaledSpline);
-			double derivativesFuture[] = path.derivative(scaledSpline+0.0001);
-			
-			double slopePresent = derivativesPresent[1]/derivativesPresent[0];
-			double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
-			
-			double secondDerivative = slopeFuture-slopePresent;
-			
-			double turnSpeed = 1-Math.abs((navx.getAngle()-Math.atan(Math.abs(slopePresent)))/navx.getAngle());
-			
-			if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
-				drive.tankDrive(turnSpeed*speed,speed);
+			double slowThreshCurr;
+			if (point.methods.length > 0)
+				slowThreshCurr = slowThresh;
 			else
-				drive.tankDrive(speed,turnSpeed*speed);
+				slowThreshCurr = 1.1;
 			
-			//if in range of points run methods
+			while (point.distance > getOverallDistance()) {//exit out when robot has gone distance
+				double scaledLocation = point.distance/getOverallDistance();
+				
+				double derivativesPresent[] = path.derivative(i+scaledLocation);
+				double derivativesFuture[] = path.derivative(i+scaledLocation+0.0001);
+				
+				double slopePresent = derivativesPresent[1]/derivativesPresent[0];
+				double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
+				
+				double secondDerivative = slopeFuture-slopePresent;
+				
+				double navAngle = navx.getAngle();
+				double turnSpeed = Math.abs(slopePresent);
+				turnSpeed = navAngle - Math.atan(turnSpeed);
+				turnSpeed = 1 - Math.abs(turnSpeed / navAngle);
+				
+				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
+					if (scaledLocation >= slowThreshCurr){
+						scaledLocation = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(turnSpeed*speed*scaledLocation,speed*scaledLocation);
+					}else
+						drive.tankDrive(turnSpeed*speed,speed);
+				else
+					if (scaledLocation >= slowThreshCurr){
+						scaledLocation = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(speed*scaledLocation,turnSpeed*speed*scaledLocation);
+					}else
+						drive.tankDrive(speed,turnSpeed*speed);
+			}
+			//we should have a speed of zero here and be at our point
+			//runMethods();
 		}
 		
 		drive.tankDrive(0,0);
