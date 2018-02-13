@@ -46,6 +46,19 @@ public class AutonomousBase {
 		JSONObject jsonObject = (JSONObject) obj;
 		return new Path(jsonObject);
 	}
+	
+	private void mapMethod(String method, JsonArray args){
+		switch(method){
+		case "print":
+			for(String arg: args){
+				System.out.print(arg);
+			}
+			System.out.print("/n");
+			break;
+		
+		}
+		
+	}
 		public static final double speed = 1;
 	public static final double slowThresh = 0.9;
 	private double scaledLocation=0;
