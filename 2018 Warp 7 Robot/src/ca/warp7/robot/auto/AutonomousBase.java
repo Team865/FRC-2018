@@ -48,19 +48,20 @@ public class AutonomousBase {
 	}
 		public static final double speed = 1;
 	public static final double slowThresh = 0.9;
+	private double scaledLocation=0;
 	public void periodic(){
 		for(int i=0;i<path.getNumberOfPoints();i++){
 			Point point = path.points[i];
 			drive.resetDistance();
 			
 			double slowThreshCurr;
-			if (point.methods.length > 0)
+			if (point.slowStop)
 				slowThreshCurr = slowThresh;
 			else
 				slowThreshCurr = 1.1;
 			
 			while (point.distance > getOverallDistance()) {//exit out when robot has gone distance
-				double scaledLocation = point.distance/getOverallDistance();
+				scaledLocation = getOverallDistance()/point.distance;
 				
 				double derivativesPresent[] = path.derivative(i+scaledLocation);
 				double derivativesFuture[] = path.derivative(i+scaledLocation+0.0001);
@@ -77,18 +78,18 @@ public class AutonomousBase {
 				
 				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
 					if (scaledLocation >= slowThreshCurr){
-						scaledLocation = 1-(scaledLocation-slowThresh)*10;
-						drive.tankDrive(turnSpeed*speed*scaledLocation,speed*scaledLocation);
+						double sens = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
 					}else
 						drive.tankDrive(turnSpeed*speed,speed);
 				else
 					if (scaledLocation >= slowThreshCurr){
-						scaledLocation = 1-(scaledLocation-slowThresh)*10;
-						drive.tankDrive(speed*scaledLocation,turnSpeed*speed*scaledLocation);
+						double sens = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(speed*sens,turnSpeed*speed*sens);
 					}else
 						drive.tankDrive(speed,turnSpeed*speed);
 			}
-			//we should have a speed of zero here and be at our point
+			//we should have a speed of zero here if theres nothing in methods array and be at our point
 			//runMethods();
 		}
 		

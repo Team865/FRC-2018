@@ -44,7 +44,9 @@ public class Path{
 			points[i] = points[data.size()-1];
 			groupXtemp.add(points[i].x);
 			groupYtemp.add(points[i].y);
-			points[i].methods = new Method[0];
+			points[i].startMethods = new Method[0];
+			points[i].endMethods = new Method[0];
+			points[i].scaledMethods = new Method[0];
 		}
 		groupX = toDoubleArray(groupXtemp);
 		groupY = toDoubleArray(groupYtemp);
@@ -96,18 +98,29 @@ public class Path{
 class Point {
 	public int x;
 	public int y;
-	public Method[] methods;
+	public Method[] startMethods;
+	public Method[] endMethods;
+	public Method[] scaledMethods;
 	public double distance;
+	public boolean slowStop;
 	
 	public Point(JSONObject json){
 		int[] a = (int[]) json.get("cord");
 		x = a[0];
 		y = a[1];
 		distance = (double) json.get("distance");
-		JSONArray methodArr = (JSONArray) json.get("methods");
-		methods = new Method[methodArr.size()];
+		slowStop = (boolean) json.get("slowStop");
+		startMethods = methodLoop(json,"startMethods");
+		endMethods = methodLoop(json,"endMethods");
+		scaledMethods = methodLoop(json,"scaledMethods");
+	}
+	
+	private Method[] methodLoop(JSONObject json, String key) {
+		JSONArray methodArr = (JSONArray) json.get(key);
+		Method[] methods = new Method[methodArr.size()];
 		for(int i=0; i<methodArr.size();i++)
 			methods[i] = new Method((JSONObject)methodArr.get(i));
+		return methods;
 	}
 }
 
