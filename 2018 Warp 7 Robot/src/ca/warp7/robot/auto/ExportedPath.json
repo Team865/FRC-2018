@@ -2,7 +2,30 @@
     "data": [
         {
             "distance": 0.0,
-            "methods": [
+            "endMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "point": [
+                1042,
+                135
+            ],
+            "scaledMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "slowStop": false,
+            "startMethods": [
                 {
                     "args": [
                         "hello",
@@ -18,7 +41,30 @@
         },
         {
             "distance": 394.0203040453626,
-            "methods": [
+            "endMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "point": [
+                1042,
+                135
+            ],
+            "scaledMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "slowStop": false,
+            "startMethods": [
                 {
                     "args": [
                         "hello",
@@ -34,7 +80,30 @@
         },
         {
             "distance": 143.0314650697531,
-            "methods": [
+            "endMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "point": [
+                1042,
+                135
+            ],
+            "scaledMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "slowStop": false,
+            "startMethods": [
                 {
                     "args": [
                         "hello",
@@ -50,7 +119,30 @@
         },
         {
             "distance": 389.0,
-            "methods": [
+            "endMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "point": [
+                1042,
+                135
+            ],
+            "scaledMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "slowStop": false,
+            "startMethods": [
                 {
                     "args": [
                         "hello",
@@ -66,7 +158,30 @@
         },
         {
             "distance": 147.00340132119393,
-            "methods": [
+            "endMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "point": [
+                1042,
+                135
+            ],
+            "scaledMethods": [
+                {
+                    "args": [
+                        "hello",
+                        "world"
+                    ],
+                    "name": "print"
+                }
+            ],
+            "slowStop": false,
+            "startMethods": [
                 {
                     "args": [
                         "hello",

@@ -6,12 +6,14 @@ import org.json.simple.parser.ParseException;
 
 import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.DataPool;
+import ca.warp7.robot.misc.RTS;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
 
 import edu.wpi.first.wpilibj.Timer;
 
 public class AutonomousBase {
+	private Mapper mapper = new Mapper();
 	
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
@@ -46,26 +48,16 @@ public class AutonomousBase {
 		JSONObject jsonObject = (JSONObject) obj;
 		return new Path(jsonObject);
 	}
-	
-	private void mapMethod(String method, JsonArray args){
-		switch(method){
-		case "print":
-			for(String arg: args){
-				System.out.print(arg);
-			}
-			System.out.print("/n");
-			break;
-		
-		}
-		
-	}
-		public static final double speed = 1;
-	public static final double slowThresh = 0.9;
-	private double scaledLocation=0;
+	private static final double speed = 1;
+	private static final double slowThresh = 0.9;
 	public void periodic(){
 		for(int i=0;i<path.getNumberOfPoints();i++){
 			Point point = path.points[i];
+			
 			drive.resetDistance();
+			
+			for (Method method : point.startMethods)
+				mapper.mapMethod(method).run();
 			
 			double slowThreshCurr;
 			if (point.slowStop)
@@ -73,8 +65,18 @@ public class AutonomousBase {
 			else
 				slowThreshCurr = 1.1;
 			
+			drive.resetDistance();
+			
+			RTS scaledRuntime = new RTS("scaledRuntime",8);
+			for (Method method : point.scaledMethods)
+				scaledRuntime.addTask(mapper.mapMethod(method));
+			scaledRuntime.start();
+			
+			double scaledLocation=0;
 			while (point.distance > getOverallDistance()) {//exit out when robot has gone distance
 				scaledLocation = getOverallDistance()/point.distance;
+				mapper.currentDistance = getOverallDistance();
+				mapper.scaledLocation = scaledLocation;
 				
 				double derivativesPresent[] = path.derivative(i+scaledLocation);
 				double derivativesFuture[] = path.derivative(i+scaledLocation+0.0001);
@@ -102,8 +104,10 @@ public class AutonomousBase {
 					}else
 						drive.tankDrive(speed,turnSpeed*speed);
 			}
+			scaledRuntime.stop();
 			//we should have a speed of zero here if theres nothing in methods array and be at our point
-			//runMethods();
+			for (Method method : point.endMethods)
+				mapper.mapMethod(method).run();
 		}
 		
 		drive.tankDrive(0,0);
