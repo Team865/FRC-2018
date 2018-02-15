@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 public class Mapper {
 	public double scaledLocation = 0;
 	public double currentDistance = 0;
+	public double speed = 0;
 	
 	public Runnable mapMethod(Method method){
 		String name = method.name;
@@ -13,7 +14,7 @@ public class Mapper {
 			case "print":
 				return () -> print(
 							(String) args.get(0), 
-							(String)args.get(1)
+							(String)args.get (1)
 						);
 			}
 		

@@ -51,6 +51,7 @@ public class AutonomousBase {
 	private static final double speed = 1;
 	private static final double slowThresh = 0.9;
 	public void periodic(){
+		mapper.speed = speed;
 		for(int i=0;i<path.getNumberOfPoints();i++){
 			Point point = path.points[i];
 			
@@ -105,7 +106,7 @@ public class AutonomousBase {
 						drive.tankDrive(speed,turnSpeed*speed);
 			}
 			scaledRuntime.stop();
-			//we should have a speed of zero here if theres nothing in methods array and be at our point
+			//we should have a speed of zero here if slowStop is true and we are at our point
 			for (Method method : point.endMethods)
 				mapper.mapMethod(method).run();
 		}
