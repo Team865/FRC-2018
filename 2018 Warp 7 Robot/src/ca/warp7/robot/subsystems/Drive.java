@@ -37,9 +37,9 @@ public class Drive {
 
 		// setup drive train motors
 		rightDrive = new MotorGroup(RIGHT_DRIVE_MOTOR_IDS,WPI_VictorSPX.class);
-		rightDrive.setInverted(true);
 		leftDrive = new MotorGroup(LEFT_DRIVE_MOTOR_IDS,WPI_VictorSPX.class);
-
+		rightDrive.setInverted(true);
+		
 		// setup drive train gear shifter
         shifter = new Solenoid(DRIVE_SHIFTER_PORT);
 		shifter.set(false);
@@ -59,7 +59,10 @@ public class Drive {
 	}
 
 	public void tankDrive(double left, double right) {
-		autoMove(left, right);
+		left = limit(left,0.999);
+		right = limit(right,0.999);
+		leftDrive.set(left*LEFT_DRIFT_OFFSET);
+		rightDrive.set(right*RIGHT_DRIFT_OFFSET);
 	}
 
 	public void cheesyDrive(double wheel, double throttle, boolean quickturn, boolean altQuickturn, boolean shift) {
@@ -171,16 +174,7 @@ public class Drive {
 		double rampSpeed = 6;
 		leftRamp += (desiredLeft - leftRamp) / rampSpeed;
 		rightRamp += (desiredRight - rightRamp) / rampSpeed;
-		a = limit(leftRamp,0.99);
-		b = limit(rightRamp,0.99);
-		leftDrive.set(a*17/17.34);
-		rightDrive.set(b);
-	}
-
-	public void autoMove(double left, double right) {
-		left *= 0.9;
-		leftDrive.set(limit(left, 1));
-		rightDrive.set(limit(right, 1));
+		tankDrive(leftRamp,rightRamp);
 	}
 
 	public void autoShift(boolean b) {
@@ -207,15 +201,15 @@ public class Drive {
 	}
 	
 	public double getLeftDistance(){
-		return leftEncoder.getDistance();
+		return leftEncoder.getDistance()*2.54;
 	}
 	
 	public double getRightDistance(){
-		return rightEncoder.getDistance();
+		return rightEncoder.getDistance()*2.54;
 	}
 	
 	public void resetDistance(){
-		rightEncoder.reset();
 		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 }

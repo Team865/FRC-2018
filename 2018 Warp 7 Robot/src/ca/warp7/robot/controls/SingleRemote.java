@@ -70,7 +70,7 @@ public class SingleRemote extends ControlsBase{
 		}else{
 			try{
 				if(DataPool.getBooleanData("vision", "found")){
-					drive.autoMove(DataPool.getDoubleData("vision", "left"), DataPool.getDoubleData("vision", "right"));
+					drive.tankDrive(DataPool.getDoubleData("vision", "left"), DataPool.getDoubleData("vision", "right"));
 				}else{
 					drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, driver.getTrigger(kLeft) == DOWN, driver.getBumper(kRight) != DOWN);
 				}

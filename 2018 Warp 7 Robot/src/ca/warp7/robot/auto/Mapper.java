@@ -14,7 +14,7 @@ public class Mapper {
 			case "print":
 				return () -> print(
 							(String) args.get(0), 
-							(String)args.get (1)
+							(String) args.get(1)
 						);
 			}
 		
@@ -24,6 +24,6 @@ public class Mapper {
 	}
 	
 	private void print(String one, String two){
-		System.out.println(one+" "+two);
+		//System.out.println(one+" "+two);
 	}
 }

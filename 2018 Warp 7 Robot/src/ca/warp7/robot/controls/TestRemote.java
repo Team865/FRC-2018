@@ -125,7 +125,7 @@ public class TestRemote extends ControlsBase{
 			try{
 				boolean found = DataPool.getBooleanData("vision", "S_found");
 				if(found){
-					drive.autoMove(DataPool.getDoubleData("vision", "S_left"), DataPool.getDoubleData("vision", "S_right"));
+					drive.tankDrive(DataPool.getDoubleData("vision", "S_left"), DataPool.getDoubleData("vision", "S_right"));
 					double pixelHeight = DataPool.getDoubleData("vision", "S_dist")-10;
 					if(pixelHeight > 534 && found){
 						//rpm = 4425;

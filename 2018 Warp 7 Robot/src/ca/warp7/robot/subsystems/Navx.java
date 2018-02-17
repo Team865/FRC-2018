@@ -101,4 +101,8 @@ public class Navx {
 	public RTS getDisplacementUpdater(){
 		return updater;
 	}
+	
+	public void resetAngle() {
+		ahrs.reset();
+	}
 }

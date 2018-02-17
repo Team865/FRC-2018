@@ -10,6 +10,7 @@ import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,7 +30,11 @@ public class Robot extends IterativeRobot  {
 	
 	public static Navx navx;
 	
-	private DriverStation driverStation;		
+	private DriverStation driverStation;	
+	
+	private DigitalInput s4;
+	private DigitalInput s5;
+	private DigitalInput s6;
 	
 	public void robotInit() {
 		System.out.println("Hello me is robit");
@@ -44,37 +49,47 @@ public class Robot extends IterativeRobot  {
 		driverStation = DriverStation.getInstance();
 		//navx.startUpdateDisplacement(60);
 		
-		String jsonPaths = null;
-		while (jsonPaths == null)
-			SmartDashboard.getString("PathData", jsonPaths);
+		auto = new AutonomousBase();
 		
-		auto = new AutonomousBase(jsonPaths);
+		s4 = new DigitalInput(4);
+		s5 = new DigitalInput(5);
+		s6 = new DigitalInput(6);
 	}
 	
 	public void autonomousInit(){
+		String jsonPaths = "None";
+		/*if(!s4.get())
+			jsonPaths = "Left";
+		else if(!s5.get())
+			jsonPaths = "Middle";
+		else if(!s6.get())
+			jsonPaths = "Right";			
+		*/
 		String gameData = null;
-		while (gameData == null)
-			gameData = driverStation.getGameSpecificMessage();
-
-		auto.autonomousInit(gameData);
-		String jsonPaths = null;
-		while (jsonPaths == null)
-			SmartDashboard.getString("PathData", jsonPaths);
+		//while (gameData == null)
+		//	gameData = driverStation.getGameSpecificMessage();
+		drive.resetDistance();
+		navx.resetAngle();
+		gameData = "down";
+		auto.autonomousInit(gameData,jsonPaths);
 		
-		auto.autonomousInit(gameData);
+		//double 
+		//while () {
+			
+		//}
+		auto.periodic();
 	}
 	
 	public void autonomousPeriodic(){
-		auto.periodic();
-		drive.tankDrive(-1,-1);
-		SmartDashboard.putNumber("Right", drive.b);
-		SmartDashboard.putNumber("Left", drive.a);
+		
 	}
 	
 	public void teleopInit() {
 		//navx.startUpdateDisplacement(60);
-		navx.resetDisplacement();
-		compressor.setClosedLoopControl(false);
+		//navx.resetDisplacement();
+		compressor.setClosedLoopControl(true);
+		drive.resetDistance();
+		//a();
 	}
 
 	public void teleopPeriodic(){
@@ -86,9 +101,43 @@ public class Robot extends IterativeRobot  {
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			//drive.periodic();
-			updateStuffs();
+			SmartDashboard.putNumber("Left", drive.getLeftDistance());
+			SmartDashboard.putNumber("Right", drive.getRightDistance());
+			//updateStuffs();
 			Timer.delay(0.005);
 		 }
+	}
+	
+	public void a() {
+		double i=0;
+		while (i<1) {
+			Timer.delay(0.05);
+			drive.tankDrive(i,i);
+			i+=0.01;
+		}
+		Timer.delay(5);
+		while (i>0) {
+			Timer.delay(0.05);
+			drive.tankDrive(i,i);
+			i-=0.01;
+		}
+		drive.tankDrive(0,0);
+		Timer.delay(2);
+		double left = drive.getLeftDistance();
+		double right = drive.getRightDistance();
+		double offset = left/right;
+		if (offset >= 1) {
+			SmartDashboard.putNumber("LeftOffset", 1);
+			SmartDashboard.putNumber("RightOffset", right/left);
+		}else {
+			SmartDashboard.putNumber("LeftOffset", offset);
+			SmartDashboard.putNumber("RightOffset", 1);
+		}
+		
+	}
+	public void testPeriodic(){
+		//SmartDashboard.putNumber("Left", drive.getLeftDistance());
+		//SmartDashboard.putNumber("Right", drive.getRightDistance());
 	}
 	
 	public void updateStuffs() {

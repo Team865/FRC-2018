@@ -82,7 +82,7 @@ public class DualRemote extends ControlsBase {
 			try{
 				boolean found = DataPool.getBooleanData("vision", "D_found");
 				if(found){
-					drive.autoMove(Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_left"), -0.75)), Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_right"), -0.75)));
+					drive.tankDrive(Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_left"), -0.75)), Math.min(0.75, Math.max(DataPool.getDoubleData("vision", "D_right"), -0.75)));
 				}else{
 					drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, driver.getTrigger(kLeft) == DOWN, false);
 				}
@@ -105,7 +105,7 @@ public class DualRemote extends ControlsBase {
 			try{
 				boolean found = DataPool.getBooleanData("vision", "S_found");
 				if(found){
-					drive.autoMove(DataPool.getDoubleData("vision", "S_left"), DataPool.getDoubleData("vision", "S_right"));
+					drive.tankDrive(DataPool.getDoubleData("vision", "S_left"), DataPool.getDoubleData("vision", "S_right"));
 					double pixelHeight = DataPool.getDoubleData("vision", "S_dist")+pixelOffset;
 					if(pixelHeight > 534 && found){
 						//rpm = 4425;

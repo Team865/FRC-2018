@@ -1,5 +1,8 @@
 package ca.warp7.robot.auto;
 
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -11,6 +14,7 @@ import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Navx;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutonomousBase {
 	private Mapper mapper = new Mapper();
@@ -23,40 +27,42 @@ public class AutonomousBase {
 	
 	private Path path;
 	
-	public AutonomousBase(String jsonPaths){
-		path = loadJson(jsonPaths);
+	public AutonomousBase(){
+		
 	}
 	
-	public void autonomousInit(String gameData) {
+	public void autonomousInit(String gameData, String jsonPaths) {
 		/*
 		 load autonomous data (robot types)
 		 load FMS data here
 		 calculate best fit path
 		 */
+		path = loadJson("/home/lvuser/Autos/"+jsonPaths+"/"+gameData+".json");
 		path.calculateSpline();
 	}
 	
-	private Path loadJson(String jsonPaths){
+	private Path loadJson(String jsonPath){
 		JSONParser parser = new JSONParser();
 		Object obj = null;
 		try {
-			obj = parser.parse(jsonPaths);
-		} catch (ParseException e) {
+			obj = parser.parse(new FileReader(jsonPath));
+		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
-		
 		JSONObject jsonObject = (JSONObject) obj;
 		return new Path(jsonObject);
 	}
-	private static final double speed = 1;
+		private static final double speed = 0.3;
 	private static final double slowThresh = 0.9;
 	public void periodic(){
+		navx.resetAngle();
 		mapper.speed = speed;
 		for(int i=0;i<path.getNumberOfPoints();i++){
+			
 			Point point = path.points[i];
 			
 			drive.resetDistance();
-			
+			System.out.println(i);
 			for (Method method : point.startMethods)
 				mapper.mapMethod(method).run();
 			
@@ -74,38 +80,45 @@ public class AutonomousBase {
 			scaledRuntime.start();
 			
 			double scaledLocation=0;
+			SmartDashboard.putNumber("break", 0);
+			SmartDashboard.putNumber("pointDist", point.distance);
 			while (point.distance > getOverallDistance()) {//exit out when robot has gone distance
+				SmartDashboard.putNumber("Left", drive.getLeftDistance());
+				SmartDashboard.putNumber("Right", drive.getRightDistance());
+				SmartDashboard.putNumber("Avg", getOverallDistance());
+				
 				scaledLocation = getOverallDistance()/point.distance;
 				mapper.currentDistance = getOverallDistance();
 				mapper.scaledLocation = scaledLocation;
 				
 				double derivativesPresent[] = path.derivative(i+scaledLocation);
-				double derivativesFuture[] = path.derivative(i+scaledLocation+0.0001);
+				double derivativesFuture[] = path.derivative(i+scaledLocation+0.00001);
 				
 				double slopePresent = derivativesPresent[1]/derivativesPresent[0];
 				double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
 				
 				double secondDerivative = slopeFuture-slopePresent;
 				
-				double navAngle = navx.getAngle();
+				double navAngle = navx.getAngle()%89;
 				double turnSpeed = Math.abs(slopePresent);
 				turnSpeed = navAngle - Math.atan(turnSpeed);
-				turnSpeed = 1 - Math.abs(turnSpeed / navAngle);
-				
+				turnSpeed = Math.abs(1 - Math.abs(turnSpeed / navAngle));
+				SmartDashboard.putNumber("turnSpeed", turnSpeed);
 				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
-					if (scaledLocation >= slowThreshCurr){
-						double sens = 1-(scaledLocation-slowThresh)*10;
-						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
-					}else
-						drive.tankDrive(turnSpeed*speed,speed);
-				else
 					if (scaledLocation >= slowThreshCurr){
 						double sens = 1-(scaledLocation-slowThresh)*10;
 						drive.tankDrive(speed*sens,turnSpeed*speed*sens);
 					}else
 						drive.tankDrive(speed,turnSpeed*speed);
+				else //right
+					if (scaledLocation >= slowThreshCurr){//left
+						double sens = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
+					}else
+						drive.tankDrive(turnSpeed*speed,speed);
 			}
-			scaledRuntime.stop();
+			//scaledRuntime.stop();
+			SmartDashboard.putNumber("break", 1);
 			//we should have a speed of zero here if slowStop is true and we are at our point
 			for (Method method : point.endMethods)
 				mapper.mapMethod(method).run();
@@ -156,7 +169,7 @@ public class AutonomousBase {
 		autoPool.logBoolean("Turn in Tolerance", Math.abs(error) < 3);
 				
 		speed = Math.max(-maxSpeed, Math.min(maxSpeed, speed));
-		drive.autoMove(speed, -speed);
+		drive.tankDrive(speed, -speed);
 		errorOld = error;
 		
 		errorSum += error;
@@ -257,7 +270,7 @@ public class AutonomousBase {
 		speedL = Math.max(-maxSpeed, Math.min(maxSpeed, speedL));
 		speedR = Math.max(-maxSpeed, Math.min(maxSpeed, speedR));
 		
-		drive.autoMove(-speedL,  -speedR);
+		drive.tankDrive(-speedL,  -speedR);
 		oldErrorL = errorL;
 		oldErrorR = errorR;
 		

@@ -29,10 +29,10 @@ public class Path{
 	public Path(JSONObject json) {
 		JSONArray data = (JSONArray) json.get("data");
 		sides = (String) json.get("sides");
-		totalDistance = (double) json.get("distance");
+		totalDistance = (double) json.get("totalDistance");
 		
-		List<Integer> groupXtemp = new ArrayList<>();
-		List<Integer> groupYtemp = new ArrayList<>();
+		List<Long> groupXtemp = new ArrayList<>();
+		List<Long> groupYtemp = new ArrayList<>();
 		points = new Point[data.size()+MAX_POINTS];
 		for(int i=0; i<data.size();i++) {
 			points[i] = new Point((JSONObject)data.get(i));
@@ -57,7 +57,7 @@ public class Path{
 	    
 	}
 	
-	private double[] toDoubleArray(List<Integer> list) {
+	private double[] toDoubleArray(List<Long> list) {
 		return list.stream().mapToDouble(i->i).toArray();
 	}
 	
@@ -96,8 +96,8 @@ public class Path{
 }
 
 class Point {	
-	public int x;
-	public int y;
+	public long x;
+	public long y;
 	public Method[] startMethods;
 	public Method[] endMethods;
 	public Method[] scaledMethods;
@@ -105,9 +105,9 @@ class Point {
 	public boolean slowStop;
 	
 	public Point(JSONObject json){
-		int[] a = (int[]) json.get("cord");
-		x = a[0];
-		y = a[1];
+		JSONArray a = (JSONArray) json.get("point");
+		x = (long) a.get(0);
+		y = (long) a.get(1);
 		distance = (double) json.get("distance");
 		slowStop = (boolean) json.get("slowStop");
 		startMethods = methodLoop(json,"startMethods");
