@@ -79,43 +79,46 @@ public class AutonomousBase {
 				scaledRuntime.addTask(mapper.mapMethod(method));
 			scaledRuntime.start();
 			
-			double scaledLocation=0;
 			SmartDashboard.putNumber("break", 0);
 			SmartDashboard.putNumber("pointDist", point.distance);
-			while (point.distance > getOverallDistance()) {//exit out when robot has gone distance
+			
+			for (double overallDistance=0; point.distance > overallDistance; overallDistance=getOverallDistance()){//exit out when robot has gone distance
 				SmartDashboard.putNumber("Left", drive.getLeftDistance());
 				SmartDashboard.putNumber("Right", drive.getRightDistance());
 				SmartDashboard.putNumber("Avg", getOverallDistance());
 				
-				scaledLocation = getOverallDistance()/point.distance;
-				mapper.currentDistance = getOverallDistance();
+				double scaledLocation = overallDistance/point.distance;
+				mapper.currentDistance = overallDistance;
 				mapper.scaledLocation = scaledLocation;
-				
 				double derivativesPresent[] = path.derivative(i+scaledLocation);
-				double derivativesFuture[] = path.derivative(i+scaledLocation+0.00001);
+				
+				double scaledLocationFuture = overallDistance/(point.distance+0.001);
+				double derivativesFuture[] = path.derivative(i+scaledLocationFuture);
 				
 				double slopePresent = derivativesPresent[1]/derivativesPresent[0];
 				double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
 				
 				double secondDerivative = slopeFuture-slopePresent;
-				
+				/*
 				double navAngle = navx.getAngle()%89;
 				double turnSpeed = Math.abs(slopePresent);
 				turnSpeed = navAngle - Math.atan(turnSpeed);
 				turnSpeed = Math.abs(1 - Math.abs(turnSpeed / navAngle));
 				SmartDashboard.putNumber("turnSpeed", turnSpeed);
-				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))
+				*/
+				double turnSpeed = 0.5;
+				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))//left
+					if (scaledLocation >= slowThreshCurr){
+						double sens = 1-(scaledLocation-slowThresh)*10;
+						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
+					}else
+						drive.tankDrive(turnSpeed*speed,speed);
+				else//right
 					if (scaledLocation >= slowThreshCurr){
 						double sens = 1-(scaledLocation-slowThresh)*10;
 						drive.tankDrive(speed*sens,turnSpeed*speed*sens);
 					}else
 						drive.tankDrive(speed,turnSpeed*speed);
-				else //right
-					if (scaledLocation >= slowThreshCurr){//left
-						double sens = 1-(scaledLocation-slowThresh)*10;
-						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
-					}else
-						drive.tankDrive(turnSpeed*speed,speed);
 			}
 			//scaledRuntime.stop();
 			SmartDashboard.putNumber("break", 1);
