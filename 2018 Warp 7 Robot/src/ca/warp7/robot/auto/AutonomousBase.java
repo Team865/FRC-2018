@@ -82,7 +82,10 @@ public class AutonomousBase {
 			SmartDashboard.putNumber("break", 0);
 			SmartDashboard.putNumber("pointDist", point.distance);
 			
-			for (double overallDistance=0; point.distance > overallDistance; overallDistance=getOverallDistance()){//exit out when robot has gone distance
+			//for (double overallDistance=0; point.distance > overallDistance; overallDistance=getOverallDistance()){//exit out when robot has gone distance
+			double overallDistance= getOverallDistance();
+			while (point.distance > overallDistance) {
+				overallDistance= getOverallDistance();
 				SmartDashboard.putNumber("Left", drive.getLeftDistance());
 				SmartDashboard.putNumber("Right", drive.getRightDistance());
 				SmartDashboard.putNumber("Avg", getOverallDistance());
@@ -106,7 +109,19 @@ public class AutonomousBase {
 				turnSpeed = Math.abs(1 - Math.abs(turnSpeed / navAngle));
 				SmartDashboard.putNumber("turnSpeed", turnSpeed);
 				*/
-				double turnSpeed = 0.5;
+				double turnSpeed = Math.abs(secondDerivative);
+				if (derivativesPresent[0] >= 0)
+					if (secondDerivative >= 0)
+						drive.tankDrive(turnSpeed*speed,speed);
+					else
+						drive.tankDrive(speed,turnSpeed*speed);
+				else
+					if (secondDerivative < 0)
+						drive.tankDrive(turnSpeed*speed,speed);
+					else
+						drive.tankDrive(speed,turnSpeed*speed);
+				
+				/*
 				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))//left
 					if (scaledLocation >= slowThreshCurr){
 						double sens = 1-(scaledLocation-slowThresh)*10;
@@ -119,6 +134,7 @@ public class AutonomousBase {
 						drive.tankDrive(speed*sens,turnSpeed*speed*sens);
 					}else
 						drive.tankDrive(speed,turnSpeed*speed);
+				*/
 			}
 			//scaledRuntime.stop();
 			SmartDashboard.putNumber("break", 1);

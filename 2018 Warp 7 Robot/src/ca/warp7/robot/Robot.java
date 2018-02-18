@@ -8,6 +8,8 @@ import ca.warp7.robot.controls.DualRemote;
 import ca.warp7.robot.misc.RTS;
 import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
+import ca.warp7.robot.subsystems.Intake;
+import ca.warp7.robot.subsystems.Lift;
 import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -21,6 +23,8 @@ public class Robot extends IterativeRobot  {
 	
 	public static Drive drive;
 	public static Climber climber;
+	public static Intake intake;
+	public static Lift lift;
 	
 	private static AutonomousBase auto;
 	private static ControlsBase controls;
@@ -41,6 +45,8 @@ public class Robot extends IterativeRobot  {
 		
 		drive = new Drive();
 		navx = new Navx();
+		intake = new Intake();
+		lift = new Lift();
 		//climber = new Climber();
 		
 		//shutup >:(
@@ -70,7 +76,7 @@ public class Robot extends IterativeRobot  {
 		//	gameData = driverStation.getGameSpecificMessage();
 		drive.resetDistance();
 		navx.resetAngle();
-		gameData = "down";
+		gameData = "thing3";
 		auto.autonomousInit(gameData,jsonPaths);
 		
 		//double 

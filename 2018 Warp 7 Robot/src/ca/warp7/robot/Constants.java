@@ -9,9 +9,11 @@ public class Constants {
 	//public static final int[] LEFT_DRIVE_MOTOR_IDS = { 9, 2 };
 	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1,3 };
 	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 2,8 };
-	public static final int[] INTAKE_MOTOR_PINS = { 6 };
-	public static final int[] ELEVATOR_MOTOR_PINS = { 7 };
-	public static final int[] CLIMBER_MOTOR_PINS = { 4, 5 };
+	public static final int[] INTAKE_MOTOR_RIGHT_IDS = { 6 };
+	public static final int[] INTAKE_MOTOR_LEFT_IDS = { 4 };
+	public static final int[] LIFT_MOTOR_LEFT_IDS = { 0 };
+	public static final int[] LIFT_MOTOR_RIGHT_IDS = { 7 };
+	public static final int[] CLIMBER_MOTORS_IDS = { 5, 9 };
 
 	//TODO Update Constants!
 	// DIG Pins
