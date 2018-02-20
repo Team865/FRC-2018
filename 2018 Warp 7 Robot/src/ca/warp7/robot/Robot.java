@@ -47,7 +47,7 @@ public class Robot extends IterativeRobot  {
 		navx = new Navx();
 		intake = new Intake();
 		lift = new Lift();
-		//climber = new Climber();
+		climber = new Climber();
 		
 		//shutup >:(
 		compressor = new Compressor(COMPRESSOR_PIN);

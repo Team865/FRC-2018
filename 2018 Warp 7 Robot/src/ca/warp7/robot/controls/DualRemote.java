@@ -1,6 +1,5 @@
 package ca.warp7.robot.controls;
 
-import static ca.warp7.robot.Constants.pixelOffset;
 import static ca.warp7.robot.controls.Control.DOWN;
 import static ca.warp7.robot.controls.Control.PRESSED;
 import static ca.warp7.robot.controls.Control.UP;
@@ -64,7 +63,7 @@ public class DualRemote extends ControlsBase {
 		}
 		
 		if(operator.getAButton() == DOWN)
-			lift.setSpeed(operator.getY(kLeft));
+			lift.setLoc(operator.getY(kLeft));
 		
 		if(operator.getBButton() == DOWN)
 			climber.setSpeed(operator.getY(kRight));

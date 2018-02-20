@@ -51,14 +51,10 @@ public class Constants {
 	public static double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
 	public static int DRIVE_TICKS_PER_REV = 256; //256
 	public static double DRIVE_INCHES_PER_TICK = WHEEL_CIRCUMFERENCE / DRIVE_TICKS_PER_REV;
-	public static double pixelOffset = -35;
-
-    public static String ATTR_EX_MODE = "CameraAttributes::Exposure::Mode";
-    public static String ATTR_EX_VALUE = "CameraAttributes::Exposure::Value";
-
-    public static String ATTR_BR_MODE = "CameraAttributes::Brightness::Mode";
-    public static String ATTR_BR_VALUE = "CameraAttributes::Brightness::Value";
     
     public static double RIGHT_DRIFT_OFFSET = 0.9961154656261869;
     public static double LEFT_DRIFT_OFFSET = 0.9717861474194853;
+    
+    public static double LIFT_HEIGHT = 1; // inches
+    public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
 }

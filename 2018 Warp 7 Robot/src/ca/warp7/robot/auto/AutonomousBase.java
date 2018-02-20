@@ -54,6 +54,7 @@ public class AutonomousBase {
 	}
 		private static final double speed = 0.3;
 	private static final double slowThresh = 0.9;
+	private static final double angleTolerance = 1;
 	public void periodic(){
 		navx.resetAngle();
 		mapper.speed = speed;
@@ -70,7 +71,7 @@ public class AutonomousBase {
 			if (point.slowStop)
 				slowThreshCurr = slowThresh;
 			else
-				slowThreshCurr = 1.1;
+				slowThreshCurr = 2;
 			
 			drive.resetDistance();
 			
@@ -95,20 +96,42 @@ public class AutonomousBase {
 				mapper.scaledLocation = scaledLocation;
 				double derivativesPresent[] = path.derivative(i+scaledLocation);
 				
-				double scaledLocationFuture = overallDistance/(point.distance+0.001);
-				double derivativesFuture[] = path.derivative(i+scaledLocationFuture);
+				//double scaledLocationFuture = overallDistance/(point.distance+0.001);
+				//double derivativesFuture[] = path.derivative(i+scaledLocationFuture);
 				
-				double slopePresent = derivativesPresent[1]/derivativesPresent[0];
-				double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
+				//double slopePresent = derivativesPresent[1]/derivativesPresent[0];
+				//double slopeFuture = derivativesFuture[1]/derivativesFuture[0];
 				
-				double secondDerivative = slopeFuture-slopePresent;
+				//double secondDerivative = slopeFuture-slopePresent;
+				
+				double navAngle = navx.getAngle()%360;
+				
+				double requiredAngle = Math.atan2(derivativesPresent[1],derivativesPresent[0]);
+				requiredAngle = (requiredAngle > 0 ? requiredAngle : (2*Math.PI + requiredAngle)) * 360 / (2*Math.PI);
+				
+				double turnSpeed = Math.abs(1+(requiredAngle-navAngle-angleTolerance)/angleTolerance);
+				
+				if ((requiredAngle - navAngle) % 360 < 180) // clockwise
+					if (scaledLocation >= slowThreshCurr){ // slow down at angle
+						double sens = 1+(1-scaledLocation-slowThresh)/slowThresh;
+						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
+					}else
+						drive.tankDrive(speed,turnSpeed*speed); 
+				else // counter-clockwise
+					if (scaledLocation >= slowThreshCurr){ // slow down at angle
+						double sens = 1+(1-scaledLocation-slowThresh)/slowThresh;
+						drive.tankDrive(turnSpeed*speed*sens,speed*sens);
+					}else
+						drive.tankDrive(turnSpeed*speed,speed); 
+					
 				/*
-				double navAngle = navx.getAngle()%89;
 				double turnSpeed = Math.abs(slopePresent);
 				turnSpeed = navAngle - Math.atan(turnSpeed);
 				turnSpeed = Math.abs(1 - Math.abs(turnSpeed / navAngle));
 				SmartDashboard.putNumber("turnSpeed", turnSpeed);
 				*/
+				
+				/*
 				double turnSpeed = Math.abs(secondDerivative);
 				if (derivativesPresent[0] >= 0)
 					if (secondDerivative >= 0)
@@ -120,6 +143,7 @@ public class AutonomousBase {
 						drive.tankDrive(turnSpeed*speed,speed);
 					else
 						drive.tankDrive(speed,turnSpeed*speed);
+				*/
 				
 				/*
 				if ((derivativesPresent[0] >= 0 && secondDerivative >= 0) || (derivativesPresent[0] < 0 && secondDerivative < 0))//left
