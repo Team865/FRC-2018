@@ -76,7 +76,7 @@ public class Robot extends IterativeRobot  {
 		//	gameData = driverStation.getGameSpecificMessage();
 		drive.resetDistance();
 		navx.resetAngle();
-		gameData = "thing3";
+		gameData = "oklul";
 		auto.autonomousInit(gameData,jsonPaths);
 		
 		//double 
@@ -106,9 +106,9 @@ public class Robot extends IterativeRobot  {
         
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
+			//lift.periodic();
 			//drive.periodic();
-			SmartDashboard.putNumber("Left", drive.getLeftDistance());
-			SmartDashboard.putNumber("Right", drive.getRightDistance());
+			SmartDashboard.putNumber("Lift", lift.getEncoderVal());
 			//updateStuffs();
 			Timer.delay(0.005);
 		 }

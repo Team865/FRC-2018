@@ -63,10 +63,13 @@ public class DualRemote extends ControlsBase {
 		}
 		
 		if(operator.getAButton() == DOWN)
-			lift.setLoc(operator.getY(kLeft));
+			lift.setSpeed(operator.getY(kLeft));
 		
 		if(operator.getBButton() == DOWN)
-			climber.setSpeed(operator.getY(kRight));
+			climber.setSpeed(operator.getY(kRight)*-1);
+		
+		if(operator.getYButton() == DOWN)
+			lift.zeroEncoder();
 		
 		 //drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
 		drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);

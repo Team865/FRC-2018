@@ -57,4 +57,7 @@ public class Constants {
     
     public static double LIFT_HEIGHT = 1; // inches
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
+    
+    public static final int LIFT_DRIVE_ENCODER_A = 8;
+	public static final int LIFT_DRIVE_ENCODER_B = 9;
 }

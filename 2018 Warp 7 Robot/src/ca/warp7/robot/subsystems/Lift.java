@@ -25,12 +25,12 @@ public class Lift {
 		LiftMotorRight.setInverted(true);
 		
 		liftEncoder =  new Encoder(LIFT_DRIVE_ENCODER_A, LIFT_DRIVE_ENCODER_B, false, EncodingType.k4X);
-		liftEncoder.setDistancePerPulse(LIFT_INCHES_PER_TICK);
+		liftEncoder.setDistancePerPulse(DRIVE_INCHES_PER_TICK);
 	}
 	
 	private double ramp = 0;
 	private final double rampSpeed = 6;
-	private void setSpeed(double speed){
+	public void setSpeed(double speed){
 		ramp += (speed - ramp)/rampSpeed;
 		LiftMotorLeft.set(ramp);
 		LiftMotorRight.set(ramp);
@@ -51,5 +51,13 @@ public class Lift {
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
 		//if (scaledLift >= setLocation-tolerance && scaledLift <= setLocation+tolerance)
 		setSpeed(speed);
+	}
+	
+	public double getEncoderVal() {
+		return liftEncoder.getDistance(); 
+	}
+	
+	public void zeroEncoder() {
+		liftEncoder.reset();
 	}
 }
