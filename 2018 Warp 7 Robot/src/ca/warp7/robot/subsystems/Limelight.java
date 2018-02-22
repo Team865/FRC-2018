@@ -18,20 +18,11 @@ public class Limelight {
 	double skew;
 	double LEDMode;
 	double camMode;
-	double pipeline;
+	int pipeline = 0;
+	int pipelineNumber = 2;
 
-	public Limelight() {
-		table = NetworkTableInstance.getDefault().getTable("limelight-intake");
-	}
-
-	public boolean getHasTarget() {
-		targetD = table.getEntry("tv").getDouble(0);
-		if (targetD == 0) {
-			hasTarget = false;
-		} else if (targetD == 1) {
-			hasTarget = true;
-		}
-		return hasTarget;
+	public Limelight(String name) {
+		table = NetworkTableInstance.getDefault().getTable(name);
 	}
 
 	public double getXOffset() {
@@ -53,6 +44,11 @@ public class Limelight {
 		skew = table.getEntry("ts").getDouble(0);
 		return skew;
 	}
+	
+	public boolean foundObject() {
+		int found = (int) table.getEntry("tv").getDouble(0);
+		return found == 1;
+	}
 
 	public double getLEDMode() {
 		LEDMode = table.getEntry("ledMode").getDouble(1);
@@ -64,8 +60,12 @@ public class Limelight {
 		return camMode;
 	}
 
-	public double getPipeline() {
-		pipeline = table.getEntry("pipeline").getDouble(0);
+	public int getNetworkPipeline() {
+		int pipeline = (int) table.getEntry("pipeline").getDouble(0);
+		return pipeline;
+	}
+	
+	public int getPipeline() {
 		return pipeline;
 	}
 	
@@ -100,8 +100,14 @@ public class Limelight {
 		}
 	}
 
-	public void setPipeline(double pipeline) {
+	public void setPipeline(int pipeline) {
 		table.getEntry("pipeline").setDouble(pipeline);
+		this.pipeline = pipeline;
 		SmartDashboard.putNumber("Camera Mode", pipeline);
+	}
+	
+	public void mutiPipeline() {
+		if (!foundObject())
+			setPipeline((pipeline+1)%pipelineNumber);
 	}
 }

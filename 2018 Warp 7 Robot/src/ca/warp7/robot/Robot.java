@@ -10,7 +10,9 @@ import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Intake;
 import ca.warp7.robot.subsystems.Lift;
+import ca.warp7.robot.subsystems.Limelight;
 import ca.warp7.robot.subsystems.Navx;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,11 +36,18 @@ public class Robot extends IterativeRobot  {
 	
 	public static Navx navx;
 	
+	public static Limelight limelight;
+	
 	private DriverStation driverStation;	
 	
 	private DigitalInput s4;
 	private DigitalInput s5;
 	private DigitalInput s6;
+	
+	private AnalogInput a0;
+	private AnalogInput a1;
+	private AnalogInput a2;
+	private AnalogInput a3;
 	
 	public void robotInit() {
 		System.out.println("Hello me is robit");
@@ -57,9 +66,16 @@ public class Robot extends IterativeRobot  {
 		
 		auto = new AutonomousBase();
 		
+		limelight = new Limelight("limelight");
+		
 		s4 = new DigitalInput(4);
 		s5 = new DigitalInput(5);
 		s6 = new DigitalInput(6);
+		
+		a0 = new AnalogInput(0);
+		a1 = new AnalogInput(1);
+		a2 = new AnalogInput(2);
+		a3 = new AnalogInput(3);
 	}
 	
 	public void autonomousInit(){
@@ -78,6 +94,7 @@ public class Robot extends IterativeRobot  {
 		navx.resetAngle();
 		gameData = "oklul";
 		auto.autonomousInit(gameData,jsonPaths);
+	
 		
 		//double 
 		//while () {
@@ -102,13 +119,20 @@ public class Robot extends IterativeRobot  {
         controls = new DualRemote();
 
 		if(driverStation.isFMSAttached()){}
-			
-        
+			        
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
+			limelight.mutiPipeline();
+			intake.periodic();
+			
 			//lift.periodic();
 			//drive.periodic();
 			SmartDashboard.putNumber("Lift", lift.getEncoderVal());
+			SmartDashboard.putNumber("Analog 0", a0.getAverageVoltage());
+			SmartDashboard.putNumber("Analog 1", a1.getAverageVoltage());
+			SmartDashboard.putNumber("Analog 2", a2.getAverageVoltage());
+			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
+			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
 			//updateStuffs();
 			Timer.delay(0.005);
 		 }
@@ -153,8 +177,9 @@ public class Robot extends IterativeRobot  {
 		RTS dispUpdater = navx.getDisplacementUpdater();
 		SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
 		SmartDashboard.putNumber("Hyp ahrs", Math.hypot(navx.getDispX(), navx.getDispY()));
+		
+		
 	}
-	
 	
 	public void disabledInit() {
 		//if (navx.getDisplacementUpdater().isRunning())

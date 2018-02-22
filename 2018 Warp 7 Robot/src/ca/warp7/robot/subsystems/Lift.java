@@ -9,6 +9,7 @@ import static ca.warp7.robot.Constants.LIFT_HEIGHT;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.MotorGroup;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -18,6 +19,8 @@ public class Lift {
 	private MotorGroup LiftMotorLeft;
 	private Encoder liftEncoder;
 	private double setLocation;
+	
+	protected Intake intake = Robot.intake;
 	
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
