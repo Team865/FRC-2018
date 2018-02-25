@@ -105,4 +105,8 @@ public class Navx {
 	public void resetAngle() {
 		ahrs.reset();
 	}
+
+	public double getPitch() {
+		return ahrs.getPitch();
+	}
 }

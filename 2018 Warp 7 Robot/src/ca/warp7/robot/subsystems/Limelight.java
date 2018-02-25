@@ -6,23 +6,23 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
-	NetworkTable table;
-	Relay visionLEDs = new Relay(0);
+	private NetworkTable table;
+	private Relay visionLEDs = new Relay(0);
 
 	// Create variables
-	double targetD;
-	boolean hasTarget;
-	double xOffset;
-	double yOffset;
-	double area;
-	double skew;
-	double LEDMode;
-	double camMode;
-	int pipeline = 0;
-	int pipelineNumber = 2;
+	private double targetD;
+	private boolean hasTarget;
+	private double xOffset;
+	private double yOffset;
+	private double area;
+	private double skew;
+	private double LEDMode;
+	private double camMode;
+	private int pipeline;
+	public int pipelineNumber = 2;
 
-	public Limelight(String name) {
-		table = NetworkTableInstance.getDefault().getTable(name);
+	public Limelight() {
+		table = NetworkTableInstance.getDefault().getTable("limelight");
 	}
 
 	public double getXOffset() {
@@ -108,6 +108,6 @@ public class Limelight {
 	
 	public void mutiPipeline() {
 		if (!foundObject())
-			setPipeline((pipeline+1)%pipelineNumber);
+			setPipeline((getNetworkPipeline()+1)%pipelineNumber);
 	}
 }

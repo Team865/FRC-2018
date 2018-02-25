@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.Talon;
 
 public class Drive {
 	
+	private Navx navx = Robot.navx;
+	
 	public static DataPool drivePool;
 	
 	private MotorGroup rightDrive;
@@ -57,10 +59,11 @@ public class Drive {
 		if(shifter.get() != gear)
 			shifter.set(gear);
 	}
-
+	
 	public void tankDrive(double left, double right) {
-		left = limit(left,0.999);
-		right = limit(right,0.999);
+		double scaledBalance = autoBalance();
+		left = limit(left+scaledBalance,0.999);
+		right = limit(right+scaledBalance,0.999);
 		leftDrive.set(left*LEFT_DRIFT_OFFSET);
 		rightDrive.set(right*RIGHT_DRIFT_OFFSET);
 	}
@@ -197,7 +200,7 @@ public class Drive {
     }
 	
 	public double getRotation() {
-		return Robot.navx.getAngle();
+		return navx.getAngle();
 	}
 	
 	public double getLeftDistance(){
@@ -211,5 +214,22 @@ public class Drive {
 	public void resetDistance(){
 		leftEncoder.reset();
 		rightEncoder.reset();
+	}
+	
+	
+	
+	
+	private static final double kOonBalanceAngleThresholdDegrees  = 5;
+	private boolean autoBalance = true;
+	
+	public double autoBalance() {        
+        if (autoBalance) {
+        	double pitchAngleDegrees = navx.getPitch();
+        	double scaledPower = 1+(0-pitchAngleDegrees-kOonBalanceAngleThresholdDegrees)/kOonBalanceAngleThresholdDegrees;
+        	if (scaledPower > 2)
+        		scaledPower = 2;
+        }
+        
+		return 0;
 	}
 }

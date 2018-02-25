@@ -2,8 +2,8 @@ package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.LIFT_MOTOR_RIGHT_IDS;
 import static ca.warp7.robot.Constants.DRIVE_INCHES_PER_TICK;
-import static ca.warp7.robot.Constants.LIFT_DRIVE_ENCODER_A;
-import static ca.warp7.robot.Constants.LIFT_DRIVE_ENCODER_B;
+import static ca.warp7.robot.Constants.LIFT_ENCODER_A;
+import static ca.warp7.robot.Constants.LIFT_ENCODER_B;
 import static ca.warp7.robot.Constants.LIFT_MOTOR_LEFT_IDS;
 import static ca.warp7.robot.Constants.LIFT_HEIGHT;
 
@@ -27,7 +27,7 @@ public class Lift {
 		LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
 		LiftMotorRight.setInverted(true);
 		
-		liftEncoder =  new Encoder(LIFT_DRIVE_ENCODER_A, LIFT_DRIVE_ENCODER_B, false, EncodingType.k4X);
+		liftEncoder =  new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
 		liftEncoder.setDistancePerPulse(DRIVE_INCHES_PER_TICK);
 	}
 	

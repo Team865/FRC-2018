@@ -22,9 +22,9 @@ public class DualRemote extends ControlsBase {
 	*/
 	@Override
 	public void periodic() {
-		if(driver.getTrigger(kRight) == DOWN){
+		if(driver.getTrigger(kLeft) == DOWN){
 			intake.setSpeed(0.7);
-		}else if (driver.getTrigger(kLeft) == DOWN) {
+		}else if (driver.getTrigger(kRight) == DOWN) {
 			intake.setSpeed(-1);
 		}else {
 			intake.setSpeed(0);

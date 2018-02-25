@@ -7,12 +7,12 @@ public class Constants {
 	// PWM Pins
 	//public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1, 5 };
 	//public static final int[] LEFT_DRIVE_MOTOR_IDS = { 9, 2 };
-	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1,3 };
-	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 2,8 };
-	public static final int[] INTAKE_MOTOR_RIGHT_IDS = { 6 };
-	public static final int[] INTAKE_MOTOR_LEFT_IDS = { 4 };
-	public static final int[] LIFT_MOTOR_LEFT_IDS = { 0 };
-	public static final int[] LIFT_MOTOR_RIGHT_IDS = { 7 };
+	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1,5 };
+	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 4,3 };
+	public static final int[] INTAKE_MOTOR_RIGHT_IDS = { 7 };
+	public static final int[] INTAKE_MOTOR_LEFT_IDS = { 2 };
+	public static final int[] LIFT_MOTOR_LEFT_IDS = { 6 };
+	public static final int[] LIFT_MOTOR_RIGHT_IDS = { 8 };
 	public static final int[] CLIMBER_MOTORS_IDS = { 5, 9 };
 
 	//TODO Update Constants!
@@ -33,7 +33,7 @@ public class Constants {
 	public static final int COMPRESSOR_PIN = 0;
 
 	//TODO Update Constants!
-	// CAN ID's
+	// CAN IDs
 	/**
 	public static final int SHOOTER_SLAVE_ID = 0;
 	public stati
@@ -41,7 +41,7 @@ public class Constants {
 	**/
 	
 	//TODO Update Constants!
-	// Remote ID's
+	// Remote IDs
 	public static final int DRIVER_ID = 0;
 	public static final int OPERATOR_ID = 1;
 	
@@ -58,6 +58,6 @@ public class Constants {
     public static double LIFT_HEIGHT = 1; // inches
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
     
-    public static final int LIFT_DRIVE_ENCODER_A = 8;
-	public static final int LIFT_DRIVE_ENCODER_B = 9;
+    public static final int LIFT_ENCODER_A = 6;
+	public static final int LIFT_ENCODER_B = 7;
 }

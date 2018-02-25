@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot  {
 	
+	public static Limelight limelight;
+	
 	public static Drive drive;
 	public static Climber climber;
 	public static Intake intake;
@@ -35,8 +37,6 @@ public class Robot extends IterativeRobot  {
 	public static Compressor compressor;
 	
 	public static Navx navx;
-	
-	public static Limelight limelight;
 	
 	private DriverStation driverStation;	
 	
@@ -52,6 +52,8 @@ public class Robot extends IterativeRobot  {
 	public void robotInit() {
 		System.out.println("Hello me is robit");
 		
+		limelight = new Limelight();
+		
 		drive = new Drive();
 		navx = new Navx();
 		intake = new Intake();
@@ -66,11 +68,6 @@ public class Robot extends IterativeRobot  {
 		
 		auto = new AutonomousBase();
 		
-		limelight = new Limelight("limelight");
-		
-		s4 = new DigitalInput(4);
-		s5 = new DigitalInput(5);
-		s6 = new DigitalInput(6);
 		
 		a0 = new AnalogInput(0);
 		a1 = new AnalogInput(1);
@@ -124,7 +121,8 @@ public class Robot extends IterativeRobot  {
 			controls.periodic();
 			limelight.mutiPipeline();
 			intake.periodic();
-			
+			SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
+			SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
 			//lift.periodic();
 			//drive.periodic();
 			SmartDashboard.putNumber("Lift", lift.getEncoderVal());

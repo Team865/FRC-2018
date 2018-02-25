@@ -6,8 +6,9 @@ import static ca.warp7.robot.Constants.INTAKE_PISTONS;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import ca.warp7.robot.misc.MotorGroup;
+import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.LimelightPhotosensor;
+import ca.warp7.robot.misc.MotorGroup;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Intake {
@@ -21,8 +22,9 @@ public class Intake {
 		intakeMotorRight = new MotorGroup(INTAKE_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
 		intakeMotorRight.setInverted(true);
 		intakePistons = new Solenoid(INTAKE_PISTONS);
+		//intakePistons.set(true);
 		
-		photosensor = new LimelightPhotosensor(1);
+		photosensor = new LimelightPhotosensor(Robot.limelight, 1);
 	}
 	
 	private double ramp = 0;
@@ -30,14 +32,9 @@ public class Intake {
 	public void setSpeed(double speed){
 		// Ramp to prevent brown outs
 		ramp += (speed - ramp)/rampSpeed;
-		System.out.println(ramp);
 		intakeMotorLeft.set(ramp);
 		intakeMotorRight.set(ramp);
-	}
-	
-	public void pistonSet(boolean b){
-		intakePistons.set(b);
-	}
+		}
 	
 	public void pistonToggle(){
 		intakePistons.set(!intakePistons.get());
