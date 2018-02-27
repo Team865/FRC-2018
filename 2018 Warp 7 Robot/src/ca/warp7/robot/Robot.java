@@ -53,9 +53,8 @@ public class Robot extends IterativeRobot  {
 		System.out.println("Hello me is robit");
 		
 		limelight = new Limelight();
-		
-		drive = new Drive();
 		navx = new Navx();
+		drive = new Drive();
 		intake = new Intake();
 		lift = new Lift();
 		climber = new Climber();
@@ -116,21 +115,26 @@ public class Robot extends IterativeRobot  {
         controls = new DualRemote();
 
 		if(driverStation.isFMSAttached()){}
-			        
+		double a = 0;
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
 			limelight.mutiPipeline();
 			intake.periodic();
+			double b = lift.getEncoderVal();
+			if (a < b)
+				a = b;
 			SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
 			SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
-			//lift.periodic();
+			lift.periodic();
 			//drive.periodic();
-			SmartDashboard.putNumber("Lift", lift.getEncoderVal());
+			SmartDashboard.putNumber("Lift", a);
+			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
 			SmartDashboard.putNumber("Analog 0", a0.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 1", a1.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 2", a2.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
+			SmartDashboard.putNumber("pitch", navx.getPitch());
 			//updateStuffs();
 			Timer.delay(0.005);
 		 }

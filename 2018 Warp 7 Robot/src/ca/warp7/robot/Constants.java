@@ -13,7 +13,7 @@ public class Constants {
 	public static final int[] INTAKE_MOTOR_LEFT_IDS = { 2 };
 	public static final int[] LIFT_MOTOR_LEFT_IDS = { 6 };
 	public static final int[] LIFT_MOTOR_RIGHT_IDS = { 8 };
-	public static final int[] CLIMBER_MOTORS_IDS = { 5, 9 };
+	public static final int[] CLIMBER_MOTORS_IDS = { 0, 9 };
 
 	//TODO Update Constants!
 	// DIG Pins
@@ -55,9 +55,9 @@ public class Constants {
     public static double RIGHT_DRIFT_OFFSET = 0.9961154656261869;
     public static double LEFT_DRIFT_OFFSET = 0.9717861474194853;
     
-    public static double LIFT_HEIGHT = 1; // inches
+    public static double LIFT_HEIGHT = 11824; // inches
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
     
-    public static final int LIFT_ENCODER_A = 6;
-	public static final int LIFT_ENCODER_B = 7;
+    public static final int LIFT_ENCODER_A = 4;
+	public static final int LIFT_ENCODER_B = 5;
 }

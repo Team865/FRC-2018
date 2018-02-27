@@ -28,7 +28,8 @@ public class Lift {
 		LiftMotorRight.setInverted(true);
 		
 		liftEncoder =  new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
-		liftEncoder.setDistancePerPulse(DRIVE_INCHES_PER_TICK);
+		liftEncoder.setDistancePerPulse(1);
+		zeroEncoder();
 	}
 	
 	private double ramp = 0;
@@ -40,24 +41,26 @@ public class Lift {
 	}
 	
 	public void setLoc(double loc){
-		setLocation = loc;
+		setLocation = Math.abs(loc);
 	}
 	
-	private static final double tolerance = 0.10;
+	private static final double tolerance = 0.5;
 	private double scaledLift = 0;
 	public void periodic(){
 		if (false) //zero switch is active zero encoder
 			scaledLift = 0;
 		else
-			scaledLift = LIFT_HEIGHT/liftEncoder.getDistance();
-		
+			scaledLift = liftEncoder.getDistance()/LIFT_HEIGHT;
+		System.out.println("scaledL: "+scaledLift);
+		System.out.println("setL: "+setLocation);
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
 		//if (scaledLift >= setLocation-tolerance && scaledLift <= setLocation+tolerance)
-		setSpeed(speed);
+		System.out.println("speed: "+speed);
+		//setSpeed(speed);
 	}
 	
 	public double getEncoderVal() {
-		return liftEncoder.getDistance(); 
+		return Math.abs(liftEncoder.getDistance()); 
 	}
 	
 	public void zeroEncoder() {
