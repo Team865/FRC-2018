@@ -20,7 +20,7 @@ public class Lift {
 	private Encoder liftEncoder;
 	private double setLocation;
 	
-	protected Intake intake = Robot.intake;
+	private Intake intake = Robot.intake;
 	
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);

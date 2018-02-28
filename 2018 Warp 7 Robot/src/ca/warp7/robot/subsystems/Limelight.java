@@ -2,12 +2,10 @@ package ca.warp7.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 	private NetworkTable table;
-	private Relay visionLEDs = new Relay(0);
 
 	// Create variables
 	private double targetD;
@@ -19,7 +17,7 @@ public class Limelight {
 	private double LEDMode;
 	private double camMode;
 	private int pipeline;
-	public int pipelineNumber = 2;
+	private int pipelineNumber = 2;
 
 	public Limelight() {
 		table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -67,14 +65,6 @@ public class Limelight {
 	
 	public int getPipeline() {
 		return pipeline;
-	}
-	
-	public void Lon() {
-		visionLEDs.set(Relay.Value.kForward);
-	}
-
-	public void Loff() {
-		visionLEDs.set(Relay.Value.kOff);
 	}
 	
 	public void switchLED() {

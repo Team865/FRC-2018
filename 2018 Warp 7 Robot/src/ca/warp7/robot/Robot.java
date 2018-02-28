@@ -5,7 +5,6 @@ import static ca.warp7.robot.Constants.*;
 import ca.warp7.robot.auto.AutonomousBase;
 import ca.warp7.robot.controls.ControlsBase;
 import ca.warp7.robot.controls.DualRemote;
-import ca.warp7.robot.misc.RTS;
 import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Intake;
@@ -14,7 +13,6 @@ import ca.warp7.robot.subsystems.Limelight;
 import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,6 +26,7 @@ public class Robot extends IterativeRobot  {
 	public static Climber climber;
 	public static Intake intake;
 	public static Lift lift;
+	private static boolean isAutonomous;
 	
 	private static AutonomousBase auto;
 	private static ControlsBase controls;
@@ -38,10 +37,6 @@ public class Robot extends IterativeRobot  {
 	public static Navx navx;
 	
 	private DriverStation driverStation;	
-	
-	private DigitalInput s4;
-	private DigitalInput s5;
-	private DigitalInput s6;
 	
 	private AnalogInput a0;
 	private AnalogInput a1;
@@ -64,6 +59,7 @@ public class Robot extends IterativeRobot  {
 		driverStation = DriverStation.getInstance();
 		//navx.startUpdateDisplacement(60);
 		
+		isAutonomous = false;
 		auto = new AutonomousBase();
 		
 		
@@ -74,6 +70,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void autonomousInit(){
+		isAutonomous = true;
 		String jsonPaths = "None";
 		/*if(!s4.get())
 			jsonPaths = "Left";
@@ -89,13 +86,7 @@ public class Robot extends IterativeRobot  {
 		navx.resetAngle();
 		gameData = "LLL";
 		auto.autonomousInit(gameData,jsonPaths);
-	
-		
-		//double 
-		//while () {
-			
-		//}
-		
+		drive.tankDrive(0,0);
 		//auto.periodic();
 	}
 	
@@ -104,6 +95,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
+		isAutonomous = false;
 		//navx.startUpdateDisplacement(60);
 		//navx.resetDisplacement();
 		compressor.setClosedLoopControl(true);
@@ -133,9 +125,7 @@ public class Robot extends IterativeRobot  {
 			SmartDashboard.putNumber("Analog 1", a1.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 2", a2.getAverageVoltage());
 			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
-			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
-			//updateStuffs();
 			Timer.delay(0.005);
 		 }
 	}
@@ -167,30 +157,15 @@ public class Robot extends IterativeRobot  {
 		}
 		
 	}
-	public void testPeriodic(){
-		//SmartDashboard.putNumber("Left", drive.getLeftDistance());
-		//SmartDashboard.putNumber("Right", drive.getRightDistance());
-	}
-	
-	public void updateStuffs() {
-		SmartDashboard.putNumber("DispX", navx.getDispX());
-		SmartDashboard.putNumber("DispY", navx.getDispY());
-		
-		RTS dispUpdater = navx.getDisplacementUpdater();
-		SmartDashboard.putNumber(dispUpdater.getName()+": Hz", dispUpdater.getHz());
-		SmartDashboard.putNumber("Hyp ahrs", Math.hypot(navx.getDispX(), navx.getDispY()));
-		
-		
-	}
 	
 	public void disabledInit() {
+		isAutonomous = false;
 		//if (navx.getDisplacementUpdater().isRunning())
 			//navx.stopUpdateDisplacement();
 	}
 	
-	public boolean isAutonomous() {
-		return isEnabled() && !isOperatorControl() && !isTest();
+	public static boolean isAutonomousActive(){
+		return isAutonomous;
 	}
-
 }
 

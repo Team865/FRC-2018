@@ -5,8 +5,6 @@ package ca.warp7.robot;
 public class Constants {
 	//TODO Update Constants!
 	// PWM Pins
-	//public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1, 5 };
-	//public static final int[] LEFT_DRIVE_MOTOR_IDS = { 9, 2 };
 	public static final int[] RIGHT_DRIVE_MOTOR_IDS = { 1,5 };
 	public static final int[] LEFT_DRIVE_MOTOR_IDS = { 4,3 };
 	public static final int[] INTAKE_MOTOR_RIGHT_IDS = { 7 };
@@ -21,7 +19,6 @@ public class Constants {
 	public static final int LEFT_DRIVE_ENCODER_B = 1;
 	public static final int RIGHT_DRIVE_ENCODER_A = 2;
 	public static final int RIGHT_DRIVE_ENCODER_B = 3;
-	public static final int PHOTOSENSOR_PIN = 9;
 	
 	//TODO Update Constants!
 	// Solenoids (manifold ports)
@@ -31,14 +28,6 @@ public class Constants {
 	//TODO Update Constants!
 	// Compressor
 	public static final int COMPRESSOR_PIN = 0;
-
-	//TODO Update Constants!
-	// CAN IDs
-	/**
-	public static final int SHOOTER_SLAVE_ID = 0;
-	public stati
-	c final int SHOOTER_MASTER_ID = 1;
-	**/
 	
 	//TODO Update Constants!
 	// Remote IDs
@@ -60,4 +49,9 @@ public class Constants {
     
     public static final int LIFT_ENCODER_A = 4;
 	public static final int LIFT_ENCODER_B = 5;
+	
+	//input data points here -> https://www.wolframalpha.com/input/?i=linear+fit+%7B1,+3%7D,%7B2,+4%7D
+	// y = mx + b
+	public static final int CUBE_DISTANCE_M = 0;
+	public static final int CUBE_DISTANCE_B = 0;
 }

@@ -22,8 +22,8 @@ public class AutonomousBaseSplineNotDone {
 	public int step;
 	public static DataPool autoPool = new DataPool("auto");
 	
-	protected Drive drive = Robot.drive;
-	protected Navx navx = Robot.navx;
+	private Drive drive = Robot.drive;
+	private Navx navx = Robot.navx;
 	
 	private Path path;
 	
