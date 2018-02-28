@@ -29,12 +29,21 @@ public class Intake {
 	
 	private double ramp = 0;
 	private final double rampSpeed = 6;
+	private final double openSpeed = 0.5;
 	public void setSpeed(double speed){
 		// Ramp to prevent brown outs
 		ramp += (speed - ramp)/rampSpeed;
-		intakeMotorLeft.set(ramp);
-		intakeMotorRight.set(ramp);
+		if (intakePistons.get())
+		{
+			intakeMotorLeft.set(ramp);
+			intakeMotorRight.set(ramp);
 		}
+		else
+		{
+			intakeMotorLeft.set(ramp * openSpeed);
+			intakeMotorRight.set(ramp * openSpeed);
+		}
+	}
 	
 	public void pistonToggle(){
 		intakePistons.set(!intakePistons.get());

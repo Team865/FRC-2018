@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot  {
-	
 	public static Limelight limelight;
 	
 	public static Drive drive;
@@ -88,7 +87,7 @@ public class Robot extends IterativeRobot  {
 		//	gameData = driverStation.getGameSpecificMessage();
 		drive.resetDistance();
 		navx.resetAngle();
-		gameData = "oklul";
+		gameData = "LLL";
 		auto.autonomousInit(gameData,jsonPaths);
 	
 		
@@ -96,7 +95,8 @@ public class Robot extends IterativeRobot  {
 		//while () {
 			
 		//}
-		auto.periodic();
+		
+		//auto.periodic();
 	}
 	
 	public void autonomousPeriodic(){
@@ -186,6 +186,10 @@ public class Robot extends IterativeRobot  {
 	public void disabledInit() {
 		//if (navx.getDisplacementUpdater().isRunning())
 			//navx.stopUpdateDisplacement();
+	}
+	
+	public boolean isAutonomous() {
+		return isEnabled() && !isOperatorControl() && !isTest();
 	}
 
 }

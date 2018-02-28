@@ -50,7 +50,7 @@ public class Lift {
 		if (false) //zero switch is active zero encoder
 			scaledLift = 0;
 		else
-			scaledLift = liftEncoder.getDistance()/LIFT_HEIGHT;
+			scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		System.out.println("scaledL: "+scaledLift);
 		System.out.println("setL: "+setLocation);
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
