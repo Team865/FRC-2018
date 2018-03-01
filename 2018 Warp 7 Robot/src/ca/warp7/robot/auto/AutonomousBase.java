@@ -27,6 +27,7 @@ public class AutonomousBase {
 		
 	}
 	
+	
 	private static final double speed = 0.25;
 	public void autonomousInit(String gameData, String jsonPaths) {
 		RTS liftRTS = new RTS("liftRTS", 8);
@@ -44,14 +45,29 @@ public class AutonomousBase {
 	private void None_LLL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		intake.setSpeed(0.1);
-		driveDistance(120*2.54+420-110+40,50,10);
+		//intake.setSpeed(0.1);
+		driveDistance(120*2.54+420-110+40-20,50,10);
 		turnRel(45,45/2,15);
 		lift.setLoc(0.8);
-		Timer.delay(3);
+		Timer.delay(7.5);
+		//intake.setSpeed(1);
+		//Timer.delay(0.05);
+		//intake.setSpeed(0);
+		turnRel(90+45,45/2,10);
+		lift.setLoc(0);
+		/*
+		drive.resetDistance();
 		intake.setSpeed(-1);
+		driveDistance(100,50,10);
+		drive.resetDistance();
+		/*
+		alignIntakeCube(50,4,20);
+		lift.setLoc(0.5);
+		Timer.delay(1);
+		intake.setSpeed(1);
 		Timer.delay(0.05);
 		intake.setSpeed(0);
+		*/
 	}
 	
 	private void alignIntakeCube(double distThresh, double angleThresh, double distanceTolerance){
@@ -82,7 +98,7 @@ public class AutonomousBase {
 	}
 	
 	private double distancePredictor(double area){
-		return CUBE_DISTANCE_M * area  + CUBE_DISTANCE_B;
+		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
 	}
 	
 	private void driveDistance(double totalDist, double distThresh, double distanceTolerance) {
@@ -93,7 +109,7 @@ public class AutonomousBase {
 				driveSpeed = 1;
 			drive.tankDrive(speed*driveSpeed,driveSpeed*speed);
 			dist = getOverallDistance();
-			System.out.println(dist);
+			//System.out.println(dist);
 		}
 		drive.tankDrive(0,0);
 	}
@@ -105,8 +121,8 @@ public class AutonomousBase {
 			if (turnSpeed > 1)
 				turnSpeed = 1;
 			navAngle = navx.getAngle()%360;
-			System.out.println(turnSpeed);
-			System.out.println(turnSpeed*speed);
+			//System.out.println(turnSpeed);
+			//System.out.println(turnSpeed*speed);
 			if (turnDirection(requiredAngle,navAngle))
 				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
 			else
@@ -124,8 +140,8 @@ public class AutonomousBase {
 			if (turnSpeed > 1)
 				turnSpeed = 1;
 			navAngle = navx.getAngle();
-			System.out.println(turnSpeed);
-			System.out.println(turnSpeed*speed);
+			//System.out.println(turnSpeed);
+			//System.out.println(turnSpeed*speed);
 			if (wantedAngle >= 0)
 				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
 			else

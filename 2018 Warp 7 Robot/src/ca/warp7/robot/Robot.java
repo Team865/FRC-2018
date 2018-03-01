@@ -101,8 +101,15 @@ public class Robot extends IterativeRobot  {
 		compressor.setClosedLoopControl(true);
 		drive.resetDistance();
 		//a();
+		limelightthing();
 	}
-
+	
+	private void limelightthing() {
+		while (isOperatorControl() && isEnabled()) {
+			SmartDashboard.putNumber("limelight area",limelight.getArea());
+		}
+	}
+	
 	public void teleopPeriodic(){
         controls = new DualRemote();
 

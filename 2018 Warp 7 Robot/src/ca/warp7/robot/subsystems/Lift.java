@@ -62,8 +62,6 @@ public class Lift {
 		System.out.println("scaledL: "+scaledLift);
 		System.out.println("setL: "+setLocation);
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
-		if (speed > 1)
-			speed = 1;
 
 		System.out.println("speed: "+speed);
 		if (intake.hasCube())

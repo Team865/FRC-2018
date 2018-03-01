@@ -52,6 +52,6 @@ public class Constants {
 	
 	//input data points here -> https://www.wolframalpha.com/input/?i=linear+fit+%7B1,+3%7D,%7B2,+4%7D
 	// y = mx + b
-	public static final int CUBE_DISTANCE_M = 0;
-	public static final int CUBE_DISTANCE_B = 0;
+	public static final double CUBE_DISTANCE_M = 0.741402;
+	public static final double CUBE_DISTANCE_B = 91.1675;
 }

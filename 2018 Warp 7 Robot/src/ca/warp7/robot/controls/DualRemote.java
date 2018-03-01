@@ -10,16 +10,7 @@ import ca.warp7.robot.misc.DataPool;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class DualRemote extends ControlsBase {
-	/*
-	private double rpm = 4450;
 	
-	
-	public DualRemote() {
-		super();
-		
-		rpm = 4450;
-	}
-	*/
 	@Override
 	public void periodic() {
 		if(driver.getTrigger(kLeft) == DOWN){
