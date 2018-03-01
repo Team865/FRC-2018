@@ -45,31 +45,25 @@ public class AutonomousBase {
 		navx.resetAngle();
 		drive.resetDistance();
 		intake.setSpeed(0.1);
-		driveDistance(120*2.54+420-110+40,50);
-		//turnRel(45,45/2,15);
+		driveDistance(120*2.54+420-110+40,50,10);
+		turnRel(45,45/2,15);
 		lift.setLoc(0.8);
-		intake.setSpeed(-0.5);
-		
-		//turnRel(90+45,45,20);
-		/*
-		intake.setSpeed(0.1);
-		
+		Timer.delay(3);
 		intake.setSpeed(-1);
+		Timer.delay(0.05);
 		intake.setSpeed(0);
-		*/
-		Timer.delay(5);
 	}
 	
-	private void alignIntakeCube(double distThresh,double angleTolerance){
+	private void alignIntakeCube(double distThresh, double angleThresh, double distanceTolerance){
 		double totalDist = distancePredictor(limelight.getArea());
 		double dist = getOverallDistance();
-		while (Robot.isAutonomousActive() && !intake.hasCube() && totalDist>dist) {
+		while (Robot.isAutonomousActive() && !intake.hasCube() && !within(dist,totalDist,distanceTolerance)) {
 			double driveSpeed = 1+(totalDist-dist-distThresh)/distThresh;
 			if (driveSpeed > 1)
 				driveSpeed = 1;
 			
 			double cubeAngleOffset = limelight.getXOffset();
-			double turnSpeed = 1-Math.abs(cubeAngleOffset/angleTolerance);
+			double turnSpeed = 1-Math.abs(cubeAngleOffset/angleThresh);
 			if (turnSpeed < 0)
 				turnSpeed = 0;
 				
@@ -91,9 +85,9 @@ public class AutonomousBase {
 		return CUBE_DISTANCE_M * area  + CUBE_DISTANCE_B;
 	}
 	
-	private void driveDistance(double totalDist, double distThresh) {
+	private void driveDistance(double totalDist, double distThresh, double distanceTolerance) {
 		double dist = getOverallDistance();
-		while (Robot.isAutonomousActive() && totalDist-20>dist) {
+		while (Robot.isAutonomousActive() && !within(dist,totalDist,distanceTolerance)) {
 			double driveSpeed = 1+(totalDist-dist-distThresh)/distThresh;
 			if (driveSpeed > 1)
 				driveSpeed = 1;
@@ -104,10 +98,10 @@ public class AutonomousBase {
 		drive.tankDrive(0,0);
 	}
 	
-	private void angleTurn(double requiredAngle, double angleTolerance, double angleThresh) {
+	private void angleTurn(double requiredAngle, double angleThresh, double angleTolerance) {
 		double navAngle = navx.getAngle()%360;
-		while (Robot.isAutonomousActive() && !within(navAngle,requiredAngle,angleThresh)){
-			double turnSpeed = 1+(requiredAngle-navAngle-angleTolerance)/angleTolerance;
+		while (Robot.isAutonomousActive() && !within(navAngle,requiredAngle,angleTolerance)){
+			double turnSpeed = 1+(requiredAngle-navAngle-angleThresh)/angleThresh;
 			if (turnSpeed > 1)
 				turnSpeed = 1;
 			navAngle = navx.getAngle()%360;
@@ -122,9 +116,23 @@ public class AutonomousBase {
 		drive.tankDrive(0,0);
 	}
 	
-	private void turnRel(double angle, double angleTolerance, double angleThresh) {
-		double wantedAngle = (navx.getAngle()+angle)%360;
-		angleTurn(wantedAngle, angleTolerance, angleThresh);
+	private void turnRel(double angle, double angleThresh, double angleTolerance) {
+		double wantedAngle = navx.getAngle()+angle;
+		double navAngle = navx.getAngle();
+		while (Robot.isAutonomousActive() && !within(navAngle,wantedAngle,angleTolerance)){
+			double turnSpeed = 1+(wantedAngle-navAngle-angleThresh)/angleThresh;
+			if (turnSpeed > 1)
+				turnSpeed = 1;
+			navAngle = navx.getAngle();
+			System.out.println(turnSpeed);
+			System.out.println(turnSpeed*speed);
+			if (wantedAngle >= 0)
+				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
+			else
+				drive.tankDrive(turnSpeed*speed*-1,turnSpeed*speed);
+				
+		}
+		drive.tankDrive(0,0);
 	}
 	
 	private boolean turnDirection(double requiredAngle,double angle) {

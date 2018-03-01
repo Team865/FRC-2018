@@ -150,11 +150,11 @@ public class Robot extends IterativeRobot  {
 		double right = drive.getRightDistance();
 		double offset = left/right;
 		if (offset >= 1) {
-			SmartDashboard.putNumber("LeftOffset", 1);
-			SmartDashboard.putNumber("RightOffset", right/left);
-		}else {
-			SmartDashboard.putNumber("LeftOffset", offset);
+			SmartDashboard.putNumber("LeftOffset", right/left);
 			SmartDashboard.putNumber("RightOffset", 1);
+		}else {
+			SmartDashboard.putNumber("LeftOffset", 1);
+			SmartDashboard.putNumber("RightOffset", offset);
 		}
 		
 	}

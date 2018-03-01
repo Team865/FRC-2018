@@ -36,6 +36,9 @@ public class Lift {
 	private final double rampSpeed = 6;
 	public void setSpeed(double speed){
 		ramp += (speed - ramp)/rampSpeed;
+		
+		if (false && speed > 0)//is max limit hit
+			ramp = 0;
 		LiftMotorLeft.set(ramp);
 		LiftMotorRight.set(ramp);
 	}
@@ -44,23 +47,29 @@ public class Lift {
 		setLocation = Math.abs(loc);
 	}
 	
+	private static final double SPEED_OFFSET = 0;
+	private static final double SPEED_OFFSET_CUBE = 0;
 	private static final double tolerance = 0.2;
 	private double scaledLift = 0;
 	public void periodic(){
-		if (false) //zero switch is active zero encoder
+		if (isBottom()){ //zero switch is active zero encoder
 			scaledLift = 0;
-		else
+			zeroEncoder();
+		}else
 			scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		
 		System.out.println("Encoder Lift Val: "+ getEncoderVal());
 		System.out.println("scaledL: "+scaledLift);
 		System.out.println("setL: "+setLocation);
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
-		if (speed > 0.75)
-			speed = 0.75;
-		//if (scaledLift >= setLocation-tolerance && scaledLift <= setLocation+tolerance)
+		if (speed > 1)
+			speed = 1;
+
 		System.out.println("speed: "+speed);
-		setSpeed(speed);
+		if (intake.hasCube())
+			setSpeed(speed+SPEED_OFFSET_CUBE);
+		else
+			setSpeed(speed+SPEED_OFFSET);
 	}
 	
 	public double getEncoderVal() {
@@ -69,5 +78,9 @@ public class Lift {
 	
 	public void zeroEncoder() {
 		liftEncoder.reset();
+	}
+	
+	public boolean isBottom(){
+		return false;//is lift at bottom
 	}
 }

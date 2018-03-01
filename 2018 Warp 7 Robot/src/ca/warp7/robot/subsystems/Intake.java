@@ -16,13 +16,13 @@ public class Intake {
 	private MotorGroup intakeMotorLeft;
 	private Solenoid intakePistons;
 	private LimelightPhotosensor photosensor;
+	private Lift lift = Robot.lift;
 	
 	public Intake(){
 		intakeMotorLeft = new MotorGroup(INTAKE_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
 		intakeMotorRight = new MotorGroup(INTAKE_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
 		intakeMotorRight.setInverted(true);
 		intakePistons = new Solenoid(INTAKE_PISTONS);
-		//intakePistons.set(true);
 		
 		photosensor = new LimelightPhotosensor(Robot.limelight, 1);
 	}
@@ -33,13 +33,11 @@ public class Intake {
 	public void setSpeed(double speed){
 		// Ramp to prevent brown outs
 		ramp += (speed - ramp)/rampSpeed;
-		if (intakePistons.get())
-		{
+		if (intakePistons.get()){
 			intakeMotorLeft.set(ramp);
 			intakeMotorRight.set(ramp);
 		}
-		else
-		{
+		else{
 			intakeMotorLeft.set(ramp * openSpeed);
 			intakeMotorRight.set(ramp * openSpeed);
 		}
@@ -54,6 +52,7 @@ public class Intake {
 	}
 	
 	public void periodic() {
-		photosensor.update();
+		if (lift.isBottom())
+			photosensor.update();
 	}
 }
