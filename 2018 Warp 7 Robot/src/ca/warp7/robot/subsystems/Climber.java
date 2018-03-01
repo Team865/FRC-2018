@@ -41,6 +41,6 @@ public class Climber {
 		
 		double speed = 1+(setLocation-scaledLift-tolerance)/tolerance;
 		//if (scaledLift >= setLocation-tolerance && scaledLift <= setLocation+tolerance)
-		setSpeed(speed);
+		//setSpeed(speed);
 	}
 }

@@ -137,6 +137,7 @@ public class Robot extends IterativeRobot  {
 			drive.tankDrive(i,i);
 			i+=0.01;
 		}
+		drive.resetDistance();
 		Timer.delay(5);
 		while (i>0) {
 			Timer.delay(0.05);
