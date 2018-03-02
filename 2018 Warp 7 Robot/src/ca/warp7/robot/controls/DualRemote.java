@@ -14,11 +14,11 @@ public class DualRemote extends ControlsBase {
 	@Override
 	public void periodic() {
 		if(driver.getTrigger(kLeft) == DOWN){
-			intake.setSpeed(0.7);
+			intake.rampSpeed(0.7);
 		}else if (driver.getTrigger(kRight) == DOWN) {
-			intake.setSpeed(-1);
+			intake.rampSpeed(-1);
 		}else {
-			intake.setSpeed(0);
+			intake.rampSpeed(0);
 		}
 		
 		if(driver.getStickButton(kRight) == PRESSED)
