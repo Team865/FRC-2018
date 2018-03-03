@@ -51,6 +51,6 @@ public class Intake {
 	
 	public void periodic() {
 		//if (lift.isBottom())
-			photosensor.update();
+		//	photosensor.update();
 	}
 }

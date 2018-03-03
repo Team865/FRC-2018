@@ -13,6 +13,7 @@ import ca.warp7.robot.subsystems.Limelight;
 import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -24,8 +25,8 @@ public class Robot extends IterativeRobot  {
 	
 	public static Drive drive;
 	public static Climber climber;
-	public static Intake intake;
 	public static Lift lift;
+	public static Intake intake;
 	private static boolean isAutonomous;
 	
 	private static AutonomousBase auto;
@@ -72,19 +73,22 @@ public class Robot extends IterativeRobot  {
 	public void autonomousInit(){
 		isAutonomous = true;
 		String jsonPaths = "None";
-		/*if(!s4.get())
+		int pin = autoSelector();
+		if(pin == 0)
+			jsonPaths = "None";
+		else if(pin == 1)
 			jsonPaths = "Left";
-		else if(!s5.get())
+		else if(pin == 2)
 			jsonPaths = "Middle";
-		else if(!s6.get())
+		else if(pin == 3)
 			jsonPaths = "Right";			
-		*/
+		
 		String gameData = null;
 		//while (gameData == null)
 		//	gameData = driverStation.getGameSpecificMessage();
 		drive.resetDistance();
 		navx.resetAngle();
-		gameData = "LLL";
+		gameData = "RRR";
 		auto.autonomousInit(gameData,jsonPaths);
 		drive.tankDrive(0,0);
 		//auto.periodic();
@@ -100,14 +104,6 @@ public class Robot extends IterativeRobot  {
 		//navx.resetDisplacement();
 		compressor.setClosedLoopControl(true);
 		drive.resetDistance();
-		//a();
-		//limelightthing();
-	}
-	
-	private void limelightthing() {
-		while (isOperatorControl() && isEnabled()) {
-			SmartDashboard.putNumber("limelight area",limelight.getArea());
-		}
 	}
 	
 	public void teleopPeriodic(){
@@ -128,16 +124,44 @@ public class Robot extends IterativeRobot  {
 			//drive.periodic();
 			SmartDashboard.putNumber("Lift", a);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
-			SmartDashboard.putNumber("Analog 0", a0.getAverageVoltage());
-			SmartDashboard.putNumber("Analog 1", a1.getAverageVoltage());
-			SmartDashboard.putNumber("Analog 2", a2.getAverageVoltage());
-			SmartDashboard.putNumber("Analog 3", a3.getAverageVoltage());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
+			
 			Timer.delay(0.005);
 		 }
 	}
 	
-	public void a() {
+	public void disabledInit() {
+		isAutonomous = false;
+		//if (navx.getDisplacementUpdater().isRunning())
+			//navx.stopUpdateDisplacement();
+	}
+	
+	public  void testInit() {
+		//makeRobitDriveStraight();
+		//limelightthing();
+		calibrateLift();
+	}
+	
+	public  void testPeriodic() {
+		
+	}
+	
+	public static boolean isAutonomousActive(){
+		return isAutonomous;
+	}
+	
+	public void calibrateLift() {
+		double speed = 0;
+		while (lift.isBottom()) {
+			lift.setSpeed(speed);
+			speed += 0.005;
+			Timer.delay(0.5);
+		}
+		lift.setSpeed(0);
+		SmartDashboard.putNumber("Lift power", speed);
+	}
+	
+	public void makeRobitDriveStraight() {
 		double i=0;
 		while (i<1) {
 			Timer.delay(0.05);
@@ -166,14 +190,32 @@ public class Robot extends IterativeRobot  {
 		
 	}
 	
-	public void disabledInit() {
-		isAutonomous = false;
-		//if (navx.getDisplacementUpdater().isRunning())
-			//navx.stopUpdateDisplacement();
+	private void limelightthing() {
+		while (isOperatorControl() && isEnabled()) {
+			SmartDashboard.putNumber("limelight area",limelight.getArea());
+		}
 	}
 	
-	public static boolean isAutonomousActive(){
-		return isAutonomous;
+	private int autoSelector() {
+		double voltage = 0;
+		int number = 0;
+		if (a0.getAverageVoltage() > voltage) {
+			number = 0;
+			voltage = a0.getAverageVoltage();
+		}
+		if (a1.getAverageVoltage() > voltage) {
+			number = 1;
+			voltage = a1.getAverageVoltage();
+		}
+		if (a2.getAverageVoltage() > voltage) {
+			number = 2;
+			voltage = a2.getAverageVoltage();
+		}
+		if (a3.getAverageVoltage() > voltage) {
+			number = 3;
+			voltage = a3.getAverageVoltage();
+		}
+		return number;
 	}
 }
 

@@ -13,9 +13,9 @@ public class DualRemote extends ControlsBase {
 	
 	@Override
 	public void periodic() {
-		if(driver.getTrigger(kLeft) == DOWN){
+		if(driver.getTrigger(kRight) == DOWN){
 			intake.rampSpeed(0.7);
-		}else if (driver.getTrigger(kRight) == DOWN) {
+		}else if (driver.getTrigger(kLeft) == DOWN) {
 			intake.rampSpeed(-1);
 		}else {
 			intake.rampSpeed(0);
@@ -54,7 +54,7 @@ public class DualRemote extends ControlsBase {
 		}
 		
 		if(operator.getAButton() == DOWN)
-			lift.setLoc(operator.getY(kLeft));
+			lift.rampSpeed(operator.getY(kLeft));
 		
 		if(operator.getBButton() == DOWN)
 			climber.setSpeed(operator.getY(kRight)*-1);

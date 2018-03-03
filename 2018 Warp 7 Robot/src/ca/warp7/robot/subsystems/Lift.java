@@ -1,16 +1,17 @@
 package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.LIFT_MOTOR_RIGHT_IDS;
-import static ca.warp7.robot.Constants.DRIVE_INCHES_PER_TICK;
 import static ca.warp7.robot.Constants.LIFT_ENCODER_A;
 import static ca.warp7.robot.Constants.LIFT_ENCODER_B;
 import static ca.warp7.robot.Constants.LIFT_MOTOR_LEFT_IDS;
 import static ca.warp7.robot.Constants.LIFT_HEIGHT;
+import static ca.warp7.robot.Constants.HALL_DIO;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.MotorGroup;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
@@ -19,22 +20,29 @@ public class Lift {
 	private MotorGroup LiftMotorLeft;
 	private Encoder liftEncoder;
 	private double setLocation;
+	private DigitalInput liftHallaffect;
 	
 	private Intake intake = Robot.intake;
 	
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
 		LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
-		LiftMotorRight.setInverted(true);
+		//LiftMotorLeft.setInverted(true);
 		
 		liftEncoder =  new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
 		liftEncoder.setDistancePerPulse(1);
+		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
 	}
 	
 	private double ramp = 0;
 	private final double rampSpeed = 6;
 	public void setSpeed(double speed){
+		LiftMotorLeft.set(speed);
+		LiftMotorRight.set(speed);
+	}
+	
+	public void rampSpeed(double speed){
 		ramp += (speed - ramp)/rampSpeed;
 		
 		if (false && speed > 0)//is max limit hit
@@ -67,10 +75,10 @@ public class Lift {
 		else if (speed < -0.5)
 			speed = -0.5;
 		System.out.println("speed: "+speed);
-		if (intake.hasCube())
-			setSpeed(speed+SPEED_OFFSET_CUBE);
-		else
-			setSpeed(speed+SPEED_OFFSET);
+		//if (intake.hasCube())
+			//rampSpeed(speed+SPEED_OFFSET_CUBE);
+		//else
+			//rampSpeed(speed+SPEED_OFFSET);
 	}
 	
 	public double getEncoderVal() {
@@ -82,6 +90,6 @@ public class Lift {
 	}
 	
 	public boolean isBottom(){
-		return false;//is lift at bottom
+		return liftHallaffect.get();//is lift at bottom
 	}
 }
