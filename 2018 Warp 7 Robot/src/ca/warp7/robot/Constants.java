@@ -20,7 +20,7 @@ public class Constants {
 	public static final int RIGHT_DRIVE_ENCODER_A = 2;
 	public static final int RIGHT_DRIVE_ENCODER_B = 3;
 	
-	public static final int HALL_DIO = 9;
+	public static final int HALL_DIO = 6;
 	
 	//TODO Update Constants!
 	// Solenoids (manifold ports)
@@ -46,7 +46,7 @@ public class Constants {
     public static double RIGHT_DRIFT_OFFSET = 1;
     public static double LEFT_DRIFT_OFFSET = 0.97;
     
-    public static double LIFT_HEIGHT = 11824;
+    public static double LIFT_HEIGHT = 12100;
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
     
     public static final int LIFT_ENCODER_A = 4;
@@ -57,7 +57,7 @@ public class Constants {
 	public static final double CUBE_DISTANCE_M = 0.741402;
 	public static final double CUBE_DISTANCE_B = 91.1675;
 	
-	public static final double SPEED_OFFSET = 0;
+	public static final double SPEED_OFFSET = 0.195;
 	public static final double SPEED_OFFSET_CUBE = 0 - SPEED_OFFSET;
 	public static final double SPEED_OFFSET_2ND_STAGE = 0;
 }

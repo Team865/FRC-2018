@@ -70,32 +70,26 @@ public class Robot extends IterativeRobot  {
 		a3 = new AnalogInput(3);
 	}
 	
+	
 	public void autonomousInit(){
-		isAutonomous = true;
-		String jsonPaths = "None";
-		int pin = autoSelector();
-		if(pin == 0)
-			jsonPaths = "None";
-		else if(pin == 1)
-			jsonPaths = "Left";
-		else if(pin == 2)
-			jsonPaths = "Middle";
-		else if(pin == 3)
-			jsonPaths = "Right";			
 		
-		String gameData = null;
-		//while (gameData == null)
-		//	gameData = driverStation.getGameSpecificMessage();
-		drive.resetDistance();
-		navx.resetAngle();
-		gameData = "RRR";
-		auto.autonomousInit(gameData,jsonPaths);
-		drive.tankDrive(0,0);
-		//auto.periodic();
 	}
 	
+	private boolean runOne = true;
 	public void autonomousPeriodic(){
-		
+		String gameData = driverStation.getGameSpecificMessage();
+		if (runOne && gameData != null) {
+			runOne = false;
+			isAutonomous = true;
+			String jsonPaths = "None";
+			int pin = autoSelector();			
+			System.out.println("pin: "+ pin);
+			drive.resetDistance();
+			navx.resetAngle();
+			auto.autonomousInit(gameData,pin);
+			drive.tankDrive(0,0);
+			//auto.periodic();
+		}
 	}
 	
 	public void teleopInit() {
@@ -120,8 +114,14 @@ public class Robot extends IterativeRobot  {
 				a = b;
 			SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
 			SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
-			lift.periodic();
+			//lift.periodic();
 			//drive.periodic();
+			
+			SmartDashboard.putNumber("0", a0.getAverageVoltage());
+			SmartDashboard.putNumber("1", a1.getAverageVoltage());
+			SmartDashboard.putNumber("2", a2.getAverageVoltage());
+			SmartDashboard.putNumber("3", a3.getAverageVoltage());
+			
 			SmartDashboard.putNumber("Lift", a);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
@@ -147,14 +147,15 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public static boolean isAutonomousActive(){
-		return isAutonomous;
+		return true;
+				
 	}
 	
 	public void calibrateLift() {
 		double speed = 0;
 		while (lift.isBottom()) {
 			lift.setSpeed(speed);
-			speed += 0.005;
+			speed -= 0.005;
 			Timer.delay(0.5);
 		}
 		lift.setSpeed(0);
@@ -200,11 +201,11 @@ public class Robot extends IterativeRobot  {
 		double voltage = 0;
 		int number = 0;
 		if (a0.getAverageVoltage() > voltage) {
-			number = 0;
+			number = 1;
 			voltage = a0.getAverageVoltage();
 		}
 		if (a1.getAverageVoltage() > voltage) {
-			number = 1;
+			number = 0;
 			voltage = a1.getAverageVoltage();
 		}
 		if (a2.getAverageVoltage() > voltage) {
@@ -215,6 +216,7 @@ public class Robot extends IterativeRobot  {
 			number = 3;
 			voltage = a3.getAverageVoltage();
 		}
+		System.out.println("volt: "+voltage);
 		return number;
 	}
 }

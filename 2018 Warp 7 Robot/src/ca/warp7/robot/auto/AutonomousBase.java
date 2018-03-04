@@ -28,14 +28,16 @@ public class AutonomousBase {
 	}
 	
 	
-	private static final double speed = 0.7;
-	public void autonomousInit(String gameData, String jsonPaths) {
+	private static final double speed = 0.35;
+	public void autonomousInit(String gameData, int pin) {
 		RTS liftRTS = new RTS("liftRTS", 8);
 		Runnable liftPer = () -> lift.periodic();
 		liftRTS.addTask(liftPer);
 		liftRTS.start();
-		/*
-		if (jsonPaths.equals("None"))
+		//driveDistance(520-49-10,360,100,10);
+		System.out.println(gameData);
+		if (pin == 0) { //None
+			System.out.println("pin 0 active :None:");
 			if (gameData.equals("RRR"))
 				None_RRR();
 			else if (gameData.equals("LLL"))
@@ -44,28 +46,9 @@ public class AutonomousBase {
 				None_LRL();
 			else if (gameData.equals("RLR"))
 				None_RLR();
-		
-		else if (jsonPaths.equals("Middle"))
-			if (gameData.equals("RRR"))
-				Middle_RRR();
-			else if (gameData.equals("LLL"))
-				Middle_LLL();
-			else if (gameData.equals("LRL"))
-				Middle_LRL();
-			else if (gameData.equals("RLR"))
-				Middle_RLR();
-		
-		else if (jsonPaths.equals("Right"))
-			if (gameData.equals("RRR"))
-				Right_RRR();
-			else if (gameData.equals("LLL"))
-				Right_LLL();
-			else if (gameData.equals("LRL"))
-				Right_LRL();
-			else if (gameData.equals("RLR"))
-				Right_RLR();
-		
-		else if (jsonPaths.equals("Left"))
+		}
+		else if (pin == 1) { //Left
+			System.out.println("pin 1 active :Left:");
 			if (gameData.equals("RRR"))
 				Left_RRR();
 			else if (gameData.equals("LLL"))
@@ -74,20 +57,179 @@ public class AutonomousBase {
 				Left_LRL();
 			else if (gameData.equals("RLR"))
 				Left_RLR();
-		*/
+		}
+		else if (pin == 2) { //Middle
+			System.out.println("pin 2 active :Middle:");
+			if (gameData.equals("RRR"))
+				Middle_RRR();
+			else if (gameData.equals("LLL"))
+				Middle_LLL();
+			else if (gameData.equals("LRL"))
+				Middle_LRL();
+			else if (gameData.equals("RLR"))
+				Middle_RLR();
+		}
+		else if (pin == 3) { //Right
+			System.out.println("pin 3 active :Right:");
+			if (gameData.equals("RRR"))
+				Right_RRR();
+			else if (gameData.equals("LLL"))
+				Right_LLL();
+			else if (gameData.equals("LRL"))
+				Right_LRL();
+			else if (gameData.equals("RLR"))
+				Right_RLR();
+		}
 		liftRTS.stop();
 	}
 	
-	private void testVis() {
+	private void Left_RLR() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void Left_RRR() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void Left_LLL() {
+		System.out.println("inside 0");
 		navx.resetAngle();
 		drive.resetDistance();
-		intake.setSpeed(-1);
-		alignIntakeCube(100,4,20);
-		Timer.delay(1);
+		System.out.println("inside 1");
+		driveDistance(210/2,5,40,2);
+		turnRelRight(25,10,5);
+		//lift.setLoc(0.4);
+		System.out.println("inside 2");
+		drive.resetDistance();
+		driveDistance(100,5,40,2);
+		Timer.delay(0.5);
+		System.out.println("inside 3");
+		intake.setSpeed(1);
+		Timer.delay(0.4);
+		intake.setSpeed(0);
+		System.out.println("inside 4");
+	}
+	
+	/*
+	driveDistance(120*2.54+420-110+40-40,50,10);
+	turnRelRight(45,45/2,15);
+	lift.setLoc(0.9);
+	drive.resetDistance();
+	driveDistance(10,10,2);
+	Timer.delay(7.5);
+	intake.setSpeed(1);
+	Timer.delay(0.4);
+	intake.setSpeed(0);
+	turnRelRight(90+45,45/2,10);
+	lift.setLoc(0.1);
+	drive.resetDistance();
+	driveDistance(100,50,10);
+	*/
+	
+	private void Left_LRL() {
+		navx.resetAngle();
+		drive.resetDistance();
+		driveDistance(210/2,5,40,2);
+		turnRelRight(25,10,5);
+		lift.setLoc(0.4);
+		drive.resetDistance();
+		driveDistance(100,5,40,2);
+		Timer.delay(0.5);
+		intake.setSpeed(1);
+		Timer.delay(0.4);
+		intake.setSpeed(0);
+	}
+
+	/*
+	turnRelRight(90,75,5);
+	driveDistance(520-49-10,360,100,10);
+	turnRelRight(90,70,5);
+	Timer.delay(0.5);
+	drive.resetDistance();
+	driveDistance(450,360,50,10);
+	angleTurn(0,675,5);
+	lift.setLoc(0.9);
+	drive.resetDistance();
+	driveDistance(25,360,10,2);
+	Timer.delay(3.5);
+	intake.setSpeed(1);
+	Timer.delay(0.4);
+	intake.setSpeed(0);
+	*/
+	
+	private void Right_RLR() {
+		navx.resetAngle();
+		drive.resetDistance();
+		driveDistance(210/2,5,40,2);
+		turnRelLeft(-25,10,5);
+		lift.setLoc(0.4);
+		drive.resetDistance();
+		driveDistance(100,5,40,2);
+		Timer.delay(0.5);
+		intake.setSpeed(1);
+		Timer.delay(0.4);
+		intake.setSpeed(0);
+	}
+
+	private void Right_LRL() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void Right_LLL() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void Right_RRR() {
+		navx.resetAngle();
+		drive.resetDistance();
+		driveDistance(210/2,5,40,2);
+		turnRelLeft(-25,10,5);
+		lift.setLoc(0.4);
+		drive.resetDistance();
+		driveDistance(100,5,40,2);
+		Timer.delay(0.5);
+		intake.setSpeed(1);
+		Timer.delay(0.4);
 		intake.setSpeed(0);
 	}
 	
+	//Middle switch left
+	private void Middle_LLL() {
+		navx.resetAngle();
+		drive.resetDistance();
+		turnRelLeft(-18,10,5);
+		lift.setLoc(0.4);
+		driveDistance(240,5,40,2);
+		Timer.delay(0.5);
+		intake.setSpeed(-1);
+		Timer.delay(0.4);
+		intake.setSpeed(0);
+		//drive.resetDistance();
+		//driveDistance(-50,5,10,2);
+		//lift.setLoc(0);
+	}
+	
+	//Middle switch right
 	private void Middle_RRR() {
+		navx.resetAngle();
+		drive.resetDistance();
+		turnRelRight(25,5,5);
+		lift.setLoc(0.4);
+		
+		driveDistance(220,5,40,2);
+		Timer.delay(0.5);
+		intake.setSpeed(1);
+		Timer.delay(0.4);
+		intake.setSpeed(0);
+	
+	}
+	
+	//Middle switch right
+	private void Middle_RLR() {
 		navx.resetAngle();
 		drive.resetDistance();
 		turnRelRight(25,15,5);
@@ -97,59 +239,53 @@ public class AutonomousBase {
 		intake.setSpeed(1);
 		Timer.delay(0.4);
 		intake.setSpeed(0);
-	}	
-		private void Middle_LLL() {
-			navx.resetAngle();
-			drive.resetDistance();
-			turnRelLeft(-25,10,5);
-			lift.setLoc(0.4);
-			driveDistance(210,5,40,2);
-			Timer.delay(0.5);
-			intake.setSpeed(1);
-			Timer.delay(0.4);
-			intake.setSpeed(0);
-			drive.resetDistance();
-			driveDistance(-50,5,10,2);
-			lift.setLoc(0);
-		}
 		
-	private void Left_LLL() {
-		/*
-		driveDistance(120*2.54+420-110+40-40,50,10);
-		turnRelRight(45,45/2,15);
-		lift.setLoc(0.9);
-		drive.resetDistance();
-		driveDistance(10,10,2);
-		Timer.delay(7.5);
-		intake.setSpeed(1);
-		Timer.delay(0.4);
-		intake.setSpeed(0);
-		turnRelRight(90+45,45/2,10);
-		lift.setLoc(0.1);
-		drive.resetDistance();
-		driveDistance(100,50,10);
-		*/
 	}
-	
-	private void Left_LRL() {
+
+	//Middle switch left
+	private void Middle_LRL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		turnRelRight(90,75,5);
-		/*
-		driveDistance(520-49-10,360,100,10);
-		turnRelRight(90,70,5);
+		turnRelLeft(-25,10,5);
+		lift.setLoc(0.4);
+		driveDistance(210,5,40,2);
 		Timer.delay(0.5);
-		drive.resetDistance();
-		driveDistance(450,360,50,10);
-		angleTurn(0,675,5);
-		lift.setLoc(0.9);
-		drive.resetDistance();
-		driveDistance(25,360,10,2);
-		Timer.delay(3.5);
 		intake.setSpeed(1);
 		Timer.delay(0.4);
 		intake.setSpeed(0);
-		*/
+		//drive.resetDistance();
+		//driveDistance(-50,5,10,2);
+		//lift.setLoc(0);
+		
+	}
+
+	private void None_RLR() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void None_LRL() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void None_LLL() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void None_RRR() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void testVis() {
+		navx.resetAngle();
+		drive.resetDistance();
+		intake.setSpeed(-1);
+		alignIntakeCube(100,4,20);
+		Timer.delay(1);
+		intake.setSpeed(0);
 	}
 	
 	private void alignIntakeCube(double distThresh, double angleThresh, double distanceTolerance){

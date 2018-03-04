@@ -6,6 +6,8 @@ import static ca.warp7.robot.Constants.LIFT_ENCODER_B;
 import static ca.warp7.robot.Constants.LIFT_MOTOR_LEFT_IDS;
 import static ca.warp7.robot.Constants.LIFT_HEIGHT;
 import static ca.warp7.robot.Constants.HALL_DIO;
+import static ca.warp7.robot.Constants.SPEED_OFFSET;
+import static ca.warp7.robot.Constants.SPEED_OFFSET_CUBE;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -55,8 +57,6 @@ public class Lift {
 		setLocation = Math.abs(loc);
 	}
 	
-	private static final double SPEED_OFFSET = 0;
-	private static final double SPEED_OFFSET_CUBE = 0;
 	private static final double tolerance = 0.2;
 	private double scaledLift = 0;
 	public void periodic(){
@@ -79,6 +79,7 @@ public class Lift {
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else
 			//rampSpeed(speed+SPEED_OFFSET);
+		rampSpeed(speed+SPEED_OFFSET);
 	}
 	
 	public double getEncoderVal() {
@@ -90,6 +91,6 @@ public class Lift {
 	}
 	
 	public boolean isBottom(){
-		return liftHallaffect.get();//is lift at bottom
+		return !(boolean) liftHallaffect.get();//is lift at bottom
 	}
 }
