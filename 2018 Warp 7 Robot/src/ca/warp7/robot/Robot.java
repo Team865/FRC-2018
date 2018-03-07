@@ -27,7 +27,6 @@ public class Robot extends IterativeRobot  {
 	public static Climber climber;
 	public static Lift lift;
 	public static Intake intake;
-	private static boolean isAutonomous;
 	
 	private static AutonomousBase auto;
 	private static ControlsBase controls;
@@ -37,7 +36,7 @@ public class Robot extends IterativeRobot  {
 	
 	public static Navx navx;
 	
-	private DriverStation driverStation;	
+	private static DriverStation driverStation;	
 	
 	private AnalogInput a0;
 	private AnalogInput a1;
@@ -59,8 +58,6 @@ public class Robot extends IterativeRobot  {
 		
 		driverStation = DriverStation.getInstance();
 		//navx.startUpdateDisplacement(60);
-		
-		isAutonomous = false;
 		auto = new AutonomousBase();
 		
 		
@@ -70,30 +67,28 @@ public class Robot extends IterativeRobot  {
 		a3 = new AnalogInput(3);
 	}
 	
-	
 	public void autonomousInit(){
-		
+		runOne = true;
 	}
 	
+	private Thread autoThread;
 	private boolean runOne = true;
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
 		if (runOne && gameData != null) {
 			runOne = false;
-			isAutonomous = true;
-			String jsonPaths = "None";
 			int pin = autoSelector();			
-			System.out.println("pin: "+ pin);
 			drive.resetDistance();
 			navx.resetAngle();
-			auto.autonomousInit(gameData,pin);
-			drive.tankDrive(0,0);
-			//auto.periodic();
+			autoThread = new Thread(() -> auto.autonomousInit(gameData,pin));
+			autoThread.start();
 		}
 	}
 	
 	public void teleopInit() {
-		isAutonomous = false;
+		autoThread.interrupt();
+		lift.setSpeed(0);
+		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);
 		//navx.resetDisplacement();
 		compressor.setClosedLoopControl(true);
@@ -102,8 +97,6 @@ public class Robot extends IterativeRobot  {
 	
 	public void teleopPeriodic(){
         controls = new DualRemote();
-
-		if(driverStation.isFMSAttached()){}
 		double a = 0;
 		 while (isOperatorControl() && isEnabled()) {
 			controls.periodic();
@@ -131,7 +124,6 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void disabledInit() {
-		isAutonomous = false;
 		//if (navx.getDisplacementUpdater().isRunning())
 			//navx.stopUpdateDisplacement();
 	}
@@ -144,11 +136,6 @@ public class Robot extends IterativeRobot  {
 	
 	public  void testPeriodic() {
 		
-	}
-	
-	public static boolean isAutonomousActive(){
-		return true;
-				
 	}
 	
 	public void calibrateLift() {
