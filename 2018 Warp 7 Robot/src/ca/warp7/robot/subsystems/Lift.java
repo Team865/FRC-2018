@@ -16,6 +16,7 @@ import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.MotorGroup;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
 public class Lift {
@@ -30,13 +31,13 @@ public class Lift {
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
 		LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
-		//LiftMotorLeft.setInverted(true);
+		LiftMotorLeft.setInverted(true);
 		
 		liftEncoder =  new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(1,0,0);
+		liftPID = new MiniPID(0.0002,0,0.0001);
 		liftPID.setOutputLimits(-1,1);
 		
 	}
@@ -57,21 +58,23 @@ public class Lift {
 		LiftMotorRight.set(ramp);
 	}
 	
-	public void setLoc(double target){
+	public void setLoc(double scale) {
+		double target = Math.abs(scale)*LIFT_HEIGHT;
+		SmartDashboard.putNumber("loc dfliusafusd", target);
 		liftPID.setSetpoint(target);
 	}
 	
 	public void periodic(){
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
-		double speed = liftPID.getOutput(getEncoderVal());	
+		double speed = liftPID.getOutput(getEncoderVal());
 		
 		//if (intake.hasCube())
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else
 			//rampSpeed(speed+SPEED_OFFSET);
 		
-		rampSpeed(speed+SPEED_OFFSET);
+		rampSpeed(speed);
 	}
 	
 	public double getEncoderVal() {

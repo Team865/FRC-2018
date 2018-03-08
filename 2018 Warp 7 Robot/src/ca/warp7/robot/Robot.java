@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	private Thread autoThread;
-	private boolean runOne = true;
+	private boolean runOne = false;
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
 		if (runOne && gameData != null) {
@@ -86,7 +86,9 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
-		autoThread.interrupt();
+		if (runOne)
+			autoThread.interrupt();
+		
 		lift.setSpeed(0);
 		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);
@@ -102,6 +104,7 @@ public class Robot extends IterativeRobot  {
 			controls.periodic();
 			limelight.mutiPipeline();
 			intake.periodic();
+			lift.periodic();
 			double b = lift.getEncoderVal();
 			if (a < b)
 				a = b;
