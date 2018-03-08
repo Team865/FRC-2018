@@ -104,13 +104,13 @@ public class Robot extends IterativeRobot  {
 			controls.periodic();
 			limelight.mutiPipeline();
 			intake.periodic();
-			lift.periodic();
+			
 			double b = lift.getEncoderVal();
 			if (a < b)
 				a = b;
 			SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
 			SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
-			//lift.periodic();
+			lift.periodic();
 			//drive.periodic();
 			
 			SmartDashboard.putNumber("0", a0.getAverageVoltage());
