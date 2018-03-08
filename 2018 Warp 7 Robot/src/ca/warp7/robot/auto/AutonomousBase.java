@@ -27,14 +27,15 @@ public class AutonomousBase {
 	private Lift lift = Robot.lift;
 	
 	private MiniPID turnPID;
+	private MiniPID turnSoftPID;
 	private MiniPID distancePID;
 	
 	public AutonomousBase(){
 		turnPID = new MiniPID(1,0,0);
-		turnPID.setOutputLimits(1);
+		turnPID.setOutputLimits(-1,1);
 		
 		distancePID = new MiniPID(1,0,0);
-		distancePID.setOutputLimits(1);
+		distancePID.setOutputLimits(-1,1);
 	}
 	
 	
@@ -385,6 +386,44 @@ public class AutonomousBase {
 			curAngle = navx.getAngle()%360;
 		}
 		drive.tankDrive(0,0);
+	}
+	
+	private void angleRelTurnSoftExit (double desiredAngle, double angleTolerance) {
+		//variables for tuning - Last years code uses 3 as angle tolerance
+		int ticksToFinish=20; //number of ticks within angleTol required to finish
+		double kp=8, ki=0.00075, kd=20; //set PID values
+		
+		double curAngle = navx.getAngle();
+		double errorAngle=desiredAngle-curAngle;
+		double turnSpeed=0;
+		
+		//create PID and set values
+		turnSoftPID = new MiniPID(kp,ki,kd); 
+		turnSoftPID.setOutputLimits(-angleTolerance, angleTolerance);
+		turnSoftPID.setSetpoint(desiredAngle);
+		boolean turnFinished=false;
+		int turnExitProgress=0;
+		
+		//loop this for the duration of turn
+		while(turnFinished==false) {
+			curAngle = navx.getAngle();
+			turnSpeed=turnSoftPID.getOutput(curAngle);
+			errorAngle=desiredAngle-curAngle;
+			if(Math.abs(errorAngle) < 3)
+				turnExitProgress++;
+			else
+				turnExitProgress = 0;
+			
+			if (Math.abs(errorAngle)<1) 
+				turnSpeed=0;
+			if(turnExitProgress >= ticksToFinish){
+					turnFinished=true;
+					break;
+				}
+			//positive = counter clockwise, negative = clockwise
+			drive.tankDrive(-turnSpeed, turnSpeed);
+		}
+		
 	}
 	
 	private boolean turnDirection(double requiredAngle,double angle) {
