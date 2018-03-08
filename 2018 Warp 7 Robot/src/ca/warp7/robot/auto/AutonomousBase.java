@@ -31,10 +31,10 @@ public class AutonomousBase {
 	
 	public AutonomousBase(){
 		turnPID = new MiniPID(1,0,0);
-		turnPID.setOutputLimits(-1,1);
+		turnPID.setOutputLimits(1);
 		
 		distancePID = new MiniPID(1,0,0);
-		distancePID.setOutputLimits(-1,1);
+		distancePID.setOutputLimits(1);
 	}
 	
 	

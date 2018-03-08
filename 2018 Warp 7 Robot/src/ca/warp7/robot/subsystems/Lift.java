@@ -37,9 +37,9 @@ public class Lift {
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(0.0002,0,0.0001);
-		liftPID.setOutputLimits(-1,1);
-		
+		liftPID = new MiniPID(0.6,0,0);
+		liftPID.setOutputLimits(1);
+		setLoc(0.5);
 	}
 	
 	private double ramp = 0;
@@ -59,7 +59,7 @@ public class Lift {
 	}
 	
 	public void setLoc(double scale) {
-		double target = Math.abs(scale)*LIFT_HEIGHT;
+		double target = Math.abs(scale);
 		SmartDashboard.putNumber("loc dfliusafusd", target);
 		liftPID.setSetpoint(target);
 	}
@@ -67,14 +67,14 @@ public class Lift {
 	public void periodic(){
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
-		double speed = liftPID.getOutput(getEncoderVal());
+		double speed = liftPID.getOutput(getEncoderVal()/LIFT_HEIGHT);
 		
 		//if (intake.hasCube())
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else
 			//rampSpeed(speed+SPEED_OFFSET);
 		
-		rampSpeed(speed);
+		rampSpeed(speed*-1);
 	}
 	
 	public double getEncoderVal() {
