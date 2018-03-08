@@ -22,7 +22,6 @@ public class Lift {
 	private MotorGroup LiftMotorRight;
 	private MotorGroup LiftMotorLeft;
 	private Encoder liftEncoder;
-	private double setLocation;
 	private DigitalInput liftHallaffect;
 	private MiniPID liftPID;
 	
@@ -66,10 +65,12 @@ public class Lift {
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
 		double speed = liftPID.getOutput(getEncoderVal());	
+		
 		//if (intake.hasCube())
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else
 			//rampSpeed(speed+SPEED_OFFSET);
+		
 		rampSpeed(speed+SPEED_OFFSET);
 	}
 	

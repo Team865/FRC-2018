@@ -1,6 +1,9 @@
 package ca.warp7.robot.auto;
 
 import static ca.warp7.robot.Constants.CUBE_DISTANCE_M;
+
+import com.stormbots.MiniPID;
+
 import static ca.warp7.robot.Constants.CUBE_DISTANCE_B;
 
 import ca.warp7.robot.Robot;
@@ -23,8 +26,15 @@ public class AutonomousBase {
 	private Intake intake = Robot.intake;
 	private Lift lift = Robot.lift;
 	
+	private MiniPID turnPID;
+	private MiniPID distancePID;
+	
 	public AutonomousBase(){
+		turnPID = new MiniPID(1,0,0);
+		turnPID.setOutputLimits(-1,1);
 		
+		distancePID = new MiniPID(1,0,0);
+		distancePID.setOutputLimits(-1,1);
 	}
 	
 	
@@ -90,20 +100,20 @@ public class AutonomousBase {
 	private void Left_RLR() {
 		navx.resetAngle();
 		drive.resetDistance();
-		driveDistance(299.65*2.54-50-75,5,50,5);
+		driveDistance(299.65*2.54-50-75,5);
 		lift.setLoc(0.8);
-		turnRelRight(50,45/2-5,10);
+		angleRelTurn(50,10);
 		Timer.delay(2);
 		intake.setSpeed(-1);
 		Timer.delay(0.4);
 		intake.setSpeed(0);
-		turnRelRight(100,45/2,5);
+		angleRelTurn(100,5);
 		lift.setLoc(0.1);
 		Timer.delay(1.5);
 		lift.setLoc(0);
 		
 		drive.resetDistance();
-		driveDistance(100,5,40,2);
+		driveDistance(100,2);
 		intake.setSpeed(0.8);
 		drive.resetDistance();
 		alignIntakeCube(5,3,5);
@@ -112,26 +122,26 @@ public class AutonomousBase {
 	}
 
 	private void Left_RRR() {
-		driveDistance(520-49-10,360,100,10);
+		driveDistance(520-49-10,10);
 	}
 	
 	private void Left_LLL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		driveDistance(299.65*2.54-50-75,5,50,5);
+		driveDistance(299.65*2.54-50-75,5);
 		lift.setLoc(0.8);
-		turnRelRight(50,45/2-5,10);
+		angleRelTurn(50,10);
 		Timer.delay(2);
 		intake.setSpeed(-1);
 		Timer.delay(0.4);
 		intake.setSpeed(0);
-		turnRelRight(100,45/2,5);
+		angleRelTurn(100,5);
 		lift.setLoc(0.1);
 		Timer.delay(1.5);
 		lift.setLoc(0);
 		
 		drive.resetDistance();
-		driveDistance(100,5,40,2);
+		driveDistance(100,2);
 		intake.setSpeed(0.8);
 		drive.resetDistance();
 		alignIntakeCube(5,3,5);
@@ -164,12 +174,12 @@ public class AutonomousBase {
 	private void Left_LRL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		driveDistance(260,5,50,10);
-		turnRelRight(50,10,8);
+		driveDistance(260,10);
+		angleRelTurn(50,8);
 		lift.setLoc(0.4);
 		Timer.delay(1);
 		drive.resetDistance();
-		driveDistance(40,5,10,15);
+		driveDistance(40,15);
 		Timer.delay(0.5);
 		intake.setSpeed(-0.5);
 		Timer.delay(0.4);
@@ -196,11 +206,11 @@ public class AutonomousBase {
 	private void Right_RLR() {
 		navx.resetAngle();
 		drive.resetDistance();
-		driveDistance(210/2,5,40,2);
-		turnRelLeft(-25,10,5);
+		driveDistance(210/2,2);
+		angleRelTurn(-25,5);
 		lift.setLoc(0.4);
 		drive.resetDistance();
-		driveDistance(100,5,40,2);
+		driveDistance(100,2);
 		Timer.delay(0.5);
 		intake.setSpeed(1);
 		Timer.delay(0.4);
@@ -220,11 +230,11 @@ public class AutonomousBase {
 	private void Right_RRR() {
 		navx.resetAngle();
 		drive.resetDistance();
-		driveDistance(210/2,5,40,2);
-		turnRelLeft(-25,10,5);
+		driveDistance(210/2,2);
+		angleRelTurn(-25,5);
 		lift.setLoc(0.4);
 		drive.resetDistance();
-		driveDistance(100,5,40,2);
+		driveDistance(100,2);
 		Timer.delay(0.5);
 		intake.setSpeed(1);
 		Timer.delay(0.4);
@@ -235,9 +245,9 @@ public class AutonomousBase {
 	private void Middle_LLL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		turnRelLeft(-25,5,5);
+		angleRelTurn(-25,5);
 		lift.setLoc(0.4);
-		driveDistance(220,5,40,2);
+		driveDistance(220,2);
 		Timer.delay(0.5);
 		intake.setSpeed(-1);
 		Timer.delay(0.4);
@@ -248,9 +258,9 @@ public class AutonomousBase {
 	private void Middle_RRR() {
 		navx.resetAngle();
 		drive.resetDistance();
-		turnRelRight(25,5,5);
+		angleRelTurn(25,5);
 		lift.setLoc(0.4);
-		driveDistance(220,5,40,2);
+		driveDistance(220,2);
 		Timer.delay(0.5);
 		intake.setSpeed(-1);
 		Timer.delay(0.4);
@@ -262,9 +272,9 @@ public class AutonomousBase {
 	private void Middle_RLR() {
 		navx.resetAngle();
 		drive.resetDistance();
-		turnRelRight(25,15,5);
+		angleRelTurn(25,5);
 		lift.setLoc(0.4);
-		driveDistance(240,5,40,2);
+		driveDistance(240,2);
 		Timer.delay(0.5);
 		intake.setSpeed(1);
 		Timer.delay(0.4);
@@ -277,9 +287,9 @@ public class AutonomousBase {
 	private void Middle_LRL() {
 		navx.resetAngle();
 		drive.resetDistance();
-		turnRelLeft(-25,10,5);
+		angleRelTurn(-25,5);
 		lift.setLoc(0.4);
-		driveDistance(240,5,40,2);
+		driveDistance(240,2);
 		Timer.delay(0.5);
 		intake.setSpeed(1);
 		Timer.delay(0.4);
@@ -321,123 +331,61 @@ public class AutonomousBase {
 	}
 	
 	private void alignIntakeCube(double distThresh, double angleThresh, double distanceTolerance){
-		double totalDist = distancePredictor(limelight.getArea());
+		double setDistance = distancePredictor(limelight.getArea());
 		double dist = getOverallDistance();
-		while (!intake.hasCube() && !within(dist,totalDist,distanceTolerance)) {
-			double driveSpeed = 1+(totalDist-dist-distThresh)/distThresh;
-			if (driveSpeed > 1)
-				driveSpeed = 1;
+		distancePID.setSetpoint(setDistance);
+		while (!intake.hasCube() && !within(dist,setDistance,distanceTolerance)) {
+			turnPID.setSetpoint((navx.getAngle()%360)+limelight.getXOffset());
+			double turnSpeed = turnPID.getOutput();
+			double driveSpeed = distancePID.getOutput(dist);
 			
-			double cubeAngleOffset = limelight.getXOffset();
-			double turnSpeed = 1-Math.abs(cubeAngleOffset/angleThresh);
-			if (turnSpeed < 0)
-				turnSpeed = 0;
-				
-			if (cubeAngleOffset >= 0)//turn right
-				drive.tankDrive(speed*driveSpeed,speed*driveSpeed*turnSpeed);
+			if (turnSpeed >= 0 )//turn right
+				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
 			else //turn left
-				drive.tankDrive(speed*driveSpeed*turnSpeed,speed*driveSpeed);
+				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
 			
 			dist = getOverallDistance();
-			
-			//dist = getOverallDistance()/2;
-			//double b = limelight.getArea();
-			//if (b != 0)
-			//	totalDist = distancePredictor(b)/2;
 		}
+		drive.tankDrive(0,0);
 	}
 	
 	private double distancePredictor(double area){
 		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
 	}
 	
-	private void driveDistance(double totalDist, double angleThresh, double distThresh, double distanceTolerance) {
+	private void driveDistance(double setDistance, double distanceTolerance) {
 		double dist = getOverallDistance();
-		double requiredAngle = navx.getAngle();
-		while (!within(dist,totalDist,distanceTolerance)) {
-			double navAngle = navx.getAngle();
-			double turnSpeed = (1+(requiredAngle-navAngle-angleThresh)/angleThresh);
-			if (turnSpeed > 1)
-				turnSpeed = 1;
+		double curAngle = navx.getAngle()%360;
+		turnPID.setSetpoint(curAngle);
+		distancePID.setSetpoint(setDistance);
+		while (!within(dist,setDistance,distanceTolerance)) {
+			double turnSpeed = turnPID.getOutput(navx.getAngle()%360);
+			double driveSpeed = distancePID.getOutput(dist);
 			
-			if (turnSpeed < -1)
-				turnSpeed = -1;
-			
-			double driveSpeed = 1+(totalDist-dist-distThresh)/distThresh;
-			if (driveSpeed > 1)
-				driveSpeed = 1;
-			
-			if (driveSpeed < -1)
-				driveSpeed = -1;
-			
-			if (!within(navAngle,requiredAngle,2))
-				if (turnSpeed >= 0 )//turn right
-					drive.tankDrive(speed*driveSpeed,speed*driveSpeed*turnSpeed);
-				else //turn left
-					drive.tankDrive(speed*driveSpeed*turnSpeed,speed*driveSpeed);
-			else
-				drive.tankDrive(speed*driveSpeed,speed*driveSpeed);
+			if (turnSpeed >= 0 )//turn right
+				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
+			else //turn left
+				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
 			
 			dist = getOverallDistance();
-			//System.out.println(turnSpeed);
 		}
 		drive.tankDrive(0,0);
 	}
 	
-	private void angleTurn(double requiredAngle, double angleThresh, double angleTolerance) {
-		double navAngle = navx.getAngle()%360;
-		while (!within(navAngle,requiredAngle,angleTolerance)){
-			double turnSpeed = 1+(requiredAngle-navAngle-angleThresh)/angleThresh;
-			if (turnSpeed > 1)
-				turnSpeed = 1;
-			navAngle = navx.getAngle()%360;
-			//System.out.println(turnSpeed);
-			//System.out.println(turnSpeed*speed);
-			if (turnDirection(requiredAngle,navAngle))
+	private void angleRelTurn(double angle, double angleTolerance) {
+		double curAngle = navx.getAngle();
+		turnPID.setSetpoint(angle);
+		while (!within(curAngle,angle,angleTolerance)){
+			double turnSpeed = turnPID.getOutput(curAngle);
+			if (angle >= 0)
 				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
 			else
 				drive.tankDrive(turnSpeed*speed*-1,turnSpeed*speed);
-				
+			
+			curAngle = navx.getAngle()%360;
 		}
 		drive.tankDrive(0,0);
 	}
-	
-	private void turnRelRight(double angle, double angleThresh, double angleTolerance) {
-		double wantedAngle = navx.getAngle()+angle;
-		double navAngle = navx.getAngle();
-		while (!within(navAngle,wantedAngle,angleTolerance)){
-			double turnSpeed = 1+(wantedAngle-navAngle-angleThresh)/angleThresh;
-			if (turnSpeed > 1)
-				turnSpeed = 1;
-			navAngle = navx.getAngle();
-			//System.out.println(turnSpeed);
-			//System.out.println(turnSpeed*speed);
-			if (wantedAngle >= 0)
-				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
-			else
-				drive.tankDrive(turnSpeed*speed*-1,turnSpeed*speed);
-				
-		}
-		drive.tankDrive(0,0);
-	}
-	
-	private void turnRelLeft(double angle, double angleThresh, double angleTolerance) {
-		double wantedAngle = navx.getAngle()+angle;
-		double navAngle = navx.getAngle();
-		while (!within(navAngle,wantedAngle,angleTolerance)){
-			double turnSpeed = 1+(wantedAngle-navAngle-angleThresh)/angleThresh;
-			if (turnSpeed > 1)
-				turnSpeed = 1;
-			navAngle = navx.getAngle();
-			//System.out.println(turnSpeed);
-			//System.out.println(turnSpeed*speed);
-			if (wantedAngle >= 0)
-				drive.tankDrive(turnSpeed*speed*-1,turnSpeed*speed);
-			else
-				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
-		}	
-	}
-	
 	
 	private boolean turnDirection(double requiredAngle,double angle) {
 		return (requiredAngle - angle) % 360 < 180; 
