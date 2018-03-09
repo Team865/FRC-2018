@@ -31,15 +31,15 @@ public class AutonomousBase {
 	private MiniPID distancePID;
 	
 	public AutonomousBase(){
-		turnPID = new MiniPID(1,0,0);
-		turnPID.setOutputLimits(-1,1);
+		turnPID = new MiniPID(0.0123,0,0); //at speed=1, p constant must be between 0.01 and 0.015
+		turnPID.setOutputLimits(1);
 		
 		distancePID = new MiniPID(1,0,0);
-		distancePID.setOutputLimits(-1,1);
+		distancePID.setOutputLimits(1);
 	}
 	
 	
-	private static final double speed = 0.35;
+	private static final double speed = 1;
 	public void autonomousInit(String gameData, int pin) {
 		RTS liftRTS = new RTS("liftRTS", 8);
 		Runnable liftPer = () -> lift.periodic();
@@ -314,7 +314,9 @@ public class AutonomousBase {
 
 	private void None_LLL() {
 		// TODO Auto-generated method stub
-		
+		navx.resetAngle();
+		drive.resetDistance();
+		angleRelTurn(90,2);
 	}
 
 	private void None_RRR() {
@@ -355,7 +357,7 @@ public class AutonomousBase {
 	}
 	
 	private void driveDistance(double setDistance, double distanceTolerance) {
-		double dist = getOverallDistance();
+		double dist = getOverallDistance()+setDistance;
 		double curAngle = navx.getAngle()%360;
 		turnPID.setSetpoint(curAngle);
 		distancePID.setSetpoint(setDistance);
@@ -364,9 +366,9 @@ public class AutonomousBase {
 			double driveSpeed = distancePID.getOutput(dist);
 			
 			if (turnSpeed >= 0 )//turn right
-				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
+				drive.tankDrive(speed*driveSpeed,speed*driveSpeed+(turnSpeed-1));
 			else //turn left
-				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
+				drive.tankDrive(speed*driveSpeed+(turnSpeed-1),speed*driveSpeed);
 			
 			dist = getOverallDistance();
 		}
@@ -374,18 +376,17 @@ public class AutonomousBase {
 	}
 	
 	private void angleRelTurn(double angle, double angleTolerance) {
-		double curAngle = navx.getAngle();
+		double curAngle = navx.getAngle()%360;
 		turnPID.setSetpoint(angle);
-		while (!within(curAngle,angle,angleTolerance)){
+		long i = 0;
+		while (true) {//!within(curAngle,angle,angleTolerance)){
 			double turnSpeed = turnPID.getOutput(curAngle);
-			if (angle >= 0)
-				drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
-			else
-				drive.tankDrive(turnSpeed*speed*-1,turnSpeed*speed);
-			
+			drive.tankDrive(speed*turnSpeed,turnSpeed*speed*-1);
+			System.out.println(curAngle);
+			System.out.println("IN LOOP"+i++);
 			curAngle = navx.getAngle()%360;
 		}
-		drive.tankDrive(0,0);
+		//drive.tankDrive(0,0);
 	}
 	
 	private void angleRelTurnSoftExit (double desiredAngle, double angleTolerance) {
@@ -399,7 +400,7 @@ public class AutonomousBase {
 		
 		//create PID and set values
 		turnSoftPID = new MiniPID(kp,ki,kd); 
-		turnSoftPID.setOutputLimits(-angleTolerance, angleTolerance);
+		turnSoftPID.setOutputLimits(1);
 		turnSoftPID.setSetpoint(desiredAngle);
 		boolean turnFinished=false;
 		int turnExitProgress=0;
@@ -409,7 +410,7 @@ public class AutonomousBase {
 			curAngle = navx.getAngle();
 			turnSpeed=turnSoftPID.getOutput(curAngle);
 			errorAngle=desiredAngle-curAngle;
-			if(Math.abs(errorAngle) < 3)
+			if(Math.abs(errorAngle) < angleTolerance)
 				turnExitProgress++;
 			else
 				turnExitProgress = 0;
@@ -438,5 +439,4 @@ public class AutonomousBase {
 	private double getOverallDistance() {
 		return (drive.getLeftDistance() + drive.getRightDistance())/2;
 	}
-	
 }

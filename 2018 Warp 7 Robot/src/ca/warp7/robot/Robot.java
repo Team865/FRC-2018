@@ -2,6 +2,9 @@ package ca.warp7.robot;
 
 import static ca.warp7.robot.Constants.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import ca.warp7.robot.auto.AutonomousBase;
 import ca.warp7.robot.controls.ControlsBase;
 import ca.warp7.robot.controls.DualRemote;
@@ -86,8 +89,15 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
-		if (runOne)
-			autoThread.interrupt();
+		Method m = null;
+		try {
+			m = Thread.class.getDeclaredMethod("stop0" , new Class[]{Object.class});
+			m.setAccessible(true);
+			m.invoke(autoThread , new ThreadDeath());
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		System.out.println("testlolol");
 		
 		lift.setSpeed(0);
 		drive.tankDrive(0,0);
