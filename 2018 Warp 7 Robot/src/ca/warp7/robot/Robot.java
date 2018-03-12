@@ -5,9 +5,12 @@ import static ca.warp7.robot.Constants.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.stormbots.MiniPID;
+
 import ca.warp7.robot.auto.AutonomousBase;
 import ca.warp7.robot.controls.ControlsBase;
 import ca.warp7.robot.controls.DualRemote;
+import ca.warp7.robot.misc.RTS;
 import ca.warp7.robot.subsystems.Climber;
 import ca.warp7.robot.subsystems.Drive;
 import ca.warp7.robot.subsystems.Intake;
@@ -68,38 +71,24 @@ public class Robot extends IterativeRobot  {
 		a1 = new AnalogInput(1);
 		a2 = new AnalogInput(2);
 		a3 = new AnalogInput(3);
+		
+		RTS liftRTS = new RTS("liftRTS", 8);
+		Runnable liftPer = () -> lift.periodic();
+		liftRTS.addTask(liftPer);
+		liftRTS.start();
 	}
 	
+	private int pin = -1;
 	public void autonomousInit(){
-		runOne = true;
+		pin = autoSelector();
 	}
 	
-	private Thread autoThread;
-	private boolean runOne = false;
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
-		if (runOne && gameData != null) {
-			runOne = false;
-			int pin = autoSelector();			
-			drive.resetDistance();
-			navx.resetAngle();
-			autoThread = new Thread(() -> auto.autonomousInit(gameData,pin));
-			autoThread.start();
-		}
+		auto.autonomousPeriodic(gameData, pin);
 	}
 	
 	public void teleopInit() {
-		Method m = null;
-		try {
-			m = Thread.class.getDeclaredMethod("stop0" , new Class[]{Object.class});
-			m.setAccessible(true);
-			m.invoke(autoThread , new ThreadDeath());
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		System.out.println("testlolol");
-		
-		lift.setSpeed(0);
 		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);
 		//navx.resetDisplacement();
