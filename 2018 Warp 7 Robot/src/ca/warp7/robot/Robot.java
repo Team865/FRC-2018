@@ -63,9 +63,7 @@ public class Robot extends IterativeRobot  {
 		compressor = new Compressor(COMPRESSOR_PIN);
 		
 		driverStation = DriverStation.getInstance();
-		//navx.startUpdateDisplacement(60);
-		auto = new AutonomousBase();
-		
+		//navx.startUpdateDisplacement(60);		
 		
 		a0 = new AnalogInput(0);
 		a1 = new AnalogInput(1);
@@ -80,7 +78,12 @@ public class Robot extends IterativeRobot  {
 	
 	private int pin = -1;
 	public void autonomousInit(){
+		lift.zeroEncoder();
+		lift.setLoc(0);
+		auto = new AutonomousBase();
 		pin = autoSelector();
+		drive.resetDistance();
+		navx.resetAngle();
 	}
 	
 	public void autonomousPeriodic(){
@@ -89,6 +92,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
+		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);
 		//navx.resetDisplacement();
@@ -119,6 +123,7 @@ public class Robot extends IterativeRobot  {
 			
 			SmartDashboard.putNumber("Lift", a);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
+			SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
 			
 			Timer.delay(0.005);
@@ -194,11 +199,11 @@ public class Robot extends IterativeRobot  {
 			voltage = a0.getAverageVoltage();
 		}
 		if (a1.getAverageVoltage() > voltage) {
-			number = 0;
+			number = 2;
 			voltage = a1.getAverageVoltage();
 		}
 		if (a2.getAverageVoltage() > voltage) {
-			number = 2;
+			number = 0;
 			voltage = a2.getAverageVoltage();
 		}
 		if (a3.getAverageVoltage() > voltage) {

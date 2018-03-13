@@ -40,18 +40,17 @@ public class AutoFunctions {
 	public boolean driveDistance(double dist, double wantedAngle) {
 		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360, wantedAngle);
 		double curDistance = getOverallDistance();
-		double driveSpeed = distancePID.getOutput(curDistance);
+		double driveSpeed = distancePID.getOutput(curDistance,dist);
 		System.out.println(
-				"drDistRunning. curDist=" + curDistance + " deltaAng=" + (wantedAngle - (navx.getAngle() % 360)));
-		if (within(curDistance, distanceO+dist, 0.5))
+				"drDistRunning. curDist=" + dist + " deltaAng=" + (wantedAngle - (navx.getAngle() % 360)));
+		if (within(curDistance, dist, 15))
 			ticks++;
 		else
 			ticks=0;
-		if ((within(curDistance, distanceO+dist, 1)) && ticks > 20) {
+		if ((within(curDistance, dist, 15)) && ticks > 20) {
 			drive.tankDrive(0, 0);
 			return true;
 		} else {
-
 			if (turnSpeed < 0) {// turn left
 				turnSpeed = -(turnSpeed);
 		
@@ -59,7 +58,6 @@ public class AutoFunctions {
 			} else { // turn right
 				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
 			}
-			
 		}
 		return false;
 	}
@@ -83,13 +81,15 @@ public class AutoFunctions {
 	}
 
 	public void setAngleTarget(double angle) {
+		navx.resetAngle();
 		turnPID.setSetpoint(navx.getAngle() % 360 + angle);
 		ticks = 0;
 	}
 
 	public void setDistanceTarget(double distance) {
-		distancePID.setSetpoint(getOverallDistance() + distance);
-		distanceO = getOverallDistance() + distance;
+		drive.resetDistance();
+		distancePID.setSetpoint(distance);
+		distanceO = distance;
 		ticks = 0;
 	}
 
@@ -134,5 +134,31 @@ public class AutoFunctions {
 		}
 		return false;
 
+	}
+	
+	public boolean alignIntakeCube(double dist) {
+		double curAngle = limelight.getXOffset();
+		double turnSpeed = turnPID.getOutput(curAngle, 0);
+		double curDistance = getOverallDistance();
+		double driveSpeed = distancePID.getOutput(curDistance,dist);
+		System.out.println(
+				"drDistRunning. curDist=" + dist + " deltaAng=" + (0 - (curAngle)));
+		if (within(curDistance, dist, 15))
+			ticks++;
+		else
+			ticks=0;
+		if ((within(curDistance, dist, 15)) && ticks > 20) {
+			drive.tankDrive(0, 0);
+			return true;
+		} else {
+			if (turnSpeed < 0) {// turn left
+				turnSpeed = -(turnSpeed);
+		
+				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
+			} else { // turn right
+				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
+			}
+		}
+		return false;
 	}
 }

@@ -33,6 +33,8 @@ public class Drive {
 	private double old_wheel = 0;
     private boolean driveReversed = true;
     
+    private double speedLimit = 0.999;
+    
     
     public Drive() {
 		drivePool = new DataPool("Drive");
@@ -62,8 +64,8 @@ public class Drive {
 	
 	public void tankDrive(double left, double right) {
 		double scaledBalance = autoBalance();
-		left = limit(left+scaledBalance,0.999);
-		right = limit(right+scaledBalance,0.999);
+		left = limit(left+scaledBalance,speedLimit);
+		right = limit(right+scaledBalance,speedLimit);
 		leftDrive.set(left*LEFT_DRIFT_OFFSET);
 		rightDrive.set(right*RIGHT_DRIFT_OFFSET);
 	}
@@ -231,5 +233,9 @@ public class Drive {
         }
         
 		return 0;
+	}
+
+	public void setSpeedLimit(double speedLimit) {
+		this.speedLimit = limit(speedLimit,0.999);
 	}
 }
