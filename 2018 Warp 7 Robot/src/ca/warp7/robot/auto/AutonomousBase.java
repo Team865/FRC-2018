@@ -83,44 +83,32 @@ public class AutonomousBase {
 
 	private void Left_RLR() {
 		switch (step) {
-		case (0): {
-			autoFunc.setDistanceTarget(585);
-			updateRobotAngle();
-			step++;
-			break;
-		}
-		case (1):
-			if (autoFunc.driveDistance(585, robotAngle)) {
+		case (0):
+			if (autoFunc.driveDistance(585)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(22.5);
 				lift.setLoc(1);
 				step++;
 			}
 			break;
-		case (2):
-			if (autoFunc.angleRelTurn2(22.5, false)) {
-				autoFunc.setDistanceTarget(100);
+		case (1):
+			if (autoFunc.angleRelTurn(22.5)) {
 				autoFunc.setSpeedLimit(0.75);
-				updateRobotAngle();
 				step++;
 			}
 			break;
-		case (3):
-			if (autoFunc.driveDistance(100, robotAngle)) {
+		case (2):
+			if (autoFunc.driveDistance(100)) {
 				System.out.println("Exiting drive because im done");
 				autoFunc.setSpeedLimit(1);
 				intake.setSpeed(-1);
 				Timer.delay(0.2);
 				intake.setSpeed(0);
-				autoFunc.setAngleTarget(90);
 				step++;
 			}
 			break;
 	
-		case (4):
-			if (autoFunc.angleRelTurn2(90, false)) {
-				autoFunc.setDistanceTarget(100);
-				updateRobotAngle();
+		case (3):
+			if (autoFunc.angleRelTurn(90)) {
 				step++;
 			}
 			break;
@@ -131,45 +119,37 @@ public class AutonomousBase {
 		switch (step) {
 		case (0): {
 			intake.setSpeed(0.2);
-			autoFunc.setDistanceTarget(535);
-			updateRobotAngle();
 			step++;
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistance(535, robotAngle)) {
+			if (autoFunc.driveDistance(535)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(90);
 				step++;
 			}
 			break;
 		case (2):
-			if (autoFunc.angleRelTurn2(90, false)) {
-				autoFunc.setDistanceTarget(485);
-				updateRobotAngle();
+			if (autoFunc.angleRelTurn(90)) {
 				step++;
 			}
 			break;
 		case (3):
-			if (autoFunc.driveDistance(485, robotAngle)) {
+			if (autoFunc.driveDistance(485)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(-90);
 				lift.setLoc(1);
 				step++;
 			}
 			break;
 		
 		case (4):
-			if (autoFunc.angleRelTurn2(-90, false)) {
-				autoFunc.setDistanceTarget(95);
+			if (autoFunc.angleRelTurn(-90)) {
 				autoFunc.setSpeedLimit(0.5);
-				updateRobotAngle();
 				step++;
 			}
 			break;
 			
 		case (5):
-			if (autoFunc.driveDistance(95, robotAngle)) {
+			if (autoFunc.driveDistance(95)) {
 				System.out.println("Exiting drive because im done");
 				intake.setSpeed(-1);
 				Timer.delay(0.2);
@@ -183,44 +163,32 @@ public class AutonomousBase {
 
 	private void Left_LLL() {
 		switch (step) {
-		case (0): {
-			autoFunc.setDistanceTarget(585);
-			updateRobotAngle();
-			step++;
-			break;
-		}
-		case (1):
-			if (autoFunc.driveDistance(585, robotAngle)) {
+		case (0):
+			if (autoFunc.driveDistance(585)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(22.5);
 				lift.setLoc(1);
 				step++;
 			}
 			break;
-		case (2):
-			if (autoFunc.angleRelTurn2(22.5, false)) {
-				autoFunc.setDistanceTarget(100);
+		case (1):
+			if (autoFunc.angleRelTurn(22.5)) {
 				autoFunc.setSpeedLimit(0.75);
-				updateRobotAngle();
 				step++;
 			}
 			break;
-		case (3):
-			if (autoFunc.driveDistance(100, robotAngle)) {
+		case (2):
+			if (autoFunc.driveDistance(100)) {
 				System.out.println("Exiting drive because im done");
 				autoFunc.setSpeedLimit(1);
 				intake.setSpeed(-1);
 				Timer.delay(0.2);
 				intake.setSpeed(0);
-				autoFunc.setAngleTarget(90);
 				step++;
 			}
 			break;
 	
-		case (4):
-			if (autoFunc.angleRelTurn2(90, false)) {
-				autoFunc.setDistanceTarget(100);
-				updateRobotAngle();
+		case (3):
+			if (autoFunc.angleRelTurn(90)) {
 				step++;
 			}
 			break;
@@ -252,22 +220,15 @@ public class AutonomousBase {
 	// Middle switch left
 	private void Middle_LLL() {
 		switch (step) {
-		case (0): {
-			autoFunc.setAngleTarget(-22.5);
-			step++;
-			break;
-		}
-		case (1):
-			if (autoFunc.angleRelTurn2(-22.5, false)) {
-				autoFunc.setDistanceTarget(280);
-				updateRobotAngle();
+		case (0):
+			if (autoFunc.angleRelTurn(-22.5)) {
 				lift.setLoc(0.4);
 				step++;
 			}
 			break;
 
-		case (2): {
-			if (autoFunc.driveDistance(280, robotAngle)) {
+		case (1): {
+			if (autoFunc.driveDistance(280)) {
 				intake.setSpeed(-1);
 				Timer.delay(0.2);
 				intake.setSpeed(0);
@@ -290,22 +251,15 @@ public class AutonomousBase {
 	// Middle switch left
 	private void Middle_LRL() {
 		switch (step) {
-		case (0): {
-			autoFunc.setAngleTarget(-22.5);
-			step++;
-			break;
-		}
-		case (1):
-			if (autoFunc.angleRelTurn2(-22.5, false)) {
-				autoFunc.setDistanceTarget(280);
-				updateRobotAngle();
+		case (0):
+			if (autoFunc.angleRelTurn(-22.5)) {
 				lift.setLoc(0.4);
 				step++;
 			}
 			break;
 
-		case (2): {
-			if (autoFunc.driveDistance(280, robotAngle)) {
+		case (1): {
+			if (autoFunc.driveDistance(280)) {
 				intake.setSpeed(-1);
 				Timer.delay(0.2);
 				intake.setSpeed(0);
@@ -330,15 +284,12 @@ public class AutonomousBase {
 		switch (step) {
 		case (0): {
 			intake.setSpeed(0.3);
-			autoFunc.setDistanceTarget(585+40);
-			updateRobotAngle();
 			step++;
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistance(585+40, robotAngle)) {
+			if (autoFunc.driveDistance(585+40)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(135+22.5);
 				lift.setLoc(1);
 				Timer.delay(1.75);
 				step++;
@@ -346,8 +297,7 @@ public class AutonomousBase {
 			break;
 		
 		case (2):
-			if (autoFunc.angleRelTurnAngleOutake(135+22.5, false,10)) {
-				autoFunc.setDistanceTarget(100);
+			if (autoFunc.angleRelTurnAngleOutake(135+22.5,10)) {
 				lift.setLoc(0);
 				autoFunc.setSpeedLimit(0.35);
 				updateRobotAngle();
@@ -448,7 +398,6 @@ public class AutonomousBase {
 		case (0): 
 			autoFunc.setSpeedLimit(0.3);
 			intake.setSpeed(1);
-			autoFunc.setDistanceTarget(300);
 			step++;
 			break;
 		case (1):
