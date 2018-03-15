@@ -23,13 +23,9 @@ public class AutoFunctions {
 	private Limelight limelight = Robot.limelight;
 	private Intake intake = Robot.intake;
 	private Lift lift = Robot.lift;
-	
-	private boolean driveReset=true;
-	private boolean angleReset=true;
-	private double wantedAngle; //for drive setpoint
-	
+
 	private static final double speed = 1;
-	private double distanceO;
+	private double speedLimit = 1;
 
 	public AutoFunctions() { // 0.0123 for relturn tested 20 0.02 i original
 		turnPID = new MiniPID(0.0155, 0.0029, 0.23); // at speed=1, p constant must be between 0.01 and 0.015
@@ -41,19 +37,8 @@ public class AutoFunctions {
 		distancePID.setMaxIOutput(0.01);
 	}
 
-	public boolean driveDistance(double dist) {
-		if(driveReset) {
-			System.out.println("reset drive");
-			navx.resetAngle();
-			drive.resetDistance();
-			distancePID.setSetpoint(dist);
-			distanceO = dist;
-			ticks = 0;
-			wantedAngle=0;
-			turnPID.setSetpoint(0);
-			driveReset=false;
-		}
-		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360);
+	public boolean driveDistance(double dist, double wantedAngle) {
+		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360, wantedAngle);
 		double curDistance = getOverallDistance();
 		double driveSpeed = distancePID.getOutput(curDistance,dist);
 		System.out.println(
@@ -63,19 +48,48 @@ public class AutoFunctions {
 		else
 			ticks=0;
 		if ((within(curDistance, dist, 15)) && ticks > 20) {
-			drive.tankDrive(0, 0);
-			driveReset=true;
+			autoDrive(0, 0);
 			return true;
 		} else {
 			if (turnSpeed < 0) {// turn left
 				turnSpeed = -(turnSpeed);
 		
-				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
+				autoDrive(driveSpeed-turnSpeed,driveSpeed);
 			} else { // turn right
-				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
+				autoDrive(driveSpeed,driveSpeed-turnSpeed);
 			}
 		}
 		return false;
+	}
+
+	public boolean angleRelTurn(double angle, double angleTolerance) {
+		double curAngle = navx.getAngle() % 360;
+		double turnSpeed = turnPID.getOutput(curAngle);
+
+		if (within(curAngle, navx.getAngle() % 360 + angle, 2)) {
+			ticks++;
+			System.out.println("ticks=" + ticks);
+			if (ticks > 200) {
+				autoDrive(0, 0);
+				return true;
+			}
+		} else {
+			autoDrive(turnSpeed, -turnSpeed);
+			ticks = 0;
+		}
+		return false;
+	}
+
+	public void setAngleTarget(double angle) {
+		navx.resetAngle();
+		turnPID.setSetpoint(navx.getAngle() % 360 + angle);
+		ticks = 0;
+	}
+
+	public void setDistanceTarget(double distance) {
+		drive.resetDistance();
+		distancePID.setSetpoint(distance);
+		ticks = 0;
 	}
 
 	private boolean within(double angle, double setAngle, double thresh) {
@@ -90,17 +104,16 @@ public class AutoFunctions {
 		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
 	}
 
-	public boolean angleRelTurn(double setP){
+	public boolean angleRelTurn2(double setP, boolean reset) {
 		double curAngle = navx.getAngle() % 360;
 		double turnSpeed = 0;
-		if (angleReset) {
+		if (reset) {
 			navx.resetAngle();
 			turnPID.setSetpoint(setP);
 			turnPID.setMaxIOutput(0.32);
-			angleReset=false;
-			return false;
+			return true;
 		} else {
-			curAngle=navx.getAngle() % 360;
+			curAngle = navx.getAngle() % 360;
 			turnSpeed = turnPID.getOutput(curAngle);
 			if (within(curAngle, setP, 0.4)) {
 				ticks++;
@@ -109,13 +122,12 @@ public class AutoFunctions {
 				ticks = 0;
 			System.out.println("ticks " + ticks);
 			if (ticks > 7) {
-				angleReset=true;
 				return true;
 			} else {
 				System.out.println("cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + " pLeft= "
 						+ speed * turnSpeed + " pRight= " + -speed * turnSpeed);
 
-				drive.tankDrive(turnSpeed, -turnSpeed);
+				autoDrive(turnSpeed, -turnSpeed);
 
 			}
 		}
@@ -123,29 +135,48 @@ public class AutoFunctions {
 
 	}
 	
-	public boolean alignIntakeCube(double dist) {
-		double curAngle = limelight.getXOffset();
-		double turnSpeed = turnPID.getOutput(curAngle, 0);
+	public boolean alignIntakeCube(double dist, double angleThresh) {		
+		double cubeAngleOffset = limelight.getXOffset();
+		double turnSpeed = 1-Math.abs(cubeAngleOffset/angleThresh);
+		if (turnSpeed < 0)
+			turnSpeed = 0;
+		
 		double curDistance = getOverallDistance();
 		double driveSpeed = distancePID.getOutput(curDistance,dist);
-		System.out.println(
-				"drDistRunning. curDist=" + dist + " deltaAng=" + (0 - (curAngle)));
+		System.out.println(cubeAngleOffset + ":" + turnSpeed);
 		if (within(curDistance, dist, 15))
 			ticks++;
 		else
 			ticks=0;
 		if ((within(curDistance, dist, 15)) && ticks > 20) {
-			drive.tankDrive(0, 0);
+			autoDrive(0, 0);
 			return true;
 		} else {
-			if (turnSpeed < 0) {// turn left
-				turnSpeed = -(turnSpeed);
-		
-				drive.tankDrive(speed*driveSpeed-turnSpeed,speed*driveSpeed);
-			} else { // turn right
-				drive.tankDrive(speed*driveSpeed,speed*driveSpeed-turnSpeed);
+			if (cubeAngleOffset >= 0)//turn right
+				autoDrive(driveSpeed,driveSpeed*turnSpeed);
+			else { //turn left
+				autoDrive(driveSpeed*turnSpeed,driveSpeed);
 			}
 		}
 		return false;
+	}
+	
+	private void autoDrive(double left, double right) {
+		speedLimit = Math.abs(speedLimit);
+		if (left > speedLimit)
+			left = speedLimit;
+		else if (left < -speedLimit)
+			left = -speedLimit;
+		
+		if (right > speedLimit)
+			right = speedLimit;
+		else if (right < -speedLimit)
+			right = -speedLimit;
+		
+		drive.tankDrive(speed*left,speed*right);
+	}
+	
+	public void setSpeedLimit(double speedLimit) {
+		this.speedLimit = speedLimit;
 	}
 }
