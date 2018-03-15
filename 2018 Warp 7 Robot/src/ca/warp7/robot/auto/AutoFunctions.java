@@ -135,6 +135,43 @@ public class AutoFunctions {
 
 	}
 	
+	public boolean angleRelTurnAngleOutake(double setP, boolean reset, double angleOutake) {
+		double curAngle = navx.getAngle() % 360;
+		double turnSpeed = 0;
+		
+		if (within(curAngle,angleOutake,20))
+			intake.setSpeed(-0.85);
+		else
+			intake.setSpeed(0.2);
+		
+		if (reset) {
+			navx.resetAngle();
+			turnPID.setSetpoint(setP);
+			turnPID.setMaxIOutput(0.32);
+			return true;
+		} else {
+			curAngle = navx.getAngle() % 360;
+			turnSpeed = turnPID.getOutput(curAngle);
+			if (within(curAngle, setP, 0.4)) {
+				ticks++;
+				turnSpeed = 0;
+			} else
+				ticks = 0;
+			System.out.println("ticks " + ticks);
+			if (ticks > 7) {
+				return true;
+			} else {
+				System.out.println("cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + " pLeft= "
+						+ speed * turnSpeed + " pRight= " + -speed * turnSpeed);
+
+				autoDrive(turnSpeed, -turnSpeed);
+
+			}
+		}
+		return false;
+
+	}
+	
 	public boolean alignIntakeCube(double dist, double angleThresh) {		
 		double cubeAngleOffset = limelight.getXOffset();
 		double turnSpeed = 1-Math.abs(cubeAngleOffset/angleThresh);

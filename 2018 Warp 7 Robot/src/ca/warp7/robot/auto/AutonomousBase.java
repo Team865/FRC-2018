@@ -330,27 +330,31 @@ public class AutonomousBase {
 		switch (step) {
 		case (0): {
 			intake.setSpeed(0.3);
-			autoFunc.setDistanceTarget(585);
+			autoFunc.setDistanceTarget(585+40);
 			updateRobotAngle();
 			step++;
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistance(585, robotAngle)) {
+			if (autoFunc.driveDistance(585+40, robotAngle)) {
 				System.out.println("Exiting drive because im done");
-				autoFunc.setAngleTarget(22.5);
+				autoFunc.setAngleTarget(135+22.5);
 				lift.setLoc(1);
+				Timer.delay(1.75);
 				step++;
 			}
 			break;
+		
 		case (2):
-			if (autoFunc.angleRelTurn2(22.5, false)) {
+			if (autoFunc.angleRelTurnAngleOutake(135+22.5, false,10)) {
 				autoFunc.setDistanceTarget(100);
+				lift.setLoc(0);
 				autoFunc.setSpeedLimit(0.35);
 				updateRobotAngle();
 				step++;
 			}
 			break;
+		/*
 		case (3):
 			if (autoFunc.driveDistance(100, robotAngle)) {
 				System.out.println("Exiting drive because im done");
@@ -387,6 +391,54 @@ public class AutonomousBase {
 				step++;
 			}
 			break;
+			
+		/*
+		case (2):
+			if (autoFunc.angleRelTurn2(22.5, false)) {
+				autoFunc.setDistanceTarget(100);
+				autoFunc.setSpeedLimit(0.35);
+				updateRobotAngle();
+				step++;
+			}
+			break;
+		
+		case (3):
+			if (autoFunc.driveDistance(100, robotAngle)) {
+				System.out.println("Exiting drive because im done");
+				intake.setSpeed(-1);
+				Timer.delay(0.2);
+				intake.setSpeed(0);
+				autoFunc.setAngleTarget(135);
+				autoFunc.setSpeedLimit(0.85);
+				step++;
+			}
+			break;
+	
+		case (4):
+			if (autoFunc.angleRelTurn2(135, false)) {
+				autoFunc.setDistanceTarget(190);
+				lift.setLoc(0);
+				Timer.delay(2);
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.5);
+				autoFunc.setSpeedLimit(1);
+				updateRobotAngle();
+				step++;
+			}
+			break;
+						
+		case (5):
+			if(autoFunc.alignIntakeCube(195,2)) {
+				intake.setSpeed(0.3);
+				lift.setLoc(0.5);
+				Timer.delay(2);
+				intake.setSpeed(-1);
+				Timer.delay(0.2);
+				intake.setSpeed(0);
+				step++;
+			}
+			break;
+		*/
 		}
 	}
 
