@@ -43,12 +43,14 @@ public class AutoFunctions {
 
 	public boolean driveDistance(double dist) {
 		if(driveReset) {
+			System.out.println("reset drive");
+			navx.resetAngle();
 			drive.resetDistance();
 			distancePID.setSetpoint(dist);
 			distanceO = dist;
 			ticks = 0;
-			wantedAngle=navx.getAngle();
-			turnPID.setSetpoint(wantedAngle);
+			wantedAngle=0;
+			turnPID.setSetpoint(0);
 			driveReset=false;
 		}
 		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360);
@@ -98,6 +100,7 @@ public class AutoFunctions {
 			angleReset=false;
 			return false;
 		} else {
+			curAngle=navx.getAngle() % 360;
 			turnSpeed = turnPID.getOutput(curAngle);
 			if (within(curAngle, setP, 0.4)) {
 				ticks++;
