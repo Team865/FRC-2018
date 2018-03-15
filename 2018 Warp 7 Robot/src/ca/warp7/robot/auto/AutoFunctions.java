@@ -88,7 +88,7 @@ public class AutoFunctions {
 		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
 	}
 
-	public boolean angleRelTurn2(double setP){
+	public boolean angleRelTurn(double setP){
 		double curAngle = navx.getAngle() % 360;
 		double turnSpeed = 0;
 		if (angleReset) {

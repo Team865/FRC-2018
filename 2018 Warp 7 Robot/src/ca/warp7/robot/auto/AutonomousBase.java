@@ -91,7 +91,7 @@ public class AutonomousBase {
 			}
 			break;
 		case (1):
-			if (autoFunc.angleRelTurn2(22.5) {
+			if (autoFunc.angleRelTurn(22.5) {
 				drive.setSpeedLimit(0.75);
 				step++;
 			}
@@ -108,7 +108,7 @@ public class AutonomousBase {
 			break;
 	
 		case (3):
-			if (autoFunc.angleRelTurn2(90)) {
+			if (autoFunc.angleRelTurn(90)) {
 				updateRobotAngle();
 				step++;
 			}
@@ -130,7 +130,7 @@ public class AutonomousBase {
 			}
 			break;
 		case (2):
-			if (autoFunc.angleRelTurn2(90)) {
+			if (autoFunc.angleRelTurn(90)) {
 				step++;
 			}
 			break;
@@ -143,7 +143,7 @@ public class AutonomousBase {
 			break;
 		
 		case (4):
-			if (autoFunc.angleRelTurn2(-90)) {
+			if (autoFunc.angleRelTurn(-90)) {
 				drive.setSpeedLimit(0.5);
 				step++;
 			}
@@ -176,7 +176,7 @@ public class AutonomousBase {
 			}
 			break;
 		case (2):
-			if (autoFunc.angleRelTurn2(22.5)) {
+			if (autoFunc.angleRelTurn(22.5)) {
 				drive.setSpeedLimit(0.75);
 				step++;
 			}
@@ -193,7 +193,7 @@ public class AutonomousBase {
 			break;
 	
 		case (4):
-			if (autoFunc.angleRelTurn2(90)) {
+			if (autoFunc.angleRelTurn(90)) {
 				updateRobotAngle();
 				step++;
 			}
@@ -231,7 +231,7 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.angleRelTurn2(-22.5)) {
+			if (autoFunc.angleRelTurn(-22.5)) {
 				updateRobotAngle();
 				lift.setLoc(0.4);
 				step++;
@@ -267,7 +267,7 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.angleRelTurn2(-22.5)) {
+			if (autoFunc.angleRelTurn(-22.5)) {
 				lift.setLoc(0.4);
 				step++;
 			}
@@ -310,7 +310,7 @@ public class AutonomousBase {
 			}
 			break;
 		case (2):
-			if (autoFunc.angleRelTurn2(22.5)) {
+			if (autoFunc.angleRelTurn(22.5)) {
 				drive.setSpeedLimit(0.25);
 				step++;
 			}
@@ -326,7 +326,7 @@ public class AutonomousBase {
 			break;
 	
 		case (4):
-			if (autoFunc.angleRelTurn2(130)) {
+			if (autoFunc.angleRelTurn(130)) {
 				updateRobotAngle();
 				step++;
 				drive.setSpeedLimit(1);
