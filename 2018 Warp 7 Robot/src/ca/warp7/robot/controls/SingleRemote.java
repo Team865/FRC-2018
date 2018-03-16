@@ -6,7 +6,7 @@ import static ca.warp7.robot.controls.Control.UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.*;
 
 import ca.warp7.robot.misc.DataPool;
-
+import ca.warp7.robot.Robot;
 public class SingleRemote extends ControlsBase{
 	
 	/*
@@ -32,7 +32,9 @@ public class SingleRemote extends ControlsBase{
 			}else if(driver.getTrigger(kRight) == UP){
 				
 			}
-			
+			if (driver.getBumper(kLeft)==PRESSED) {
+				Robot.limelight.switchCamera();
+			}
 			
 			if(driver.getYButton() == DOWN){
 				
