@@ -42,7 +42,7 @@ public class AutoFunctions {
 		double curDistance = getOverallDistance();
 		double driveSpeed = distancePID.getOutput(curDistance,dist);
 		System.out.println(
-				"drDistRunning. curDist=" + dist + " deltaAng=" + (wantedAngle - (navx.getAngle() % 360)));
+				"drDistRunning. curDist=" + curDistance + "setP="+dist+ " deltaAng=" + (wantedAngle - (navx.getAngle() % 360)));
 		if (within(curDistance, dist, 15))
 			ticks++;
 		else
@@ -135,20 +135,15 @@ public class AutoFunctions {
 
 	}
 	
-	public boolean angleRelTurnAngleOutake(double setP, boolean reset, double angleOutake) {
+	public boolean angleRelTurnAngleRunFunc(double setP, boolean reset, Runnable func) {
+		func.run();
 		double curAngle = navx.getAngle() % 360;
 		double turnSpeed = 0;
-		
-		if (within(curAngle,angleOutake,15))
-			intake.setSpeed(-0.85);
-		else
-			intake.setSpeed(0.2);
-		
 		if (reset) {
 			navx.resetAngle();
 			turnPID.setSetpoint(setP);
 			turnPID.setMaxIOutput(0.32);
-			return true;
+			return true;			
 		} else {
 			curAngle = navx.getAngle() % 360;
 			turnSpeed = turnPID.getOutput(curAngle);
@@ -215,5 +210,17 @@ public class AutoFunctions {
 	
 	public void setSpeedLimit(double speedLimit) {
 		this.speedLimit = speedLimit;
+	}
+
+	public void turnDropFunc(double angleOuttake, double angleDrop) {
+		double curAngle = navx.getAngle() % 360;
+		
+		if (within(curAngle,angleOuttake,15))
+			intake.setSpeed(-0.85);
+		else
+			intake.setSpeed(0.2);
+		
+		if (within(curAngle,angleDrop,15))
+			lift.setLoc(0);
 	}
 }
