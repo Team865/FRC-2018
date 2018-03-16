@@ -6,9 +6,10 @@ import static ca.warp7.robot.controls.Control.UP;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kLeft;
 import static edu.wpi.first.wpilibj.GenericHID.Hand.kRight;
 
+import ca.warp7.robot.Robot;
 import ca.warp7.robot.misc.DataPool;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import ca.warp7.robot.Robot;
+
 public class DualRemote extends ControlsBase {
 	
 	@Override
@@ -27,20 +28,12 @@ public class DualRemote extends ControlsBase {
 		if (driver.getAButton() == PRESSED)
 			intake.pistonToggle();
 		
-		if(operator.getBumper(kRight) == DOWN){
-			
-		}else if(operator.getBumper(kLeft) == DOWN){
-			
-		}else{
-			
+		if(driver.getBumper(kLeft) == PRESSED){
+				Robot.limelight.switchCamera();
+				System.out.println("switching camera");
 		}
-		
 		if(operator.getBackButton() == PRESSED){
 			
-		}
-		
-		if (driver.getBumper(kLeft)==PRESSED) {
-			Robot.limelight.switchCamera();
 		}
 		
 		if(operator.getBButton() == DOWN){
