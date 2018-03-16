@@ -30,10 +30,10 @@ public class AutoFunctions {
 	private double speedLimit = 1;
 
 	public AutoFunctions() { //march 16 working = 0.0155, 0.0029, 0.23
-		turnPID = new MiniPID(0.0083,1, 0.139); 
+		turnPID = new MiniPID(0.009,0.01, 0.21); 
 		turnPID.setOutputLimits(1);
 		turnPID.setOutputRampRate(0.083);
-		turnPID.setMaxIOutput(0.18);
+		turnPID.setMaxIOutput(0.175);
 		
 		distancePID = new MiniPID(0.02, 0.0013, 0.22);
 		distancePID.setOutputLimits(1);
@@ -52,6 +52,7 @@ public class AutoFunctions {
 			turnPID.setSetpoint(0);
 			distanceReset=false;
 			System.out.println("drive reset complete");
+			//turn pid i term fix
 			return false;
 		}
 		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360, 0);
@@ -91,7 +92,7 @@ public class AutoFunctions {
 	private double distancePredictor(double area) {
 		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
 	}
-
+		
 	public boolean angleRelTurn(double setP) {
 		if (angleReset) {
 			totalTicks=0;//test, delete this
@@ -106,14 +107,13 @@ public class AutoFunctions {
 			totalTicks++;//test, delete this
 			double curAngle = navx.getAngle() % 360;
 			double turnSpeed = turnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 1.7)) {
+			if (within(curAngle, setP, 2)) {
 				ticks++;
-				autoDrive(turnSpeed, -turnSpeed);
-				//turnSpeed = 0;
+				turnSpeed = 0;
 			} else
 				ticks = 0;
 			System.out.println("ticks " + ticks);
-			if (ticks > 6) {
+			if (ticks > 5) {
 				angleReset=true;
 				System.out.println("turn complete after ticks=" + totalTicks); //test, delete this
 				autoDrive(0, 0);

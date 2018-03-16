@@ -159,7 +159,7 @@ public class AutonomousBase {
 		}
 	}
 
-	private void Left_LLL() {
+	private void Left_LLL() { //OUTDATED
 		switch (step) {
 		case (0):
 			if (autoFunc.driveDistance(585)) {
@@ -268,14 +268,14 @@ public class AutonomousBase {
 	}
 	}
 
-	private void None_RLR() {
+	private void None_RLR() { //TESTING
 		autoFunc.setSpeedLimit(0.8);
 		switch (step) {
 		case (0):
-			if (autoFunc.angleRelTurn(180)) 
+			if (autoFunc.driveDistance(300)) 
 				step++;
 			break;
-		case (1): 
+		/*case (1): 
 			if (autoFunc.angleRelTurn(90)) 
 				step++;
 			break;
@@ -291,13 +291,22 @@ public class AutonomousBase {
 				if (autoFunc.angleRelTurn(180)) 
 					step++;
 				break;
+		*/
 	}
 	}
 	
 
 	private void None_LRL() {
 		// TODO Auto-generated method stub
-		
+	switch(step) {
+	case (0):
+		if (autoFunc.angleRelTurnAngleRunFunc(145, () -> autoFunc.turnDropFunc(20,50))) {
+			autoFunc.setSpeedLimit(0.75);
+			intake.setSpeed(1);
+			step++;
+		}
+		break;
+	}
 	}
 
 	private void None_LLL() {
@@ -317,7 +326,7 @@ public class AutonomousBase {
 			break;
 		
 		case (2):
-			if (autoFunc.angleRelTurnAngleRunFunc(145, () -> autoFunc.turnDropFunc(20,50))) {
+			if (autoFunc.angleRelTurnAngleRunFunc(143, () -> autoFunc.turnDropFunc(20,50))) {
 				autoFunc.setSpeedLimit(0.75);
 				intake.setSpeed(1);
 				step++;
