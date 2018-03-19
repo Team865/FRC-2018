@@ -34,7 +34,7 @@ public class Robot extends IterativeRobot  {
 	public static Lift lift;
 	public static Intake intake;
 	
-	private static AutonomousBase auto;
+	public static AutonomousBase auto;
 	private static ControlsBase controls;
 	
 	//shutup >:(

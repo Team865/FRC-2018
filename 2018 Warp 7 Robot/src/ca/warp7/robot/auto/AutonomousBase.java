@@ -29,12 +29,10 @@ public class AutonomousBase {
 	private MiniPID turnSoftPID;
 	private MiniPID distancePID;
 
-	private AutoFunctions autoFunc = new AutoFunctions();
+	public AutoFunctions autoFunc = new AutoFunctions();
+	private CustomFunctions customFunc = new CustomFunctions();
 
 	private int step = 0;
-	private double robotAngle = 0;
-
-	private static final double speed = 1;
 
 	public void autonomousPeriodic(String gameData, int pin) {
 		if (pin == 0) { // None
@@ -300,7 +298,7 @@ public class AutonomousBase {
 		// TODO Auto-generated method stub
 	switch(step) {
 	case (0):
-		if (autoFunc.angleRelTurnAngleRunFunc(145, () -> autoFunc.turnDropFunc(20,50))) {
+		if (autoFunc.angleRelTurn(145, () -> customFunc.turnDrop(20,50))) {
 			autoFunc.setSpeedLimit(0.75);
 			intake.setSpeed(1);
 			step++;
@@ -326,7 +324,7 @@ public class AutonomousBase {
 			break;
 		
 		case (2):
-			if (autoFunc.angleRelTurnAngleRunFunc(143, () -> autoFunc.turnDropFunc(20,50))) {
+			if (autoFunc.angleRelTurn(143, () -> customFunc.turnDrop(20,50))) {
 				autoFunc.setSpeedLimit(0.75);
 				intake.setSpeed(1);
 				step++;
@@ -372,13 +370,5 @@ public class AutonomousBase {
 			}
 			break;
 		}
-	}
-
-	private double distancePredictor(double area) {
-		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
-	}
-
-	private void updateRobotAngle() {
-		robotAngle = navx.getAngle() % 360;
 	}
 }

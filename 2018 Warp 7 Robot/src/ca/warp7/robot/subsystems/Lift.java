@@ -27,6 +27,7 @@ public class Lift {
 	private MiniPID liftPID;
 	
 	private Intake intake = Robot.intake;
+	private Drive drive = Robot.drive;
 	
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
@@ -66,8 +67,10 @@ public class Lift {
 	public void periodic(){
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
-		double speed = liftPID.getOutput(getEncoderVal()/LIFT_HEIGHT);
-		
+		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
+		double speed = liftPID.getOutput(scaledLift);
+		double invertVal = Math.abs(1-scaledLift);
+		drive.setSpeedLimit(TIP_CONSTANT*invertVal);
 		//if (intake.hasCube())
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else

@@ -21,13 +21,13 @@ public class AutoFunctions {
 	private Drive drive = Robot.drive;
 	private Navx navx = Robot.navx;
 	private Limelight limelight = Robot.limelight;
-	private Intake intake = Robot.intake;
-	private Lift lift = Robot.lift;
 	private boolean angleReset;
 	private boolean distanceReset;
 	private int totalTicks=0;//for testing, delete this
 	private static final double speed = 1;
 	private double speedLimit = 1;
+	
+	public double wantedAngle = 0;
 
 	public AutoFunctions() { //march 16 working = 0.0155, 0.0029, 0.23
 		turnPID = new MiniPID(0.009,0.01, 0.21); 
@@ -80,17 +80,45 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-
-	private boolean within(double angle, double setAngle, double thresh) {
-		return (setAngle - thresh) < angle && (setAngle + thresh) > angle;
-	}
-
-	private double getOverallDistance() {
-		return (-drive.getLeftDistance() + -drive.getRightDistance()) / 2;
-	}
-
-	private double distancePredictor(double area) {
-		return CUBE_DISTANCE_B - CUBE_DISTANCE_M * area;
+	
+	public boolean driveDistance(double dist, Runnable func) {
+		if (distanceReset) {
+			navx.resetAngle();
+			drive.resetDistance();
+			distancePID.setSetpoint(dist);
+			ticks = 0;
+			turnPID.setSetpoint(0);
+			distanceReset=false;
+			wantedAngle=0;
+			System.out.println("drive reset complete");
+			//turn pid i term fix
+			return false;
+		}
+		func.run();
+		double turnSpeed = turnPID.getOutput(navx.getAngle() % 360, wantedAngle);
+		double curDistance = getOverallDistance();
+		double driveSpeed = distancePID.getOutput(curDistance,dist);
+		System.out.println(
+				"driving. curDist= " + curDistance + "setPoint= " +dist+ " deltaAng= " + (0 - (navx.getAngle() % 360)));
+		if (within(curDistance, dist, 15))
+			ticks++;
+		else
+			ticks=0;
+		if ((within(curDistance, dist, 15)) && ticks > 20) {
+			autoDrive(0, 0);
+			distanceReset=true;
+			System.out.println("driving complete");
+			return true;
+		} else {
+			if (turnSpeed < 0) {// turn left
+				turnSpeed = -(turnSpeed);
+		
+				autoDrive(driveSpeed-turnSpeed,driveSpeed);
+			} else { // turn right
+				autoDrive(driveSpeed,driveSpeed-turnSpeed);
+			}
+		}
+		return false;
 	}
 		
 	public boolean angleRelTurn(double setP) {
@@ -128,44 +156,8 @@ public class AutoFunctions {
 		return false;
 
 	}
-	/*
-	public boolean angleRelTurnAngleOutake(double setP, double angleOutake) {
-		double curAngle = navx.getAngle() % 360;
-		double turnSpeed = 0;
-		if (within(curAngle,angleOutake,20))
-			intake.setSpeed(-0.85);
-		else
-			intake.setSpeed(0.2);
-		
-		if (angleReset) {
-			navx.resetAngle();
-			turnPID.setSetpoint(setP);
-			turnPID.setMaxIOutput(0.32);
-			angleReset=false;
-			return true;
-		} else {
-			turnSpeed = turnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 0.4)) {
-				ticks++;
-				turnSpeed = 0;
-			} else
-				ticks = 0;
-			System.out.println("ticks " + ticks);
-			if (ticks > 7) {
-				angleReset=true;
-				return true;
-			} else {
-				System.out.println("cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + " pLeft= "
-						+ speed * turnSpeed + " pRight= " + -speed * turnSpeed);
 
-				autoDrive(turnSpeed, -turnSpeed);
-
-			}
-		}
-		return false;
-	}
-	*/
-	public boolean angleRelTurnAngleRunFunc(double setP, Runnable func) {
+	public boolean angleRelTurn(double setP, Runnable func) {
 		if (angleReset) {
 			navx.resetAngle();
 			turnPID.setSetpoint(setP);
@@ -196,18 +188,6 @@ public class AutoFunctions {
 		}
 		return false;
 
-	}
-	
-	public void turnDropFunc(double angleOuttake, double angleDrop) {
-		double curAngle = navx.getAngle() % 360;
-		
-		if (within(curAngle,angleOuttake,15))
-			intake.setSpeed(-0.85);
-		else
-			intake.setSpeed(0.2);
-		
-		if (within(curAngle,angleDrop,15))
-			lift.setLoc(0);
 	}
 
 	public boolean alignIntakeCube(double dist, double angleThresh) {	
@@ -246,7 +226,6 @@ public class AutoFunctions {
 	}
 	
 	private void autoDrive(double left, double right) {
-		speedLimit = Math.abs(speedLimit);
 		if (left > speedLimit)
 			left = speedLimit;
 		else if (left < -speedLimit)
@@ -261,6 +240,14 @@ public class AutoFunctions {
 	}
 	
 	public void setSpeedLimit(double speedLimit) {
-		this.speedLimit = speedLimit;
+		this.speedLimit = Math.abs(speedLimit);
+	}
+	
+	private boolean within(double angle, double setAngle, double thresh) {
+		return (setAngle - thresh) < angle && (setAngle + thresh) > angle;
+	}
+
+	private double getOverallDistance() {
+		return (-drive.getLeftDistance() + -drive.getRightDistance()) / 2;
 	}
 }

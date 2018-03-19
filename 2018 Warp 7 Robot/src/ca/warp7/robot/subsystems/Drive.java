@@ -230,6 +230,7 @@ public class Drive {
         	double scaledPower = 1+(0-pitchAngleDegrees-kOonBalanceAngleThresholdDegrees)/kOonBalanceAngleThresholdDegrees;
         	if (scaledPower > 2)
         		scaledPower = 2;
+        	//return scaledPower;
         }
         
 		return 0;
