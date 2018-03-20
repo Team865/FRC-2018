@@ -19,6 +19,17 @@ public class CustomFunctions {
 	private Intake intake = Robot.intake;
 	private Lift lift = Robot.lift;
 	
+	public void turnToScale(double driveLocationTurn1,double angle1,double driveLocationTurn2,double angle2,double liftLocation, double liftScale) {
+		double dist = getOverallDistance();
+		if (withinMiddle(dist,driveLocationTurn1,20))
+			autoFunc.wantedAngle = angle1;
+		if (withinMiddle(dist,driveLocationTurn2,20))
+			autoFunc.wantedAngle = angle2;
+		
+		if (withinMiddle(dist,liftLocation,20))
+			lift.setLoc(liftScale);
+	}
+	
 	public void driveIntakeUp(double driveLocation, double liftLocation){
 		double dist = getOverallDistance();
 		if (withinMiddle(dist,driveLocation,20))

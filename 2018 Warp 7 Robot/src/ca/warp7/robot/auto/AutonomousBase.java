@@ -25,12 +25,8 @@ public class AutonomousBase {
 	private Intake intake = Robot.intake;
 	private Lift lift = Robot.lift;
 
-	private MiniPID turnPID;
-	private MiniPID turnSoftPID;
-	private MiniPID distancePID;
-
-	public AutoFunctions autoFunc = new AutoFunctions();
-	private CustomFunctions customFunc = new CustomFunctions();
+	public static AutoFunctions autoFunc = new AutoFunctions();
+	private static CustomFunctions customFunc = new CustomFunctions();
 
 	private int step = 0;
 
@@ -359,13 +355,14 @@ public class AutonomousBase {
 	private void None_RRR() {
 		// TODO Auto-generated method stub
 		switch (step) {
-		case (0): 
-			autoFunc.setSpeedLimit(0.3);
-			intake.setSpeed(1);
+		case (0): {
+			intake.setSpeed(0.2);
 			step++;
 			break;
+		}
 		case (1):
-			if(autoFunc.alignIntakeCube(300,10)) {
+			if (autoFunc.driveDistance(1090, () -> customFunc.turnToScale(320,80,900,-145,250,1))) {
+				System.out.println("Exiting drive because im done");
 				step++;
 			}
 			break;

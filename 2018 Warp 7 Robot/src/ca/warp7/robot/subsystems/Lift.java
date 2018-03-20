@@ -69,8 +69,9 @@ public class Lift {
 			zeroEncoder();
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
-		double invertVal = Math.abs(1-scaledLift);
-		drive.setSpeedLimit(TIP_CONSTANT*invertVal);
+		double speedLimit = Math.pow(0.3,scaledLift);
+		//drive.setSpeedLimit(speedLimit);
+		//drive.setSpeedLimit(TIP_CONSTANT*invertVal);
 		//if (intake.hasCube())
 			//rampSpeed(speed+SPEED_OFFSET_CUBE);
 		//else

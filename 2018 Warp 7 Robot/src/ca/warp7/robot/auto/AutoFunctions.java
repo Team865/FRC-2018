@@ -28,11 +28,11 @@ public class AutoFunctions {
 	private double speedLimit = 1;
 	
 	public double wantedAngle = 0;
-
+	//friday march 16ish (0.009,0.01, 0.21); 
 	public AutoFunctions() { //march 16 working = 0.0155, 0.0029, 0.23
-		turnPID = new MiniPID(0.009,0.01, 0.21); 
+		turnPID = new MiniPID(0.015,0.01, 0.21); 
 		turnPID.setOutputLimits(1);
-		turnPID.setOutputRampRate(0.083);
+		turnPID.setOutputRampRate(0.086);
 		turnPID.setMaxIOutput(0.175);
 		
 		distancePID = new MiniPID(0.02, 0.0013, 0.22);
