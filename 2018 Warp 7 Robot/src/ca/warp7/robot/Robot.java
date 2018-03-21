@@ -78,7 +78,6 @@ public class Robot extends IterativeRobot  {
 	
 	private int pin = -1;
 	public void autonomousInit(){
-		drive.autoShift(true);
 		lift.zeroEncoder();
 		lift.setLoc(0);
 		auto = new AutonomousBase();

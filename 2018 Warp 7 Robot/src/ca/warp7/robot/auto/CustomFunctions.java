@@ -47,7 +47,7 @@ public class CustomFunctions {
 		double curAngle = navx.getAngle() % 360;
 		
 		if (withinMiddle(curAngle,angleOuttake,15))
-			intake.setSpeed(-0.85);
+			intake.setSpeed(-1);
 		else
 			intake.setSpeed(0.2);
 		

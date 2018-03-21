@@ -115,7 +115,7 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistance(535)) {
+			if (autoFunc.driveDistance(540)) {
 				System.out.println("Exiting drive because im done");
 				step++;
 			}
@@ -126,7 +126,7 @@ public class AutonomousBase {
 			}
 			break;
 		case (3):
-			if (autoFunc.driveDistance(485)) {
+			if (autoFunc.driveDistance(465)) {
 				System.out.println("Exiting drive because im done");
 				lift.setLoc(1);
 				step++;
@@ -361,11 +361,29 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistance(1090, () -> customFunc.turnToScale(320,80,900,-145,250,1))) {
-				System.out.println("Exiting drive because im done");
+			if (autoFunc.driveDistanceNoStop(332, 0)) {
+				step++;
+				lift.setLoc(0.35);
+			}
+			break;
+		case (2):
+			if (autoFunc.driveDistanceNoStop(243, 90)) {
+				lift.setLoc(0.6);
 				step++;
 			}
 			break;
-		}
+		case (3): //drive between switch and scale
+			if (autoFunc.driveDistanceNoStop(280, 0)) {
+				lift.setLoc(1);
+				step++;
+			}
+			break;
+		 case (4):
+		 	if (autoFunc.driveDistanceNoStop(500,-250, () -> customFunc.turnDrop(-115,-130))){
+		 		step++;
+		 	}
+		 break;
+		 
+		 
 	}
-}
+}}
