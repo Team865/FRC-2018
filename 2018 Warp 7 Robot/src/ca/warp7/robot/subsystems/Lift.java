@@ -67,15 +67,14 @@ public class Lift {
 	public void periodic(){
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
+		else
+			if (intake.getSpeed() >= 0)
+				intake.rampSpeed(0.25);
+		
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
-		double speedLimit = Math.pow(0.45,scaledLift);
+		double speedLimit = Math.pow(0.3,scaledLift);
 		drive.setSpeedLimit(speedLimit);
-		//drive.setSpeedLimit(TIP_CONSTANT*invertVal);
-		//if (intake.hasCube())
-			//rampSpeed(speed+SPEED_OFFSET_CUBE);
-		//else
-			//rampSpeed(speed+SPEED_OFFSET);
 		
 		rampSpeed(speed);
 	}

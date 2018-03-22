@@ -30,6 +30,12 @@ public class CustomFunctions {
 			lift.setLoc(liftScale);
 	}
 	
+	public void driveTurn(double driveLocationTurn1,double angle1) {
+		double dist = getOverallDistance();
+		if (withinMiddle(dist,driveLocationTurn1,20))
+			autoFunc.wantedAngle = angle1;
+	}
+	
 	public void driveIntakeUp(double driveLocation, double liftLocation){
 		double dist = getOverallDistance();
 		if (withinMiddle(dist,driveLocation,20))

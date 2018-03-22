@@ -31,7 +31,7 @@ public class AutoFunctions {
 
 	// friday march 16ish (0.009,0.01, 0.21);
 	public AutoFunctions() { // march 16 working = 0.0155, 0.0029, 0.23
-		turnPID = new MiniPID(0.015, 0.01, 0.21);
+		turnPID = new MiniPID(0.016, 0.2, 0.22);
 		turnPID.setOutputLimits(1);
 		turnPID.setOutputRampRate(0.086);
 		turnPID.setMaxIOutput(0.175);
@@ -49,9 +49,10 @@ public class AutoFunctions {
 			navx.resetAngle();
 			drive.resetDistance();
 			ticks = 0;
-			turnPID.setSetpoint(angle);
-			turnPID.setP(0.016);
-			turnPID.setD(0.36);
+			turnPID.setSetpoint(angle); 
+			//turnPID.setP(0.015);
+			turnPID.setD(0.39);
+			turnPID.setMaxIOutput(0.19);
 			distanceReset = false;
 			System.out.println("drive reset complete");
 			// turn pid i term fix
@@ -87,8 +88,9 @@ public class AutoFunctions {
 			drive.resetDistance();
 			ticks = 0;
 			turnPID.setSetpoint(angle);
-			turnPID.setP(0.016);
+			turnPID.setP(0.0172);
 			turnPID.setD(0.36);
+			turnPID.setMaxIOutput(0.19);
 			distanceReset = false;
 			System.out.println("drive reset complete");
 			// turn pid i term fix
@@ -99,7 +101,7 @@ public class AutoFunctions {
 		double driveSpeed;
 		func.run();
 		if (curDistance + 85 > dist)
-			driveSpeed = 0.55;
+			driveSpeed = 0.35;
 		else
 			driveSpeed = 1;
 		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
@@ -236,8 +238,9 @@ public class AutoFunctions {
 		if (angleReset) {
 			navx.resetAngle();
 			turnPID.setSetpoint(setP);
-			turnPID.setMaxIOutput(0.32);
+			//turnPID.setMaxIOutput(0.32);
 			angleReset = false;
+			turnPID.setP(setP);
 			System.out.println("turn reset complete");
 			return false;
 		} else {
@@ -261,9 +264,9 @@ public class AutoFunctions {
 			}
 		}
 		return false;
-
 	}
-
+	
+	
 	public boolean alignIntakeCube(double dist, double angleThresh) {
 		if (distanceReset) {
 			navx.resetAngle();

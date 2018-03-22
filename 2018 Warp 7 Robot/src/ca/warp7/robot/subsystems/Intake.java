@@ -41,6 +41,10 @@ public class Intake {
 		intakeMotorRight.set(speed);
 	}
 	
+	public double getSpeed() {
+		return intakeMotorRight.get();
+	}
+	
 	public void pistonToggle(){
 		intakePistons.set(!intakePistons.get());
 	}

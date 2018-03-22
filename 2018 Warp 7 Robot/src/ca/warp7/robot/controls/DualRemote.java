@@ -28,7 +28,7 @@ public class DualRemote extends ControlsBase {
 		if (driver.getAButton() == PRESSED)
 			intake.pistonToggle();
 		
-		if(driver.getBumper(kLeft) == PRESSED){
+		if(driver.getXButton() == PRESSED){
 				Robot.limelight.switchCamera();
 				System.out.println("switching camera");
 		}
