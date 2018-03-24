@@ -46,7 +46,7 @@ public class Constants {
     public static double RIGHT_DRIFT_OFFSET = 0.98;
     public static double LEFT_DRIFT_OFFSET = 1;
     
-    public static double LIFT_HEIGHT = 12900;
+    public static double LIFT_HEIGHT = 12100;
     public static double CLIMBER_HEIGHT = 255; // string potentiometer max number
     
     public static final int LIFT_ENCODER_A = 4;

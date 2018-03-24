@@ -30,6 +30,8 @@ public class Lift {
 	private Intake intake = Robot.intake;
 	private Drive drive = Robot.drive;
 	
+	public boolean disableSpeedLimit = false;
+	
 	public Lift(){
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
 		LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
@@ -40,7 +42,7 @@ public class Lift {
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(10,0,55);
+		liftPID = new MiniPID(13,0,20);
 		liftPID.setOutputLimits(-0.7-SPEED_OFFSET,1);
 	}
 	
@@ -78,8 +80,12 @@ public class Lift {
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
 		System.out.println("speed= "+speed + " height= "+scaledLift +"setP= "+targetH);
-		double speedLimit = Math.pow(0.3,scaledLift);
-		drive.setSpeedLimit(speedLimit);
+		
+		if (!disableSpeedLimit) {
+			double speedLimit = Math.pow(0.25,scaledLift);
+			drive.setSpeedLimit(speedLimit);
+		}else
+			drive.setSpeedLimit(1);
 		
 		rampSpeed(speed);
 	}

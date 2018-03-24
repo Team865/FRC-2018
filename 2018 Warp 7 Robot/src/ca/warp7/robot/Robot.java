@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot  {
 		RTS liftRTS = new RTS("liftRTS", 8);
 		Runnable liftPer = () -> lift.periodic();
 		liftRTS.addTask(liftPer);
-		//liftRTS.start();
+		liftRTS.start();
 	}
 	
 	private int pin = -1;
@@ -92,6 +92,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
+		lift.disableSpeedLimit = false;
 		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);

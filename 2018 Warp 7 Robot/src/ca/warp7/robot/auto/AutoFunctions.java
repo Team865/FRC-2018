@@ -23,10 +23,9 @@ public class AutoFunctions {
 	private Limelight limelight = Robot.limelight;
 	private boolean angleReset;
 	private boolean distanceReset;
-	private int totalTicks = 0;// for testing, delete this
+	public int totalTicks = 0;// for testing, delete this
 	private static final double speed = 1;
 	private double speedLimit = 1;
-
 	public double wantedAngle = 0;
 
 	// friday march 16ish (0.009,0.01, 0.21);
@@ -52,7 +51,7 @@ public class AutoFunctions {
 			turnPID.setSetpoint(angle); 
 			//turnPID.setP(0.015);
 			turnPID.setD(0.39);
-			turnPID.setMaxIOutput(0.19);
+			turnPID.setMaxIOutput(0.21);
 			distanceReset = false;
 			System.out.println("drive reset complete");
 			// turn pid i term fix
@@ -211,7 +210,7 @@ public class AutoFunctions {
 			totalTicks++;// test, delete this
 			double curAngle = navx.getAngle() % 360;
 			double turnSpeed = turnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 2)) {
+			if (within(curAngle, setP, 1.25)) {
 				ticks++;
 				turnSpeed = 0;
 			} else
@@ -236,29 +235,34 @@ public class AutoFunctions {
 
 	public boolean angleRelTurn(double setP, Runnable func) {
 		if (angleReset) {
+			totalTicks = 0;// test, delete this
 			navx.resetAngle();
+			Timer.delay(0.05);
+			ticks = 0;
 			turnPID.setSetpoint(setP);
-			//turnPID.setMaxIOutput(0.32);
 			angleReset = false;
-			turnPID.setP(setP);
 			System.out.println("turn reset complete");
 			return false;
 		} else {
 			func.run();
+			totalTicks++;// test, delete this
 			double curAngle = navx.getAngle() % 360;
 			double turnSpeed = turnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 1)) {
+			if (within(curAngle, setP, 1.25)) {
 				ticks++;
 				turnSpeed = 0;
 			} else
 				ticks = 0;
 			System.out.println("ticks " + ticks);
-			if (ticks > 7) {
+			if (ticks > 5) {
 				angleReset = true;
-				System.out.println("turnDrop complete");
+				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
+				autoDrive(0, 0);
 				return true;
 			} else {
-				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed);
+				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
+						+ totalTicks);
+
 				autoDrive(turnSpeed, -turnSpeed);
 
 			}
@@ -273,22 +277,25 @@ public class AutoFunctions {
 			drive.resetDistance();
 			distancePID.setSetpoint(dist);
 			ticks = 0;
+			totalTicks=0;
 			distanceReset = false;
 			System.out.println("align intake drive reset complete");
 			return false;
 		}
 		double cubeAngleOffset = limelight.getXOffset();
 		double turnSpeed = 1 - Math.abs(cubeAngleOffset / angleThresh);
+		totalTicks++;
+		System.out.println("alignIntake ticks= "+totalTicks);
 		if (turnSpeed < 0)
 			turnSpeed = 0;
 		double curDistance = getOverallDistance();
 		double driveSpeed = distancePID.getOutput(curDistance);
 		System.out.println(cubeAngleOffset + ":" + turnSpeed);
-		if (within(curDistance, dist, 15))
+		if (within(curDistance, dist, 30))
 			ticks++;
 		else
 			ticks = 0;
-		if ((within(curDistance, dist, 15)) && ticks > 20) {
+		if ((within(curDistance, dist, 30)) && ticks > 30) {
 			autoDrive(0, 0);
 			distanceReset = true;
 			return true;

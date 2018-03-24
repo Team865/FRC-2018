@@ -40,13 +40,6 @@ public class CustomFunctions {
 		double dist = getOverallDistance();
 		if (withinMiddle(dist,driveLocation,20))
 			lift.setLoc(liftLocation);
-		
-		if (withinFront(dist,driveLocation,20))
-			autoFunc.wantedAngle = 90;
-		else if (withinFront(dist,driveLocation,20))
-			autoFunc.wantedAngle = 0;
-		else
-			autoFunc.wantedAngle = 0;
 	}
 	
 	public void turnDrop(double angleOuttake, double angleDrop) {
