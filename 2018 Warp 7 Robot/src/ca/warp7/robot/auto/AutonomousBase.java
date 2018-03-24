@@ -218,12 +218,13 @@ public class AutonomousBase {
 				step++;
 				break;	
 			case (1):
-				if (autoFunc.driveDistance(295,() -> customFunc.driveTurn(0, -25))) {
+				if (autoFunc.driveDistance(295,() -> customFunc.driveTurn(10, -25))) {
 					intake.setSpeed(-1);
 					Timer.delay(0.2);
 					intake.setSpeed(0);
 					step++;
 				}
+				break;
 		}
 	}
 

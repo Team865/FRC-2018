@@ -25,6 +25,7 @@ public class Lift {
 	private Encoder liftEncoder;
 	private DigitalInput liftHallaffect;
 	private MiniPID liftPID;
+	private double targetH;
 	
 	private Intake intake = Robot.intake;
 	private Drive drive = Robot.drive;
@@ -33,13 +34,14 @@ public class Lift {
 		LiftMotorLeft = new MotorGroup(LIFT_MOTOR_LEFT_IDS, WPI_VictorSPX.class);
 		LiftMotorRight = new MotorGroup(LIFT_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
 		LiftMotorLeft.setInverted(true);
+		LiftMotorRight.setInverted(true);
 		
 		liftEncoder =  new Encoder(LIFT_ENCODER_A, LIFT_ENCODER_B, false, EncodingType.k4X);
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(2.5,0,0);
-		liftPID.setOutputLimits(-0.5,1);
+		liftPID = new MiniPID(10,0,55);
+		liftPID.setOutputLimits(-0.7-SPEED_OFFSET,1);
 	}
 	
 	private double ramp = 0;
@@ -60,6 +62,8 @@ public class Lift {
 	
 	public void setLoc(double scale) {
 		double target = Math.abs(scale);
+		target = Math.floor(target * 10.0) / 10.0;
+		targetH=target;
 		SmartDashboard.putNumber("loc dfliusafusd", target);
 		liftPID.setSetpoint(target);
 	}
@@ -69,10 +73,11 @@ public class Lift {
 			zeroEncoder();
 		else
 			if (intake.getSpeed() >= 0)
-				intake.rampSpeed(0.25);
+				intake.rampSpeed(0.3);
 		
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
+		System.out.println("speed= "+speed + " height= "+scaledLift +"setP= "+targetH);
 		double speedLimit = Math.pow(0.3,scaledLift);
 		drive.setSpeedLimit(speedLimit);
 		
@@ -80,7 +85,11 @@ public class Lift {
 	}
 	
 	public double getEncoderVal() {
-		return Math.abs(liftEncoder.getDistance()); 
+		double dist = liftEncoder.getDistance();
+		
+		if (dist>=-300)
+			return dist;
+		return 0; 
 	}
 	
 	public void zeroEncoder() {

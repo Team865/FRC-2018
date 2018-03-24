@@ -73,7 +73,7 @@ public class Robot extends IterativeRobot  {
 		RTS liftRTS = new RTS("liftRTS", 8);
 		Runnable liftPer = () -> lift.periodic();
 		liftRTS.addTask(liftPer);
-		liftRTS.start();
+		//liftRTS.start();
 	}
 	
 	private int pin = -1;
@@ -153,6 +153,7 @@ public class Robot extends IterativeRobot  {
 			Timer.delay(0.5);
 		}
 		lift.setSpeed(0);
+		System.out.println(speed);
 		SmartDashboard.putNumber("Lift power", speed);
 	}
 	

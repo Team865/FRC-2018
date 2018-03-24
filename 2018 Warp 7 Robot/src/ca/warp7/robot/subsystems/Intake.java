@@ -23,7 +23,6 @@ public class Intake {
 		intakeMotorRight = new MotorGroup(INTAKE_MOTOR_RIGHT_IDS, WPI_VictorSPX.class);
 		intakeMotorRight.setInverted(true);
 		intakePistons = new Solenoid(INTAKE_PISTONS);
-		
 		photosensor = new LimelightPhotosensor(Robot.limelight, 1);
 	}
 	
