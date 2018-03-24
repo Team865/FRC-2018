@@ -317,13 +317,13 @@ public class AutonomousBase {
 			lift.zeroEncoder();
 			Timer.delay(0.1);
 			intake.setSpeed(0.3);
-			lift.disableSpeedLimit = false;
+			lift.disableSpeedLimit = true;
 			autoFunc.setSpeedLimit(1);
 			step++;
 			lift.setLoc(0.5);
 			break;
 		case (1):
-			if (autoFunc.driveDistance(310)) {
+			if (autoFunc.driveDistance(410)) {
 				step++;
 			}
 			break;
