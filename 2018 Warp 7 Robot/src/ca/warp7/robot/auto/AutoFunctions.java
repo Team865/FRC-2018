@@ -230,7 +230,37 @@ public class AutoFunctions {
 			}
 		}
 		return false;
+	}
+	
+	public boolean angleRelTurnNoStop(double setP) {
+		if (angleReset) {
+			totalTicks = 0;// test, delete this
+			navx.resetAngle();
+			Timer.delay(0.05);
+			turnPID.setSetpoint(setP);
+			angleReset = false;
+			System.out.println("turn reset complete");
+			return false;
+		} else {
+			totalTicks++;// test, delete this
+			double curAngle = navx.getAngle() % 360;
+			double turnSpeed = turnPID.getOutput(curAngle);
+			if (within(curAngle, setP, 1.25)) {
+				ticks++;
+				turnSpeed = 0;
+				angleReset = true;
+				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
+				autoDrive(0, 0);
+				return true;
+			} else {
+				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
+						+ totalTicks);
 
+				autoDrive(turnSpeed, -turnSpeed);
+
+			}
+		}
+		return false;
 	}
 
 	public boolean angleRelTurn(double setP, Runnable func) {
