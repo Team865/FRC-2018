@@ -77,7 +77,7 @@ public class AutonomousBase {
 	private void Left_RLR() {
 		// DOUBLE SCALE left working
 		switch (step) {
-		case (0):			
+		case (0):
 			lift.zeroEncoder();
 			Timer.delay(0.1);
 			lift.setLoc(1);
@@ -142,45 +142,26 @@ public class AutonomousBase {
 				step++;
 			}
 			break;
-		case(9):
+		case (9):
 			if (autoFunc.driveDistanceNoStop(-50, 0)) {
 				step++;
 				lift.setLoc(0);
 			}
 			break;
-	}
+		}
 		/*
-		switch (step) {
-		case (0):
-			if (autoFunc.driveDistance(585)) {
-				lift.setLoc(1);
-				step++;
-			}
-			break;
-		case (1):
-			if (autoFunc.angleRelTurn(22.5)) {
-				autoFunc.setSpeedLimit(0.75);
-				step++;
-			}
-			break;
-		case (2):
-			if (autoFunc.driveDistance(100)) {
-				System.out.println("Exiting drive because im done");
-				autoFunc.setSpeedLimit(1);
-				intake.setSpeed(-1);
-				Timer.delay(0.2);
-				intake.setSpeed(0);
-				step++;
-			}
-			break;
-
-		case (3):
-			if (autoFunc.angleRelTurn(90)) {
-				step++;
-			}
-			break;
-			
-		}*/
+		 * switch (step) { case (0): if (autoFunc.driveDistance(585)) { lift.setLoc(1);
+		 * step++; } break; case (1): if (autoFunc.angleRelTurn(22.5)) {
+		 * autoFunc.setSpeedLimit(0.75); step++; } break; case (2): if
+		 * (autoFunc.driveDistance(100)) {
+		 * System.out.println("Exiting drive because im done");
+		 * autoFunc.setSpeedLimit(1); intake.setSpeed(-1); Timer.delay(0.2);
+		 * intake.setSpeed(0); step++; } break;
+		 * 
+		 * case (3): if (autoFunc.angleRelTurn(90)) { step++; } break;
+		 * 
+		 * }
+		 */
 	}
 
 	private void Left_RRR() {
@@ -199,7 +180,7 @@ public class AutonomousBase {
 			if (autoFunc.driveDistanceNoStop(317, 0)) {
 				step++;
 				autoFunc.setSpeedLimit(0.9);
-				lift.setLoc(1); //LIFT
+				lift.setLoc(1); // LIFT
 			}
 			break;
 		case (2):
@@ -246,13 +227,16 @@ public class AutonomousBase {
 				step++;
 			}
 			break;
+		// TODO shoot second cube a little later, almost hit the wood and missed switch.
+		// lift it higher
+
 		}
 	}
 
 	private void Left_LLL() {
 		// WORKING LEFT SCALE LEFT SWITCH DOUBLE CUBE march 24
 		switch (step) {
-		case (0):			
+		case (0):
 			lift.zeroEncoder();
 			Timer.delay(0.1);
 			lift.setLoc(1);
@@ -313,32 +297,33 @@ public class AutonomousBase {
 				step++;
 			}
 			break;
+		// drive backwards TODO so we dont hit intake on switch after auto ends
 		}
 	}
 
 	private void Left_LRL() {
 
-		//double scale test
+		// double scale test right side
 		switch (step) {
 		case (0): {
 			lift.zeroEncoder();
 			Timer.delay(0.1);
-			lift.setLoc(0.3);
+			lift.setLoc(0.4);
 			intake.setSpeed(0.45);
 			lift.disableSpeedLimit = true;
 			step++;
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistanceNoStop(312, 0)) {
+			if (autoFunc.driveDistanceNoStop(305, 0)) {
 				step++;
 				autoFunc.setSpeedLimit(0.9);
-				lift.setLoc(1); //LIFT
+				lift.setLoc(1); // LIFT
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(540, 87)) {
-				autoFunc.setSpeedLimit(0.55);
+			if (autoFunc.driveDistanceNoStop(518, 87)) {
+				autoFunc.setSpeedLimit(0.58);
 				step++;
 			}
 			break;
@@ -349,17 +334,19 @@ public class AutonomousBase {
 			// }
 			break;
 		case (4):
-			if (autoFunc.driveDistanceNoStop(285, -253, () -> customFunc.turnDrop(-120, -145))) {
-				autoFunc.setSpeedLimit(0.6);
+			if (autoFunc.driveDistanceNoStop(291, -253, () -> customFunc.turnDrop(-120, -145))) {
+				autoFunc.setSpeedLimit(0.5);
+				Timer.delay(0.05);
 				intake.setSpeed(1);
+				Timer.delay(0.05);
+
 				step++;
 			}
 			break;
 
-
 		case (5):
-			if (autoFunc.alignIntakeCube(105, 4)) {
-				Timer.delay(0.15);
+			if (autoFunc.alignIntakeCube(108, 4)) {
+				Timer.delay(0.1);
 				step++;
 			}
 			break;
@@ -367,42 +354,34 @@ public class AutonomousBase {
 		case (6):
 			if (autoFunc.driveDistance(-15)) {
 				intake.setSpeed(0.3);
-				lift.setLoc(0.6);
+				lift.setLoc(1);
 				autoFunc.setSpeedLimit(0.85);
-				Timer.delay(1);
+				Timer.delay(0.7);
 				step++;
 			}
 			break;
 		case (7):
 			if (autoFunc.driveDistanceNoStop(-60, 0)) {
 				lift.setLoc(1);
-				autoFunc.setSpeedLimit(0.65);
-				step++;
-			}
-			break;
-		case (8):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(134)) {
-				autoFunc.setSpeedLimit(0.7);
-				step++;
-			}
-			break;
-
-		case (9):
-			if (autoFunc.driveDistanceNoStop(15, 0)) {
-				intake.setSpeed(-0.5);
-				Timer.delay(0.1);
-				intake.setSpeed(0);
 				autoFunc.setSpeedLimit(0.5);
 				step++;
 			}
 			break;
-		case(10):
-			if (autoFunc.driveDistanceNoStop(-35, 0)) {
+		case (8):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(123)) {
+				autoFunc.setSpeedLimit(0.58);
+				intake.setSpeed(-1);
 				step++;
-				lift.setLoc(0);
 			}
 			break;
-	}	}
+		/*
+		 * case (9): if (autoFunc.driveDistanceNoStop(14, 0)) { intake.setSpeed(-0.8);
+		 * Timer.delay(0.24); intake.setSpeed(0); autoFunc.setSpeedLimit(0.5); step++; }
+		 * break; case(10): if (autoFunc.driveDistanceNoStop(-40, 0)) { step++;
+		 * lift.setLoc(0); } break;
+		 */
+		}
+	}
 
 	private void Right_RLR() {
 
@@ -422,7 +401,7 @@ public class AutonomousBase {
 
 	}
 
-	// Middle switch left
+	// Middle switch left (march 26: idk if this works. -kaelan)
 	private void Middle_LLL() {
 		switch (step) {
 		case (0):
@@ -455,21 +434,123 @@ public class AutonomousBase {
 	private void Middle_LRL() {
 		switch (step) {
 		case (0):
-			if (autoFunc.angleRelTurn(-22.5)) {
-				lift.setLoc(0.4);
+			lift.disableSpeedLimit = true;
+			lift.setLoc(0.5);
+			step++;
+			break;
+
+		case (1):
+			if (autoFunc.driveDistanceNoStop(150, -40)) {
 				step++;
 			}
 			break;
-
-		case (1): {
-			if (autoFunc.driveDistance(280)) {
-				intake.setSpeed(-1);
-				Timer.delay(0.2);
+		case (2):
+			if (autoFunc.driveDistanceNoStop(110, 60)) {
+				Timer.delay(0.15);
+				intake.setSpeed(-0.6);
+				Timer.delay(0.25);
+				intake.setSpeed(0);
+				lift.setLoc(0);
+				step++;
+			}
+			break;
+		case (3):
+			if (autoFunc.driveDistanceNoStop(-85,7)) {
+				intake.setSpeed(0.5);
+				step++;
+			}
+			break;
+		case (4):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(43.5)) {
+				step++;
+				Timer.delay(0.05);
+				intake.setSpeed(1);
+			}
+			break;
+		case (5):
+			if (autoFunc.alignIntakeCube(145,4)) {
+				step++;
+				Timer.delay(0.1);
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.3);
+			}
+			break;
+		case (6):
+			if (autoFunc.alignIntakeCube(10,4)) {
+				step++;
+				autoFunc.setSpeedLimit(0.9);
+				intake.setSpeed(0.3);
+				lift.setLoc(0.5);
+			}
+			break;
+		case (7):
+			if (autoFunc.driveDistanceNoStop(-100,-250)) {
+				step++;
+			}
+			break;
+		case (8):
+			if (autoFunc.driveDistanceNoStop(104, -46)) {
+				Timer.delay(0.1);
+				intake.setSpeed(-0.5);
+				Timer.delay(0.25);
+				intake.setSpeed(0);
+				lift.setLoc(0);
+				step++;
+			}
+			break;
+		case (9):
+			if (autoFunc.driveDistanceNoStop(-85,7)) {
+				intake.setSpeed(0.5);
+				step++;
+			}
+			break;
+		case (10):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(43.5)) {
+				step++;
+				Timer.delay(0.05);
+				intake.setSpeed(1);
+			}
+			break;
+		case (11):
+			if (autoFunc.alignIntakeCube(145,4)) {
+				step++;
+				Timer.delay(0.05);
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.3);
+			}
+			break;
+		case (12):
+			if (autoFunc.alignIntakeCube(10,4)) {
+				step++;
+				autoFunc.setSpeedLimit(0.9);
+				intake.setSpeed(0.6);
+				lift.setLoc(0.5);
+				Timer.delay(0.15);
+			}
+			break;
+		case (13):
+			if (autoFunc.driveDistanceNoStop(-100,-250)) {
+				step++;
+			}
+			break;
+		case (14):
+			if (autoFunc.driveDistanceNoStop(90, -46)) {
+				Timer.delay(0.1);
+				intake.setSpeed(-0.4);
+				Timer.delay(0.25);
 				intake.setSpeed(0);
 				step++;
 			}
+			break;
+		case (15):
+			if (autoFunc.driveDistanceNoStop(-40,0)) {
+				intake.setSpeed(0);
+				Timer.delay(0.25);
+				step++;
+			}
+			break;
 		}
-		}
+		
 	}
 
 	private void None_RLR() { // TESTING
@@ -493,7 +574,8 @@ public class AutonomousBase {
 		 */
 	}
 
-	private void None_LLL() {}
+	private void None_LLL() {
+	}
 	/*
 	 * case (3): if (autoFunc.driveDistanceNoStop(300,150)) { step++; } break; /*
 	 * case (3): if (autoFunc.alignIntakeCube(175, 4)) {
@@ -507,5 +589,6 @@ public class AutonomousBase {
 	 * }
 	 */
 
-	private void None_RRR() {}
+	private void None_RRR() {
+	}
 }
