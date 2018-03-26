@@ -61,10 +61,17 @@ public class AutoFunctions {
 		double curDistance = getOverallDistance();
 		double driveSpeed;
 
-		if (curDistance + 80 > dist)
-			driveSpeed = 0.55;
+		if (Math.abs(curDistance)+80 > Math.abs(dist)) {
+			if (dist>0)
+				driveSpeed = 0.55;
+			else
+				driveSpeed=-0.55;
+		}	
 		else
-			driveSpeed = 1;
+			if (dist>0)
+				driveSpeed = 1;
+			else
+				driveSpeed=-1;
 		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
 				+ (Math.abs(angle) - Math.abs(navx.getAngle() % 360)));
 		if (turnSpeed < 0) {// turn left
@@ -73,7 +80,7 @@ public class AutoFunctions {
 		} else { // turn right
 			autoDrive(driveSpeed, driveSpeed -turnSpeed);
 		}
-		if (curDistance > dist) {
+		if (Math.abs(curDistance) > Math.abs(dist)) {
 			drive.tankDrive(0, 0);
 			distanceReset=true;
 			return true;
@@ -205,6 +212,9 @@ public class AutoFunctions {
 			turnPID.setSetpoint(setP);
 			angleReset = false;
 			System.out.println("turn reset complete");
+			//delete this if u want turning tuned for the march 24 LLL RRR 2cube scale switch
+			turnPID.setP(0.0172);
+			turnPID.setD(0.36);
 			return false;
 		} else {
 			totalTicks++;// test, delete this
@@ -230,9 +240,10 @@ public class AutoFunctions {
 			}
 		}
 		return false;
+
 	}
 	
-	public boolean angleRelTurnNoStop(double setP) {
+	public boolean angleRelTurnNoStop(double setP, Runnable func) {
 		if (angleReset) {
 			totalTicks = 0;// test, delete this
 			navx.resetAngle();
@@ -242,6 +253,7 @@ public class AutoFunctions {
 			System.out.println("turn reset complete");
 			return false;
 		} else {
+			func.run();
 			totalTicks++;// test, delete this
 			double curAngle = navx.getAngle() % 360;
 			double turnSpeed = turnPID.getOutput(curAngle);
@@ -262,6 +274,7 @@ public class AutoFunctions {
 		}
 		return false;
 	}
+
 
 	public boolean angleRelTurn(double setP, Runnable func) {
 		if (angleReset) {
@@ -299,7 +312,44 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-	
+	public boolean angleRelTurnLiftUpNoShoot(double setP) {
+		if (angleReset) {
+			totalTicks = 0;// test, delete this
+			navx.resetAngle();
+			Timer.delay(0.05);
+			ticks = 0;
+			turnPID.setSetpoint(setP);
+			turnPID.setP(0.0175);
+			turnPID.setD(0.27);
+			turnPID.setMaxIOutput(0.24);
+			angleReset = false;
+			System.out.println("turn reset complete");
+			return false;
+		} else {
+			totalTicks++;// test, delete this
+			double curAngle = navx.getAngle() % 360;
+			double turnSpeed = turnPID.getOutput(curAngle);
+			if (within(curAngle, setP, 2.5)) {
+				ticks++;
+				turnSpeed = 0;
+			} else
+				ticks = 0;
+			System.out.println("ticks " + ticks);
+			if (ticks > 5) {
+				angleReset = true;
+				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
+				autoDrive(0, 0);
+				return true;
+			} else {
+				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
+						+ totalTicks);
+
+				autoDrive(turnSpeed, -turnSpeed);
+
+			}
+		}
+		return false;
+	}
 	
 	public boolean alignIntakeCube(double dist, double angleThresh) {
 		if (distanceReset) {

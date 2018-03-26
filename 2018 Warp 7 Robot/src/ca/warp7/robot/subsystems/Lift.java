@@ -79,7 +79,8 @@ public class Lift {
 		
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
-		System.out.println("speed= "+speed + " height= "+scaledLift +"setP= "+targetH);
+		if (scaledLift>0.2)
+			System.out.println("speed= "+speed + " height= "+scaledLift +"setP= "+targetH);
 		
 		if (!disableSpeedLimit) {
 			double speedLimit = Math.pow(0.25,scaledLift);
