@@ -140,7 +140,7 @@ public class AutonomousBase {
 					Timer.delay(0.2);
 					intake.setSpeed(0);
 					step++;
-				}
+				}+
 				break;
 			case (9):
 				if (autoFunc.driveDistanceNoStop(-50, 0)) {
@@ -653,6 +653,19 @@ public class AutonomousBase {
 	}
 
 	private void None_LLL() {
+		switch (step) {
+			case (0):
+				lift.zeroEncoder();
+				lift.disableSpeedLimit = true;
+				step++;
+				break;
+			
+			case (1):
+				if (autoFunc.driveDistance(300)) {
+					step++;
+				}
+				break;
+		}
 	}
 
 	private void None_RRR() {

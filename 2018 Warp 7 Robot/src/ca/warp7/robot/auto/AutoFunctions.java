@@ -30,12 +30,12 @@ public class AutoFunctions {
 
 	// friday march 16ish (0.009,0.01, 0.21);
 	public AutoFunctions() { // march 16 working = 0.0155, 0.0029, 0.23
-		turnPID = new MiniPID(0.016, 0.2, 0.22);
+		turnPID = new MiniPID(0.016, 0.3, 0.22);//0.016, 0.2, 0.22
 		turnPID.setOutputLimits(1);
 		turnPID.setOutputRampRate(0.086);
 		turnPID.setMaxIOutput(0.175);
 
-		distancePID = new MiniPID(0.02, 0.0013, 0.22);
+		distancePID = new MiniPID(0.02, 0.0013, 0.23);
 		distancePID.setOutputLimits(1);
 		distancePID.setMaxIOutput(0.01);
 
@@ -49,8 +49,8 @@ public class AutoFunctions {
 			drive.resetDistance();
 			ticks = 0;
 			turnPID.setSetpoint(angle); 
-			//turnPID.setP(0.015);
-			turnPID.setD(0.39);
+			turnPID.setP(0.02);//0.02 0.0013 0.22
+			turnPID.setD(0.3);
 			turnPID.setMaxIOutput(0.21);
 			distanceReset = false;
 			System.out.println("drive reset complete");
@@ -213,8 +213,8 @@ public class AutoFunctions {
 			angleReset = false;
 			System.out.println("turn reset complete");
 			//delete this if u want turning tuned for the march 24 LLL RRR 2cube scale switch
-			turnPID.setP(0.0172);
-			turnPID.setD(0.36);
+			turnPID.setP(0.0298); //0.0347 0.0017 0.2597 --- //0.0172
+			turnPID.setD(0.425); // --- 0.36
 			return false;
 		} else {
 			totalTicks++;// test, delete this
@@ -400,6 +400,7 @@ public class AutoFunctions {
 		else if (right < -speedLimit)
 			right = -speedLimit;
 
+		System.out.println("Left: "+left+ "  Right: "+ right);
 		drive.tankDrive(speed * left, speed * right);
 	}
 
@@ -412,6 +413,6 @@ public class AutoFunctions {
 	}
 
 	private double getOverallDistance() {
-		return (-drive.getLeftDistance() + -drive.getRightDistance()) / 2;
+		return (drive.getLeftDistance() + drive.getRightDistance()) / 2;
 	}
 }

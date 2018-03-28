@@ -24,6 +24,7 @@ public class Intake {
 		intakeMotorRight.setInverted(true);
 		intakePistons = new Solenoid(INTAKE_PISTONS);
 		photosensor = new LimelightPhotosensor(Robot.limelight, 1);
+		//pistonToggle();
 	}
 	
 	private double ramp = 0;

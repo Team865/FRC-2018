@@ -38,6 +38,7 @@ public class Robot extends IterativeRobot  {
 	private static ControlsBase controls;
 	
 	//shutup >:(
+	//no u
 	public static Compressor compressor;
 	
 	public static Navx navx;
@@ -121,7 +122,7 @@ public class Robot extends IterativeRobot  {
 			SmartDashboard.putNumber("1", a1.getAverageVoltage());
 			SmartDashboard.putNumber("2", a2.getAverageVoltage());
 			SmartDashboard.putNumber("3", a3.getAverageVoltage());
-			
+			System.out.println("Lift:"+a);
 			SmartDashboard.putNumber("Lift", a);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
 			SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
@@ -201,11 +202,11 @@ public class Robot extends IterativeRobot  {
 			voltage = a0.getAverageVoltage();
 		}
 		if (a1.getAverageVoltage() > voltage) {
-			number = 2;
+			number = 0;
 			voltage = a1.getAverageVoltage();
 		}
 		if (a2.getAverageVoltage() > voltage) {
-			number = 0;
+			number = 2;
 			voltage = a2.getAverageVoltage();
 		}
 		if (a3.getAverageVoltage() > voltage) {
