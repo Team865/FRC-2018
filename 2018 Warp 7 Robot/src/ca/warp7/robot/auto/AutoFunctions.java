@@ -31,9 +31,9 @@ public class AutoFunctions {
 
 	public AutoFunctions() {
 		
-//DRIVE TURN PID -------------------------------------------------------------------------------------------------------
-		//Practice bot values:    (0.02, 0.3, 0.3)
-		driveTurnPID = new MiniPID(0.02, 0.3, 0.3); //TUNE DRIVING WHILE TURNING WITH THESE
+//DRIVE TURN PID -----------------------------
+		//Practice bot values:    (0.016, 0.3, 0.39)
+		driveTurnPID = new MiniPID(0.016, 0.3, 0.39); //TUNE DRIVING WHILE TURNING WITH THESE
 		
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		driveTurnPID.setMaxIOutput(0.21); 
@@ -42,7 +42,7 @@ public class AutoFunctions {
 		driveTurnPID.setOutputLimits(1);
 		driveTurnPID.setOutputRampRate(0.086); //set output ramp rate : prevents chatter
 		
-//STOP TURN PID---------------------------------------------------------------------------------------------------------
+//STOP TURN PID------------------------------
 		//Practice bot values:   (0.0175, 0.3, 0.27)
 		stopTurnPID = new MiniPID(0.0175, 0.3, 0.27); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
@@ -65,7 +65,8 @@ public class AutoFunctions {
 		angleReset = true;
 		distanceReset = true;
 	}
-
+	
+	//DRIVE DIST NO STOP
 	public boolean driveDistanceNoStop(double dist, double angle) {
 		if (distanceReset) {
 			navx.resetAngle();
@@ -104,7 +105,8 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-
+	
+	//DRIVE DIST NOSTOP WITH RUNNABLE
 	public boolean driveDistanceNoStop(double dist, double angle, Runnable func) {
 		if (distanceReset) {
 			navx.resetAngle();
@@ -140,7 +142,8 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-
+	
+	//DRIVE DIST
 	public boolean driveDistance(double dist, double angle) {
 		if (distanceReset) {
 			navx.resetAngle();
@@ -176,92 +179,8 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-
-	// UNUSED
-	/*
-	public boolean driveDistance(double dist, Runnable func) {
-		if (distanceReset) {
-			navx.resetAngle();
-			drive.resetDistance();
-			distancePID.setSetpoint(dist);
-			ticks = 0;
-			driveTurnPID.setSetpoint(0);
-			distanceReset = false;
-			wantedAngle = 0;
-			System.out.println("drive reset complete");
-			// turn pid i term fix
-			return false;
-		}
-		func.run();
-		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360, wantedAngle);
-		double curDistance = getOverallDistance();
-		double driveSpeed = distancePID.getOutput(curDistance, dist);
-		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
-				+ (0 - (navx.getAngle() % 360)));
-		if (within(curDistance, dist, 15))
-			ticks++;
-		else
-			ticks = 0;
-		if ((within(curDistance, dist, 15)) && ticks > 20) {
-			autoDrive(0, 0);
-			distanceReset = true;
-			System.out.println("driving complete");
-			return true;
-		} else {
-			if (turnSpeed < 0) {// turn left
-				turnSpeed = -(turnSpeed);
-
-				autoDrive(driveSpeed - turnSpeed, driveSpeed);
-			} else { // turn right
-				autoDrive(driveSpeed, driveSpeed - turnSpeed);
-			}
-		}
-		return false;
-	}
-	*/
 	
-	public boolean angleRelTurn(double setP) {
-		if (angleReset) {
-			totalTicks = 0;// test, delete this
-			navx.resetAngle();
-			Timer.delay(0.05);
-			ticks = 0;
-			driveTurnPID.setSetpoint(setP);
-			angleReset = false;
-			System.out.println("turn reset complete");
-			// delete this if u want turning tuned for the march 24 LLL RRR 2cube scale
-			// switch
-			driveTurnPID.setP(0.0298); // 0.0347 0.0017 0.2597 --- //0.0172
-			driveTurnPID.setD(0.425); // --- 0.36
-			return false;
-		} else {
-			totalTicks++;// test, delete this
-			double curAngle = navx.getAngle() % 360;
-			double turnSpeed = driveTurnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 1.25)) {
-				ticks++;
-				turnSpeed = 0;
-			} else
-				ticks = 0;
-			System.out.println("ticks " + ticks);
-			if (ticks > 5) {
-				angleReset = true;
-				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
-				autoDrive(0, 0);
-				return true;
-			} else {
-				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
-						+ totalTicks);
-
-				autoDrive(turnSpeed, -turnSpeed);
-
-			}
-		}
-		return false;
-
-	}
-	
-	//Uses the 
+	//ANGLE REL TURN LIFT UP NO SHOOT
 	//this is tuned with the lift up, so it might be out of tune for lift down
 	public boolean angleRelTurnLiftUpNoShoot(double setP) {
 		if (angleReset) {
@@ -364,10 +283,52 @@ public class AutoFunctions {
 		return (drive.getLeftDistance() + drive.getRightDistance()) / 2;
 	}
 }
-// UNUSED OLD METHODS BELOW HERE. FOR REFERENCE
+// UNUSED OLD METHODS BELOW HERE. FOR REFERENCE.
 /*
+ -----Old AngleRelTurn, not used
  
-DRIVE DISTANCE RUNNABLE. 
+	public boolean angleRelTurn(double setP) {
+		if (angleReset) {
+			totalTicks = 0;// test, delete this
+			navx.resetAngle();
+			Timer.delay(0.05);
+			ticks = 0;
+			stopTurnPID.setSetpoint(setP);
+			angleReset = false;
+			System.out.println("turn reset complete");
+			// delete this if u want turning tuned for the march 24 LLL RRR 2cube scale
+			// switch
+			stopTurnPID.setP(0.0298); // 0.0347 0.0017 0.2597 --- //0.0172
+			stopTurnPID.setD(0.425); // --- 0.36
+			return false;
+		} else {
+			totalTicks++;// test, delete this
+			double curAngle = navx.getAngle() % 360;
+			double turnSpeed = stopTurnPID.getOutput(curAngle);
+			if (within(curAngle, setP, 1.25)) {
+				ticks++;
+				turnSpeed = 0;
+			} else
+				ticks = 0;
+			System.out.println("ticks " + ticks);
+			if (ticks > 5) {
+				angleReset = true;
+				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
+				autoDrive(0, 0);
+				return true;
+			} else {
+				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
+						+ totalTicks);
+
+				autoDrive(turnSpeed, -turnSpeed);
+
+			}
+		}
+		return false;
+
+	}
+ 
+DRIVE DISTANCE RUNNABLE. -------------------------
 public boolean driveDistance(double dist, Runnable func) {
 	if (distanceReset) {
 		navx.resetAngle();
