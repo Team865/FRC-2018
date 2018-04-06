@@ -44,9 +44,9 @@ public class AutonomousBase {
 		} else if (pin == 1) { // Left
 			System.out.println("pin 1 active :Left:");
 			if (gameData.equals("RRR"))
-				Left_RRR();
+				Left_LRL();
 			else if (gameData.equals("LLL"))
-				Left_LLL();
+				Left_RLR();
 			else if (gameData.equals("LRL"))
 				Left_LRL();
 			else if (gameData.equals("RLR"))
@@ -79,46 +79,48 @@ public class AutonomousBase {
 	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
 	// angleRelTurnLiftUpNoShoot, alignIntakeCube
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
 	private void Left_RLR() {
 		switch (step) {
 		case (0):
 			lift.zeroEncoder();
 			Timer.delay(0.1);
 			lift.setLoc(1); // LIFT
-			Timer.delay(0.4); // DELAY TO LET THE LIFT GO UP (IMPORTANT)
+			Timer.delay(1.7); // DELAY TO LET THE LIFT GO UP (IMPORTANT)
 			intake.setSpeed(0.3); // INTAKE
 			lift.disableSpeedLimit = true;
 			autoFunc.setSpeedLimit(0.57); // SPEEDLIMIT
 			step++;
 			break;
 		case (1):
-			if (autoFunc.driveDistanceNoStop(200, 0)) { // DRIVE
+			if (autoFunc.driveDistanceNoStop(200, -13.5)) { // DRIVE
 				autoFunc.setSpeedLimit(0.85); // SPEEDLIMIT
 				step++;
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(300, 0)) { // DRIVE
+			if (autoFunc.driveDistanceNoStop(267, 4.3)) { // DRIVE
 				step++;
 			}
 			break;
 
-		case (3):
-			if (autoFunc.driveDistanceNoStop(144, 150, () -> customFunc.turnDrop(40, 43))) { // TURN,SHOOT,DROP
+		case (3)://was 190
+			if (autoFunc.driveDistanceNoStop(196, 123, () -> customFunc.turnDrop(55, 52))) { // TURN,SHOOT,DROP
 				step++;
 				intake.setSpeed(1); // INTAKE
-				autoFunc.setSpeedLimit(0.45);// SPEEDLIMIT
+				autoFunc.setSpeedLimit(0.5);// SPEEDLIMIT
 			}
 			break;
 		case (4):
-			if (autoFunc.alignIntakeCube(154, 4)) { // DRIVE,ALIGNINTAKE
+			if (autoFunc.alignIntakeCube(160, 4)) { // DRIVE,ALIGNINTAKE
 				intake.setSpeed(1); // INTAKE
-				autoFunc.setSpeedLimit(0.25); // SPEEDLIMIT
+				autoFunc.setSpeedLimit(0.37); // SPEEDLIMIT
 				step++;
 			}
 			break;
 		case (5):
-			if (autoFunc.alignIntakeCube(18, 4)) {// DRIVE SUPER SLOW
+			if (autoFunc.alignIntakeCube(40, 4)) {// DRIVE SUPER SLOW
 				step++;
 				autoFunc.setSpeedLimit(0.3); // SPEEDLIMIT
 				lift.setLoc(1); // LIFT
@@ -132,17 +134,18 @@ public class AutonomousBase {
 			}
 			break;
 		case (7):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(-75)) { // TURN
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-98)) { // TURN
 				autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
 				step++;
 			}
 			break;
 
 		case (8):
-			if (autoFunc.driveDistanceNoStop(62, -56)) { // DRIVE,TURN
-				intake.setSpeed(-0.5); // OUTTAKE
-				Timer.delay(0.2);
+			if (autoFunc.driveDistanceNoStop(62, -35)) { // DRIVE,TURN
+				intake.setSpeed(-0.42); // OUTTAKE
+				Timer.delay(0.4);
 				intake.setSpeed(0);
+				autoFunc.setSpeedLimit(0.4);
 				step++;
 			}
 			;
@@ -159,8 +162,10 @@ public class AutonomousBase {
 	// RIGHT SCALE RIGHT SWITCH DOUBLE CUBE
 	// tuned for practice bot, not tuned for comp bot
 	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
-	// angleRelTurnLiftUpNoShoot, alignIntakeCube
+	// alignIntakeCube (((DOESNT USE AngleRelTurnLiftUpNoShoot
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
 	private void Left_RRR() {
 		switch (step) {
 		case (0): {
@@ -182,7 +187,7 @@ public class AutonomousBase {
 			break;
 		case (2):
 			if (autoFunc.driveDistanceNoStop(518, 87)) { // DRIVE,TURN
-				autoFunc.setSpeedLimit(0.58); // SPEEDLIMIT
+				autoFunc.setSpeedLimit(0.67); // SPEEDLIMIT
 				step++;
 			}
 			break;
@@ -227,8 +232,10 @@ public class AutonomousBase {
 	// LEFT SCALE LEFT SWITCH DOUBLE CUBE
 	// tuned for practice bot, not tuned for comp bot
 	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
-	// angleRelTurnLiftUpNoShoot, alignIntakeCube
+	// alignIntakeCube DOESNT USE ANGLERELTURNLIFTUPNOSHOOT
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
 	private void Left_LLL() {
 		switch (step) {
 		case (0):
@@ -269,7 +276,7 @@ public class AutonomousBase {
 		case (5):
 			if (autoFunc.alignIntakeCube(18, 4)) {// DRIVE, ALIGN
 				autoFunc.setSpeedLimit(0.3); //SPEEDLIMIT
-				lift.setLoc(1); //LIFT
+				lift.setLoc(0.6); //LIFT
 				intake.setSpeed(1); //INTAKE
 				step++;
 			}
@@ -301,6 +308,8 @@ public class AutonomousBase {
 	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
 	// angleRelTurnLiftUpNoShoot, alignIntakeCube
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
 	private void Left_LRL() {
 
 		switch (step) {
@@ -315,20 +324,20 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistanceNoStop(305, 0)) { //DRIVE
+			if (autoFunc.driveDistanceNoStop(275, 0)) { //DRIVE
 				step++;
 				autoFunc.setSpeedLimit(0.9); //SPEEDLIMIT
 				lift.setLoc(1); // LIFT
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(518, 87)) { //DRIVE, TURN
-				autoFunc.setSpeedLimit(0.58); //SPEEDLIMIT
+			if (autoFunc.driveDistanceNoStop(570, 90)) { //DRIVE, TURN
+				autoFunc.setSpeedLimit(0.5); //SPEEDLIMIT
 				step++;
 			}
 			break;
 		case (3):
-			if (autoFunc.driveDistanceNoStop(291, -253, () -> customFunc.turnDrop(-120, -145))) { //TURN, SHOOT, DROP
+			if (autoFunc.driveDistanceNoStop(291, -255, () -> customFunc.turnDrop(-122, -145))) { //TURN, SHOOT, DROP
 				autoFunc.setSpeedLimit(0.5); //SPEEDLIMIT
 				Timer.delay(0.05);
 				intake.setSpeed(1); //INTAKE
@@ -338,7 +347,7 @@ public class AutonomousBase {
 			break;
 
 		case (4):
-			if (autoFunc.alignIntakeCube(108, 4)) { //DRIVE, ALIGN
+			if (autoFunc.alignIntakeCube(150, 4)) { //DRIVE, ALIGN
 				Timer.delay(0.1); //DELAY WHILE INTAKE RUNS TO FINISH INTAKING
 				step++;
 			}
@@ -389,23 +398,25 @@ public class AutonomousBase {
 
 	// CURRENTLY UNUSED
 	private void Middle_LLL() {
-
+		Middle_LRL();
 	}
 
 	// Middle switch right
 	private void Middle_RRR() {
-
+		Middle_RLR();
 	}
 
 	// Middle switch right - scores 2 cubes then lines up exchange
-	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
+	// uses driveDistanceNoStop
 	// angleRelTurnLiftUpNoShoot, alignIntakeCube
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
 	private void Middle_RLR() {
 		switch (step) {
 		case (0):
 			lift.disableSpeedLimit = true; 
-			autoFunc.setSpeedLimit(0.3); //SPEEDLIMIT
+			autoFunc.setSpeedLimit(1); //SPEEDLIMIT
 			lift.setLoc(0.5); //LIFT
 			step++;
 			break;
@@ -418,28 +429,32 @@ public class AutonomousBase {
 		case (2):
 			if (autoFunc.driveDistanceNoStop(110, -60)) { //DRIVE, TURN LEFT
 				Timer.delay(0.15);
-				intake.setSpeed(-0.6); //OUTTAKE
+				intake.setSpeed(-0.4); //OUTTAKE
 				Timer.delay(0.25);
-				intake.setSpeed(0);
+				intake.setSpeed(1);
 				lift.setLoc(0); //DROP LIFT
+				autoFunc.setSpeedLimit(0.6);
 				step++;
 			}
 			break;
 		case (3):
 			if (autoFunc.driveDistanceNoStop(-85, -7)) { //DRIVE BACK
-				intake.setSpeed(0.5); //INTAKE
+				intake.setSpeed(1); //INTAKE
 				step++;
 			}
 			break;
+			
 		case (4):
 			if (autoFunc.angleRelTurnLiftUpNoShoot(-43.5)) { //TURN
 				step++;
 				Timer.delay(0.05);
 				intake.setSpeed(1); //INTAKE
+				autoFunc.setSpeedLimit(0.5);
+				
 			}
 			break;
 		case (5):
-			if (autoFunc.alignIntakeCube(145, 4)) {//DRIVE, ALIGN
+			if (autoFunc.alignIntakeCube(132, 4)) {//DRIVE, ALIGN
 				step++;
 				Timer.delay(0.1);
 				intake.setSpeed(1); //INTAKE
@@ -447,21 +462,21 @@ public class AutonomousBase {
 			}
 			break;
 		case (6):
-			// if (autoFunc.alignIntakeCube(20,4)) {
+			if (autoFunc.alignIntakeCube(20,4)) {
 			step++;
-			autoFunc.setSpeedLimit(0.75); //SPEEDLIMIT
+			autoFunc.setSpeedLimit(0.6); //SPEEDLIMIT
 			intake.setSpeed(0.5); //INTAKE
 			lift.setLoc(0.5); //LIFT
-			// }
+			}
 			break;
 		case (7):
-			if (autoFunc.driveDistanceNoStop(-100, 250)) { //DRIVE BACK, TURN
-				autoFunc.setSpeedLimit(0.9); //SPEEDLIMIT
+			if (autoFunc.driveDistanceNoStop(-107, 250)) { //DRIVE BACK, TURN
+				autoFunc.setSpeedLimit(0.65); //SPEEDLIMIT
 				step++;
 			}
 			break;
 		case (8):
-			if (autoFunc.driveDistanceNoStop(104, 46)) { //TURN, DRIVE
+			if (autoFunc.driveDistanceNoStop(108, 65)) { //TURN, DRIVE
 				Timer.delay(0.1);
 				intake.setSpeed(-0.4); //OUTTAKE
 				Timer.delay(0.25);
@@ -502,7 +517,7 @@ public class AutonomousBase {
 		case (13):
 			if (autoFunc.driveDistanceNoStop(-50, -100)) {
 				intake.setSpeed(0.3);
-				step++;
+				step++;	
 			}
 			break;
 
@@ -511,15 +526,21 @@ public class AutonomousBase {
 				step++;
 			}
 			break;
+			
 		}
 	}
 
 	// Middle switch left
 	// 2 CUBES AND THEN PREPARE TO EXCHANGE
 	// NOT TESTED ON COMP BOT
-	// uses driveDistanceNoStop, driveDistanceNoStop(runnable turnDrop),
+	// uses driveDistanceNoStop
 	// angleRelTurnLiftUpNoShoot, alignIntakeCube
 	// all speed limits are manually set. lift-speedLimit is disabled at all times
+	
+	//WRITE TUNING UPDATES AT THE COMP HERE.
+	
+	//ADJUSTED AFTER MATCH 1
+	
 	private void Middle_LRL() {
 		switch (step) {
 		case (0):
@@ -529,78 +550,191 @@ public class AutonomousBase {
 			break;
 
 		case (1):
-			if (autoFunc.driveDistanceNoStop(150, -40)) {
+			if (autoFunc.driveDistanceNoStop(150, -52)) {
 				step++;
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(155, 60)) {
+			if (autoFunc.driveDistanceNoStop(125, 80)) {
 				Timer.delay(0.15);
-				intake.setSpeed(-0.6);
+				intake.setSpeed(-0.4);
 				Timer.delay(0.25);
-				intake.setSpeed(0);
+				intake.setSpeed(1);
 				lift.setLoc(0);
+				autoFunc.setSpeedLimit(0.87);
 				step++;
 			}
 			break;
 		case (3):
-			if (autoFunc.driveDistanceNoStop(-85, 7)) {
-				intake.setSpeed(0.5);
-				step++;
-			}
-			break;
-		case (4):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(43.5)) {
+			if (autoFunc.driveDistanceNoStop(-90, 7)) {
 				step++;
 				Timer.delay(0.05);
 				intake.setSpeed(1);
 			}
 			break;
+		
+		case (4):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(45)) {
+				step++;
+				autoFunc.setSpeedLimit(0.7);
+			}
+			break;
 		case (5):
-			if (autoFunc.alignIntakeCube(145, 4)) {
+			if (autoFunc.alignIntakeCube(160, 4)) {
+				step++;
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.35);}
+			break;
+		case (6):
+			if (autoFunc.alignIntakeCube(20, 4)) {
+				intake.setSpeed(1);
+				step++;
+			}
+			break;
+		case (7):
+			step++;
+			autoFunc.setSpeedLimit(0.75);
+			intake.setSpeed(0.8);
+			lift.setLoc(0.5);
+			break;
+		case (8):
+			if (autoFunc.driveDistanceNoStop(-100, -200)) {
+				step++;
+				autoFunc.setSpeedLimit(0.8);
+			}
+			break;
+			
+		case(9):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-40)) {
+				step++;
+			}
+			break;
+		case (10)://-60
+			if (autoFunc.driveDistanceNoStop(150, 0)) {
+				Timer.delay(0.3);
+				intake.setSpeed(-0.3);
+				Timer.delay(0.25);
+				intake.setSpeed(1);
+				lift.setLoc(0);
+				autoFunc.setSpeedLimit(0.75);
+				step++;
+			}
+			break;
+		case (11):
+			if (autoFunc.driveDistanceNoStop(-80, 7)) {
+				intake.setSpeed(1);
+				step++;
+			}
+			break;
+		case (12):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(42)) {
+				step++;
+				Timer.delay(0.05);
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.65);
+			}
+			break;
+		case (13):
+			if (autoFunc.alignIntakeCube(174, 4)) {
+				step++;
+				Timer.delay(0.05);
+				intake.setSpeed(1);
+				autoFunc.setSpeedLimit(0.35);
+			}
+			break;
+
+		case (14):
+			if (autoFunc.alignIntakeCube(20, 4)) {
+				intake.setSpeed(0.8);
+				step++;
+				autoFunc.setSpeedLimit(0.8);
+			}
+			break;
+
+		case (15):
+			if (autoFunc.driveDistanceNoStop(-50, 100)) {
+				intake.setSpeed(0.3);
+				step++;
+			}
+			break;
+
+		case (16):
+			if (autoFunc.driveDistanceNoStop(100, 89)) {
+				step++;
+			}
+			break;
+			
+		
+		//KAELANS CODE TO BYPASS LIMELIGHT. CAN BE DELETED IF THE ABOVE CODE WORKS
+			
+			
+			/*
+		case (4):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(45)) {
+				step++;
+				intake.setSpeed(0.8);
+				Timer.delay(0.05);
+				intake.setSpeed(0.8);
+				autoFunc.setSpeedLimit(0.7);
+			}
+			break;
+		case (5):
+			if (autoFunc.driveDistanceNoStop(115, 0)) {
 				step++;
 				Timer.delay(0.1);
 				intake.setSpeed(1);
-				autoFunc.setSpeedLimit(0.3);
-			}
+				Timer.delay(0.3);	
+				autoFunc.setSpeedLimit(0.5);}
 			break;
 		case (6):
-			step++;
-			autoFunc.setSpeedLimit(0.75);
-			intake.setSpeed(0.5);
-			lift.setLoc(0.5);
-			break;
-		case (7):
-			if (autoFunc.driveDistanceNoStop(-100, -250)) {
+			if (autoFunc.alignIntakeCube(40, 4)) {
+				intake.setSpeed(1);
 				step++;
-				autoFunc.setSpeedLimit(0.9);
 			}
 			break;
+		case (7):
+			step++;
+			autoFunc.setSpeedLimit(0.75);
+			intake.setSpeed(0.8);
+			lift.setLoc(0.5);
+			break;
 		case (8):
-			if (autoFunc.driveDistanceNoStop(100, -46)) {
+			if (autoFunc.driveDistanceNoStop(-115, -200)) {
+				step++;
+				autoFunc.setSpeedLimit(1);
+			}
+			break;
+			
+		case(9):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-40)) {
+				step++;
+			}
+			break;
+		case (10)://-60
+			if (autoFunc.driveDistanceNoStop(150, 0)) {
 				Timer.delay(0.1);
 				intake.setSpeed(-0.4);
 				Timer.delay(0.25);
-				intake.setSpeed(0);
+				intake.setSpeed(1);
 				lift.setLoc(0);
 				step++;
 			}
 			break;
-		case (9):
+		case (11):
 			if (autoFunc.driveDistanceNoStop(-80, 7)) {
-				intake.setSpeed(0.5);
+				intake.setSpeed(1);
 				step++;
 			}
 			break;
-		case (10):
+		case (12):
 			if (autoFunc.angleRelTurnLiftUpNoShoot(42)) {
 				step++;
 				Timer.delay(0.05);
 				intake.setSpeed(1);
 			}
 			break;
-		case (11):
-			if (autoFunc.alignIntakeCube(144, 4)) {
+		case (13):
+			if (autoFunc.alignIntakeCube(174, 4)) {
 				step++;
 				Timer.delay(0.05);
 				intake.setSpeed(1);
@@ -608,42 +742,123 @@ public class AutonomousBase {
 			}
 			break;
 
-		case (12):
-			if (autoFunc.driveDistanceNoStop(10, 100)) {
-				intake.setSpeed(0.6);
+		case (14):
+			if (autoFunc.alignIntakeCube(20, 4)) {
+				intake.setSpeed(0.8);
 				step++;
 			}
 			break;
 
-		case (13):
+		case (15):
 			if (autoFunc.driveDistanceNoStop(-50, 100)) {
 				intake.setSpeed(0.3);
 				step++;
 			}
 			break;
 
-		case (14):
+		case (16):
 			if (autoFunc.driveDistanceNoStop(100, 89)) {
 				step++;
 			}
 			break;
+		*/
 		}
 
 	}
 	
-	//NONE METHODS: CURRENTLY ONLY FOR TESTING
+	//baseline auto
 	private void None_RLR() {
-
+		switch (step) {
+		case (0):
+			if (autoFunc.driveDistance(530,0))
+				step++;
+		break;
+		}
+	}
+	
+	private void baseLine() {
+		switch (step) { //turn
+			case (0):
+				if (autoFunc.driveDistance(500, 0))
+					step++;
+			break;
+		}
+	}
+	//NONE METHODS: CURRENTLY ONLY FOR TESTING
+	//TUNING STEP 1: DRIVE AND TURN 90 DEGREES WITH THE LIFT DOWN
+	private void None_LRL() { //TUNING STEP 2: DRIVE AND TURN 150 degrees with lift at 0.4 and 0.8
+		switch (step) { //setup
+		case(0):
+			autoFunc.setSpeedLimit(1);
+			lift.disableSpeedLimit=true;
+			step++;
+		break;
+		case (1):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(90))
+				step++;
+		break;
+		case (2):
+			lift.setLoc(0.8);
+			Timer.delay(4);
+			step++;
+		break;
+		case (3):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(130))
+				step++;
+		break;
+		}
 	}
 
-	private void None_LRL() {
-
+	private void None_LLL() { //TUNING STEP 3: DRIVE 3 meters with lift down AND TURN 40 DEGREES
+		switch (step) { //setup and gain momentum
+		case (0):
+			lift.disableSpeedLimit=true;
+			if (autoFunc.driveDistanceNoStop(50, 0)) {
+				step++;
+			}
+		break;
+		case (1):
+			if (autoFunc.driveDistanceNoStop(350, 90)) {
+				step++;
+			}
+		break;
+		case (2):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(45)) {
+				step++;
+			}
+		break;
+		
+		case (3):
+			lift.setLoc(0.7);
+			Timer.delay(4);
+			step++;
+		break;
+		case (4):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-90)) {
+				step++;
+			}
+		break;
+		
+		
+		
 	}
-
-	private void None_LLL() {
-
 	}
+	
+	//Next step is tune left_LLL and left_RRR because these dont use angleRelTurnLiftUpNoShoot
+	
 
+	
+	
+	//then use this to tune angleRelTurnLiftUpNoShoot
 	private void None_RRR() {
+		switch (step) { //turn
+		case (0):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-75))
+				step++;
+		break;
+		//if that works, tune 123 degrees by itself, then -70 degrees, then -43 degrees. those are all the angles we turn
+		
+		//then tune left_RLR then left_LRL
+		}
 	}
 }

@@ -33,7 +33,7 @@ public class AutoFunctions {
 		
 //DRIVE TURN PID -----------------------------
 		//Practice bot values:    (0.016, 0.3, 0.39)
-		driveTurnPID = new MiniPID(0.016, 0.3, 0.39); //TUNE DRIVING WHILE TURNING WITH THESE
+		driveTurnPID = new MiniPID(0.016, 0.14, 0.46); //TUNE DRIVING WHILE TURNING WITH THESE
 		
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		driveTurnPID.setMaxIOutput(0.21); 
@@ -44,9 +44,10 @@ public class AutoFunctions {
 		
 //STOP TURN PID------------------------------
 		//Practice bot values:   (0.0175, 0.3, 0.27)
-		stopTurnPID = new MiniPID(0.0175, 0.3, 0.27); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
+		//These values undershoot at low voltage (0.0255, 0.3, 0.3);
+		stopTurnPID = new MiniPID(0.0268, 0.3, 0.28); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
-		stopTurnPID.setMaxIOutput(0.24);
+		stopTurnPID.setMaxIOutput(0.3);
 		//Practice bot value:    (0.24)
 		
 		stopTurnPID.setOutputLimits(1);
@@ -90,7 +91,7 @@ public class AutoFunctions {
 			driveSpeed = 1;
 		else
 			driveSpeed = -1;
-		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
+		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist +" ts= "+turnSpeed+" deltaAng= "
 				+ (Math.abs(angle) - Math.abs(navx.getAngle() % 360)));
 		if (turnSpeed < 0) {// turn left
 			turnSpeed = -(turnSpeed);
@@ -111,6 +112,9 @@ public class AutoFunctions {
 		if (distanceReset) {
 			navx.resetAngle();
 			drive.resetDistance();
+			driveTurnPID.setP(0.192);
+			driveTurnPID.setMaxIOutput(0.19);
+			driveTurnPID.setD(0.47);
 			ticks = 0;
 			driveTurnPID.setSetpoint(angle);
 			//in here, we used to manually set the p value to 0.0172 but ONLY for the runnable. hopefully we dont need to
@@ -123,11 +127,11 @@ public class AutoFunctions {
 		double curDistance = getOverallDistance();
 		double driveSpeed;
 		func.run();
-		if (curDistance + 85 > dist)
-			driveSpeed = 0.35;
+		if (curDistance + 65 > dist)
+			driveSpeed = 0.5;
 		else
 			driveSpeed = 1;
-		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
+		System.out.println("drDisNoStRunnable curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
 				+ (Math.abs(angle) - Math.abs(navx.getAngle() % 360)));
 		if (turnSpeed < 0) {// turn left
 			turnSpeed = -(turnSpeed);

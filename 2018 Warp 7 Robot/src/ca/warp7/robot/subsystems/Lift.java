@@ -64,7 +64,8 @@ public class Lift {
 	
 	public void setLoc(double scale) {
 		double target = Math.abs(scale);
-		target = Math.floor(target * 10.0) / 10.0;
+		if (target <= 0.1)
+			target = 0;
 		targetH=target;
 		SmartDashboard.putNumber("loc dfliusafusd", target);
 		liftPID.setSetpoint(target);

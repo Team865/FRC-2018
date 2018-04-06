@@ -85,11 +85,17 @@ public class Robot extends IterativeRobot  {
 		pin = autoSelector();
 		drive.resetDistance();
 		navx.resetAngle();
+		if (pin==0) {
+			//trajectory.load()
+			//
+		}
 	}
 	
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
+		if (!(pin==0)) {
 		auto.autonomousPeriodic(gameData, pin);
+		}
 	}
 	
 	public void teleopInit() {
