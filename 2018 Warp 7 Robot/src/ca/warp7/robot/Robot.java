@@ -79,26 +79,28 @@ public class Robot extends IterativeRobot  {
 	
 	private int pin = -1;
 	public void autonomousInit(){
+		System.out.println("test");
 		lift.zeroEncoder();
 		lift.setLoc(0);
 		auto = new AutonomousBase();
-		pin = autoSelector();
+		pin = 0;//autoSelector()
 		drive.resetDistance();
 		navx.resetAngle();
-		if (pin==0) {
+		//if (pin==0) {
 			//trajectory.load()
-			//
+			//}
 		}
-	}
 	
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
-		if (!(pin==0)) {
-		auto.autonomousPeriodic(gameData, pin);
-		}
+		//if (!(pin==0)) {
+		System.out.println("aaa");
+		auto.autonomousPeriodic(gameData, 0);//pin
+		//}
 	}
 	
 	public void teleopInit() {
+		auto.trajA.notifier.stop();
 		lift.disableSpeedLimit = false;
 		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);
@@ -109,6 +111,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopPeriodic(){
+		
         controls = new DualRemote();
 		double a = 0;
 		 while (isOperatorControl() && isEnabled()) {

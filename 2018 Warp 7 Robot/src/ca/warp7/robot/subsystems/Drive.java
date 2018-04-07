@@ -1,9 +1,7 @@
 package ca.warp7.robot.subsystems;
 
 import static ca.warp7.robot.Constants.*;
-
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
 import ca.warp7.robot.Robot;
 
 import ca.warp7.robot.misc.DataPool;
@@ -77,6 +75,8 @@ public class Drive {
 		 * robot should drive in the Y direction. -1 is forward. [-1.0..1.0]
 		 * :param quickturn: If the robot should drive arcade-drive style
 		 */
+		System.out.println("rate= "+rightEncoder.getRate());
+
 		throttle = Util.deadband(throttle);
 		wheel = Util.deadband(wheel);
 		if(driveReversed)
@@ -196,6 +196,14 @@ public class Drive {
 	public void setDrivetrainReversed(boolean reversed) {
         driveReversed = reversed;
     }
+	
+	public double leftVelocity() {
+		return leftEncoder.getRate();
+	}
+	
+	public double rightVelocity() {
+		return rightEncoder.getRate();
+	}
 	
 	public boolean driveReversed() {
         return driveReversed;
