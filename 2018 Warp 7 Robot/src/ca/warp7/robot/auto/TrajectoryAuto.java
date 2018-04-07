@@ -16,7 +16,7 @@ public class TrajectoryAuto {
 	private File left,right;
     public Notifier notifier;
     private Trajectory leftTrajectory,rightTrajectory;
-    private double p=0,i,d,v,a, kv=1.8, ka=2;//v=143 a=70
+    private double p=0,i,d, kv=1/1.5, ka=1/0.8;//v=143 a=70
 	private Drive drive = Robot.drive;
 	private Navx navx = Robot.navx;	
 	
@@ -51,13 +51,12 @@ public class TrajectoryAuto {
 		if (ticks<leftTrajectory.length()-1) {
 		double driveVLeft=drive.leftVelocity()*-100; //convert from backwards centimeters to forward meters
 		double driveVRight=drive.leftVelocity()*-100; //convert from backwards centimeters to forward meters
-		System.out.println(ticks);
 		Trajectory.Segment segLeft = leftTrajectory.get(ticks);
 		Trajectory.Segment segRight = rightTrajectory.get(ticks);
 		double errorVLeft=segLeft.velocity-driveVLeft;
 		double errorVRight=segRight.velocity-driveVRight;
-		double errorDLeft=segLeft.position-driveVLeft;
-		double errorDRight=segRight.velocity-driveVRight;
+		double errorDLeft=segLeft.position-drive.getLeftDistance();
+		double errorDRight=segRight.velocity-drive.getRightDistance();
 		double ffLeftAcc=segLeft.acceleration/ka;
 		double ffRightAcc=segRight.acceleration/ka;
 		double ffLeftVel=segLeft.velocity/kv;
@@ -69,15 +68,18 @@ public class TrajectoryAuto {
 		        segLeft.dt, segLeft.x, segLeft.y, segLeft.position, segLeft.velocity, 
 		            segLeft.acceleration, segLeft.jerk, segLeft.heading);
 		//System.out.println("leftP= "+leftNewPower+" rightP= "+ rightNewPower + "rightV= "+driveVRight + " rightVSP= "+segRight.velocity);
-		SmartDashboard.putNumber("current leftV",driveVLeft);
-		SmartDashboard.putNumber("current rightV",driveVRight);
+		SmartDashboard.putNumber("leftV",driveVLeft);
+		SmartDashboard.putNumber("rightV",driveVRight);
 		SmartDashboard.putNumber("leftV Setpoint",segLeft.velocity);
 		SmartDashboard.putNumber("rightV Setpoint",segRight.velocity);
 		//SmartDashboard.putNumber("current leftA",seg);
 		//SmartDashboard.putNumber("current rightA",);
 		SmartDashboard.putNumber("leftA Setpoint",segLeft.acceleration);
 		SmartDashboard.putNumber("rightA Setpoint",segRight.acceleration);
-		SmartDashboard.putNumber("current left distance",drive.getLeftDistance());
+		SmartDashboard.putNumber("left distance",drive.getLeftDistance());
+		SmartDashboard.putNumber("right distance",drive.getLeftDistance());
+		SmartDashboard.putNumber("left dist SP",segLeft.position);
+		SmartDashboard.putNumber("right dist SP",segRight.position);
 		ticks++;
 		}
 	}
