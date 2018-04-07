@@ -100,7 +100,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopInit() {
-		auto.trajA.notifier.stop();
+		//auto.trajA.notifier.stop();
 		lift.disableSpeedLimit = false;
 		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);

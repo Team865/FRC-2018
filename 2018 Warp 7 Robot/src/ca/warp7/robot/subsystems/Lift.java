@@ -42,8 +42,8 @@ public class Lift {
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(6.5,0,10);
-		liftPID.setOutputLimits(-0.6,1);
+		liftPID = new MiniPID(11.5,0,35);
+		liftPID.setOutputLimits(-0.45,1);
 	}
 	
 	private double ramp = 0;
@@ -89,7 +89,7 @@ public class Lift {
 		}else
 			drive.setSpeedLimit(1);
 		
-		rampSpeed(speed);
+		rampSpeed(-speed);
 	}
 	
 	public double getEncoderVal() {
