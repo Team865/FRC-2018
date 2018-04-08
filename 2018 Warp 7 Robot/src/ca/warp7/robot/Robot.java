@@ -94,13 +94,13 @@ public class Robot extends IterativeRobot  {
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
 		//if (!(pin==0)) {
-		System.out.println("aaa");
 		auto.autonomousPeriodic(gameData, 0);//pin
 		//}
 	}
 	
 	public void teleopInit() {
-		//auto.trajA.notifier.stop();
+		//if (auto.trajA.notifierRunning)
+		//	auto.trajA.notifier.stop();
 		lift.disableSpeedLimit = false;
 		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);
@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopPeriodic(){
-		
+
         controls = new DualRemote();
 		double a = 0;
 		 while (isOperatorControl() && isEnabled()) {

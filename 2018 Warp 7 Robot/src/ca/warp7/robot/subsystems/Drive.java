@@ -10,6 +10,7 @@ import ca.warp7.robot.misc.MotorGroupCAN;
 import ca.warp7.robot.misc.Util;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
@@ -165,6 +166,10 @@ public class Drive {
 		} else {
 			moveRamped(left_pwm, right_pwm);
 		}
+		SmartDashboard.putNumber("teleop leftV=",leftEncoder.getRate());
+		SmartDashboard.putNumber("teleop rightV=",rightEncoder.getRate());
+		SmartDashboard.putNumber("teleop left distance=",getLeftDistance());
+		SmartDashboard.putNumber("teleop right distance=",getRightDistance());
 	}
 
 	private double limit(double wheel, double d) {
@@ -198,11 +203,11 @@ public class Drive {
     }
 	
 	public double leftVelocity() {
-		return leftEncoder.getRate();
+		return -leftEncoder.getRate();
 	}
 	
 	public double rightVelocity() {
-		return rightEncoder.getRate();
+		return -rightEncoder.getRate();
 	}
 	
 	public boolean driveReversed() {
@@ -214,11 +219,11 @@ public class Drive {
 	}
 	
 	public double getLeftDistance(){
-		return leftEncoder.getDistance()*2.54;
+		return leftEncoder.getDistance()*-2.54;
 	}
 	
 	public double getRightDistance(){
-		return rightEncoder.getDistance()*2.54;
+		return rightEncoder.getDistance()*-2.54;
 	}
 	
 	public void resetDistance(){

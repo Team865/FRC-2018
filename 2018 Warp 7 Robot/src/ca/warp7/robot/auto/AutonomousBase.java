@@ -37,7 +37,6 @@ public class AutonomousBase {
 			if (gameData.equals("RRR"))
 				None_RRR();
 			else if (gameData.equals("LLL")) {
-				System.out.println("not crashed yet pinS");
 				None_LLL();
 			}
 			else if (gameData.equals("LRL"))
@@ -691,7 +690,6 @@ public class AutonomousBase {
 	private void None_LLL() {
 		switch (step) {
 		case (0):
-			System.out.println("not crashed yet");
 			trajA = new TrajectoryAuto("doubleScaleLeft");
 			step++;
 			break;

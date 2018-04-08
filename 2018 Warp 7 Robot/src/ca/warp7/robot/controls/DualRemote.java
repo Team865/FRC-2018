@@ -40,11 +40,8 @@ public class DualRemote extends ControlsBase {
 			lift.setLoc(0.11);
 		}
 		
-		else if(operator.getTrigger(kLeft) == DOWN){
-			
-		}
-		else if(operator.getTrigger(kLeft) == UP){
-			
+		if(operator.getTrigger(kRight) == DOWN){
+			lift.setLoc(0.4);
 		}
 		
 		if (operator.getDpad(90) == DOWN){
