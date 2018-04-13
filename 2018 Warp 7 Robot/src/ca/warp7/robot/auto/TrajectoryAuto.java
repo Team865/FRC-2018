@@ -15,6 +15,8 @@ import jaci.pathfinder.modifiers.TankModifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TrajectoryAuto {
+}
+/*
 	private int ticks = 0;
 	private File left, right;
 	public Notifier notifier;
@@ -33,7 +35,7 @@ public class TrajectoryAuto {
 		 * Pathfinder.readFromCSV(left); right = new
 		 * File("doubleScaleLeft_right_detailed.csv"); rightTrajectory =
 		 * Pathfinder.readFromCSV(right);
-		 */
+		 
 
 		Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC,
 				Trajectory.Config.SAMPLES_FAST, 0.01, 4, 2, 50.0);
@@ -112,7 +114,7 @@ public class TrajectoryAuto {
 			if (currentAngle>Pathfinder.r2d(segLeft.heading))
 				angle_difference=
 				angle_difference = ((Pathfinder.r2d(segLeft.heading))- currentAngle);
-				*/
+				
 			double segAngle=(Pathfinder.r2d(segLeft.heading));
 			double navAngle = navx.getAngle();
 			
@@ -166,3 +168,4 @@ public class TrajectoryAuto {
 	}
 
 }
+*/

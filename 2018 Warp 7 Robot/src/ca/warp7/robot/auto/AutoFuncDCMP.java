@@ -12,14 +12,16 @@ import ca.warp7.robot.subsystems.Lift;
 import ca.warp7.robot.subsystems.Limelight;
 import ca.warp7.robot.subsystems.Navx;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoFunctions {
+public class AutoFuncDCMP {
 	private MiniPID driveTurnPID;
 	private MiniPID stopTurnPID;
 	private MiniPID distancePID;
 	private int ticks;
 
 	private Drive drive = Robot.drive;
+	private Intake intake = Robot.intake;
 	private Navx navx = Robot.navx;
 	private Limelight limelight = Robot.limelight;
 	private boolean angleReset;
@@ -28,12 +30,15 @@ public class AutoFunctions {
 	private static final double speed = 1;
 	private double speedLimit = 1;
 	public double wantedAngle = 0;
+	public boolean dropLift=false;
+	public boolean overrideIntake=false;
 
-	public AutoFunctions() {
+	public AutoFuncDCMP() {
 		
 //DRIVE TURN PID -----------------------------
 		//Practice bot values:    (0.016, 0.3, 0.39)
-		driveTurnPID = new MiniPID(0.016, 0.14, 0.46); //TUNE DRIVING WHILE TURNING WITH THESE
+		//comp bot values: driveTurnPID = new MiniPID(0.016, 0.14, 0.46); //TUNE DRIVING WHILE TURNING WITH THESE
+		driveTurnPID = new MiniPID(0.016, 0.3, 0.39); //TUNE DRIVING WHILE TURNING WITH THESE
 		
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		driveTurnPID.setMaxIOutput(0.21); 
@@ -43,9 +48,8 @@ public class AutoFunctions {
 		driveTurnPID.setOutputRampRate(0.086); //set output ramp rate : prevents chatter
 		
 //STOP TURN PID------------------------------
-		//Practice bot values:   (0.0175, 0.3, 0.27)
-		//These values undershoot at low voltage (0.0255, 0.3, 0.3);
-		stopTurnPID = new MiniPID(0.0268, 0.3, 0.28); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
+		//Practice bot values:   (0.0175, 0.3, 0.27) //windsor d=0.28
+		stopTurnPID = new MiniPID(0.0268, 0.3, 0.35); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		stopTurnPID.setMaxIOutput(0.3);
 		//Practice bot value:    (0.24)
@@ -68,7 +72,7 @@ public class AutoFunctions {
 	}
 	
 	//DRIVE DIST NO STOP
-	public boolean driveDistanceNoStop(double dist, double angle,  boolean usingPIDLimit) {
+	public boolean driveDistanceNoStop(double dist, double angle) {
 		if (distanceReset) {
 			navx.resetAngle();
 			drive.resetDistance();
@@ -83,20 +87,12 @@ public class AutoFunctions {
 		double driveSpeed;
 
 		if (Math.abs(curDistance) + 80 > Math.abs(dist)) {
-			if (dist > 0) {
-				if (usingPIDLimit && speedLimit<0.55)
-					driveSpeed=speedLimit;
-				else
-					driveSpeed = 0.55;
-				}
+			if (dist > 0)
+				driveSpeed = 0.55;
 			else
 				driveSpeed = -0.55;
-		} else if (dist > 0) {
-			if (usingPIDLimit)
-				driveSpeed=speedLimit;
-			else
-				driveSpeed = 1;
-		}
+		} else if (dist > 0)
+			driveSpeed = 1;
 		else
 			driveSpeed = -1;
 		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist +" ts= "+turnSpeed+" deltaAng= "
@@ -115,86 +111,90 @@ public class AutoFunctions {
 		return false;
 	}
 	
-	//DRIVE DIST NOSTOP WITH RUNNABLE
-	public boolean driveDistanceNoStop(double dist, double angle, boolean usingPIDLimit, Runnable func) {
-		if (distanceReset) {
-			navx.resetAngle();
-			drive.resetDistance();
-			driveTurnPID.setP(0.192);
-			driveTurnPID.setMaxIOutput(0.19);
-			driveTurnPID.setD(0.47);
-			ticks = 0;
-			driveTurnPID.setSetpoint(angle);
-			//in here, we used to manually set the p value to 0.0172 but ONLY for the runnable. hopefully we dont need to
-			//in here, we used to manually set the p value to 0.36 but ONLY for the runnable. hopefully we dont need to
-			distanceReset = false;
-			System.out.println("drive reset complete");
-			return false;
-		}
-		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360);
-		double curDistance = getOverallDistance();
-		double driveSpeed;
-		func.run();
-		if (curDistance + 65 > dist)
-			if (usingPIDLimit&&speedLimit<0.5)
-				driveSpeed=speedLimit;
-			else
-				driveSpeed = 0.5;
-		else
-			if (usingPIDLimit)
-				driveSpeed=speedLimit;
-			else
-				driveSpeed = 1;
-		System.out.println("drDisNoStRunnable curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
-				+ (Math.abs(angle) - Math.abs(navx.getAngle() % 360)));
-		if (turnSpeed < 0) {// turn left
-			turnSpeed = -(turnSpeed);
-			autoDrive(driveSpeed - turnSpeed, driveSpeed);
-		} else { // turn right
-			autoDrive(driveSpeed, driveSpeed - turnSpeed);
-		}
-		if (curDistance > dist) {
-			drive.tankDrive(0, 0);
-			distanceReset = true;
-			return true;
-		}
-		return false;
-	}
-	
 	//DRIVE DIST
-	public boolean driveDistance(double dist, double angle, double tol, boolean usingPIDLimit) {
+	public boolean driveDistance(double dist, double angle) {
 		if (distanceReset) {
 			navx.resetAngle();
 			drive.resetDistance();
 			distancePID.setSetpoint(dist);
 			ticks = 0;
 			driveTurnPID.setSetpoint(angle);
-			
-			if (usingPIDLimit)
-				distancePID.setOutputLimits(speedLimit);
-			else
-				distancePID.setOutputLimits(1);
-			 
 			distanceReset = false;
 			System.out.println("drive reset complete");
 			return false;
 		}
-		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360);
+		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360, angle);
 		double curDistance = getOverallDistance();
-		double driveSpeed = distancePID.getOutput(curDistance);
+		double driveSpeed = distancePID.getOutput(curDistance, dist);
 		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
 				+ (angle - (navx.getAngle() % 360)));
-		if (within(curDistance, dist, tol))
+		if (within(curDistance, dist, 65)) {
+			turnSpeed/=4;
+		}
+		if (within(curDistance, dist, 15)) {
 			ticks++;
+			turnSpeed/=2;
+		}
+		
 		else
 			ticks = 0;
-		if ((within(curDistance, dist, tol)) && ticks > 20) {
+		if ((within(curDistance, dist, 15)) && ticks > 7) {
 			autoDrive(0, 0);
 			distanceReset = true;
 			System.out.println("driving complete");
 			return true;
 		} else {
-			//turnSpeed=0;// REMEMBER TO REMOVE THIS AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+			if (turnSpeed < 0) {// turn left
+				turnSpeed = -(turnSpeed);
+				autoDrive(driveSpeed - turnSpeed, driveSpeed);
+			} else { // turn right
+				autoDrive(driveSpeed, driveSpeed - turnSpeed);
+			}
+		}
+		return false;
+	}
+	
+	public boolean driveDistanceIntake(double dist, double angle) {
+		if (distanceReset) {
+			navx.resetAngle();
+			Timer.delay(0.005);
+			drive.resetDistance();
+			distancePID.setSetpoint(dist);
+			ticks = 0;
+			driveTurnPID.setSetpoint(angle);
+			distanceReset = false;
+			intake.pistonToggle();
+			intake.setSpeed(1);
+			System.out.println("drive reset complete");
+			return false;
+		}
+		SmartDashboard.putNumber("drive distanceL", drive.getLeftDistance());
+		SmartDashboard.putNumber("delta Angle=", (angle - (navx.getAngle() % 360)));
+		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360, angle);
+		double curDistance = getOverallDistance();
+		double driveSpeed = distancePID.getOutput(curDistance, dist);
+		System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
+				+ (angle - (navx.getAngle() % 360)));
+		if (within(curDistance, dist, 65)) {
+			turnSpeed/=4;
+			if(driveSpeed>0.3) {
+			driveSpeed=0.3;
+			}
+		}
+		if (within(curDistance, dist, 20)) {
+			ticks++;
+			turnSpeed/=2;
+		}
+		else
+			ticks = 0;
+		if ((within(curDistance, dist, 15)) && ticks > 20) {
+			intake.pistonToggle();
+			intake.setSpeed(0.6);
+			autoDrive(0, 0);
+			distanceReset = true;
+			System.out.println("driving complete");
+			return true;
+		} else {
 			if (turnSpeed < 0) {// turn left
 				turnSpeed = -(turnSpeed);
 				autoDrive(driveSpeed - turnSpeed, driveSpeed);
@@ -207,21 +207,14 @@ public class AutoFunctions {
 	
 	//ANGLE REL TURN LIFT UP NO SHOOT
 	//this is tuned with the lift up, so it might be out of tune for lift down
-	public boolean angleRelTurnLiftUpNoShoot(double setP, boolean usingPIDLimit) {
+	public boolean angleRelTurnNoShoot(double setP) {
 		if (angleReset) {
 			totalTicks = 0;// test, delete this
 			navx.resetAngle();
-			Timer.delay(0.05);
+			Timer.delay(0.005);
 			ticks = 0;
 			angleReset = false;
-			if (usingPIDLimit)
-				stopTurnPID.setOutputLimits(speedLimit);
-			else
-				stopTurnPID.setOutputLimits(1);			
 			stopTurnPID.setSetpoint(setP);
-			
-			
-			
 			System.out.println("turn reset complete");
 			return false;
 		} else {
@@ -249,24 +242,22 @@ public class AutoFunctions {
 		}
 		return false;
 	}
-	//ANGLE REL TURN LIFT UP WITH RUNNABLE
+	
+	//ANGLE REL TURN LIFT UP NO SHOOT
 		//this is tuned with the lift up, so it might be out of tune for lift down
-		public boolean angleRelTurnLiftUpRunnable(double setP, boolean usingPIDLimit, Runnable func) {
+		public boolean turnAngleShotspeedShotangleDropangle(double setP, double shotSpeed, double shotAngle, double dropAngle) {
 			if (angleReset) {
+				stopTurnPID.setD(0.45);
 				totalTicks = 0;// test, delete this
 				navx.resetAngle();
-				Timer.delay(0.05);
+				Timer.delay(0.01);
 				ticks = 0;
 				angleReset = false;
-				if (usingPIDLimit)
-					stopTurnPID.setOutputLimits(speedLimit);
-				else
-					stopTurnPID.setOutputLimits(1);				
 				stopTurnPID.setSetpoint(setP);
 				System.out.println("turn reset complete");
+				dropLift=false;
 				return false;
 			} else {
-				func.run();
 				totalTicks++;// test, delete this
 				double curAngle = navx.getAngle() % 360;
 				double turnSpeed = stopTurnPID.getOutput(curAngle);
@@ -276,10 +267,32 @@ public class AutoFunctions {
 				} else
 					ticks = 0;
 				System.out.println("ticks " + ticks);
-				if (ticks > 5) {
+				
+				if (shotAngle>0) {
+					if (curAngle>shotAngle) {
+						intake.setSpeed(shotSpeed);
+						if (!dropLift&&curAngle>dropAngle) {
+							dropLift=true;
+							Robot.lift.setLoc(0);
+						}
+					}
+				}
+				else if (shotAngle<0) {
+					if (curAngle<shotAngle) {
+						intake.setSpeed(shotSpeed);
+						if (!dropLift&&curAngle<dropAngle) {
+							dropLift=true;
+							Robot.lift.setLoc(0);
+						}
+					}
+				}
+				
+				if (ticks > 16) {
 					angleReset = true;
 					System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
 					autoDrive(0, 0);
+					intake.setSpeed(0.8);
+					dropLift=false;
 					return true;
 				} else {
 					System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
@@ -291,19 +304,12 @@ public class AutoFunctions {
 			}
 			return false;
 		}
-	
-	public boolean alignIntakeCube(double dist, double angleThresh, boolean usingPIDLimit) { //the only PID used is distance
+
+	public boolean alignIntakeCube(double dist, double angleThresh) { //the only PID used is distance
 		if (distanceReset) {
 			navx.resetAngle();
 			drive.resetDistance();
 			distancePID.setSetpoint(dist);
-			
-			if (usingPIDLimit) {
-				distancePID.setOutputLimits(speedLimit);
-			}else {
-				distancePID.setOutputLimits(1);
-			}
-			
 			ticks = 0;
 			totalTicks = 0; 
 			distanceReset = false;
@@ -347,7 +353,7 @@ public class AutoFunctions {
 			right = speedLimit;
 		else if (right < -speedLimit)
 			right = -speedLimit;
-		// }
+
 		System.out.println("Left: " + left + "  Right: " + right);
 		drive.tankDrive(speed * left, speed * right);
 	}
@@ -361,168 +367,6 @@ public class AutoFunctions {
 	}
 
 	private double getOverallDistance() {
-		return (-drive.getLeftDistance() + -drive.getRightDistance()) / 2;
+		return (drive.getLeftDistance() + drive.getRightDistance()) / 2;
 	}
 }
-// UNUSED OLD METHODS BELOW HERE. FOR REFERENCE.
-/*
- -----Old AngleRelTurn, not used
- 
-	public boolean angleRelTurn(double setP) {
-		if (angleReset) {
-			totalTicks = 0;// test, delete this
-			navx.resetAngle();
-			Timer.delay(0.05);
-			ticks = 0;
-			stopTurnPID.setSetpoint(setP);
-			angleReset = false;
-			System.out.println("turn reset complete");
-			// delete this if u want turning tuned for the march 24 LLL RRR 2cube scale
-			// switch
-			stopTurnPID.setP(0.0298); // 0.0347 0.0017 0.2597 --- //0.0172
-			stopTurnPID.setD(0.425); // --- 0.36
-			return false;
-		} else {
-			totalTicks++;// test, delete this
-			double curAngle = navx.getAngle() % 360;
-			double turnSpeed = stopTurnPID.getOutput(curAngle);
-			if (within(curAngle, setP, 1.25)) {
-				ticks++;
-				turnSpeed = 0;
-			} else
-				ticks = 0;
-			System.out.println("ticks " + ticks);
-			if (ticks > 5) {
-				angleReset = true;
-				System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
-				autoDrive(0, 0);
-				return true;
-			} else {
-				System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
-						+ totalTicks);
-
-				autoDrive(turnSpeed, -turnSpeed);
-
-			}
-		}
-		return false;
-
-	}
- 
-DRIVE DISTANCE RUNNABLE. -------------------------
-public boolean driveDistance(double dist, Runnable func) {
-	if (distanceReset) {
-		navx.resetAngle();
-		drive.resetDistance();
-		distancePID.setSetpoint(dist);
-		ticks = 0;
-		driveTurnPID.setSetpoint(0);
-		distanceReset = false;
-		wantedAngle = 0;
-		System.out.println("drive reset complete");
-		// turn pid i term fix
-		return false;
-	}
-	func.run();
-	double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360, wantedAngle);
-	double curDistance = getOverallDistance();
-	double driveSpeed = distancePID.getOutput(curDistance, dist);
-	System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
-			+ (0 - (navx.getAngle() % 360)));
-	if (within(curDistance, dist, 15))
-		ticks++;
-	else
-		ticks = 0;
-	if ((within(curDistance, dist, 15)) && ticks > 20) {
-		autoDrive(0, 0);
-		distanceReset = true;
-		System.out.println("driving complete");
-		return true;
-	} else {
-		if (turnSpeed < 0) {// turn left
-			turnSpeed = -(turnSpeed);
-
-			autoDrive(driveSpeed - turnSpeed, driveSpeed);
-		} else { // turn right
-			autoDrive(driveSpeed, driveSpeed - turnSpeed);
-		}
-	}
-	return false;
-}
-*/
-/*
-ANGLE REL TURN METHODS. OBSELETE. WE ONLY DO REL TURN ON THE SPOT WHEN THE LIFT IS UP, SO THE angleRelTurnLiftUpNoShoot
-may or may not be tuned for when the lift is down. dont try without testing first.
-
-this is calling the old turn method, needs to be switched over to stopTurn if we want to use it.
-
-public boolean angleRelTurnNoStop(double setP, Runnable func) {
-	if (angleReset) {
-		totalTicks = 0;// test, delete this
-		navx.resetAngle();
-		Timer.delay(0.05);
-		driveTurnPID.setSetpoint(setP);
-		angleReset = false;
-		System.out.println("turn reset complete");
-		return false;
-	} else {
-		func.run();
-		totalTicks++;// test, delete this
-		double curAngle = navx.getAngle() % 360;
-		double turnSpeed = driveTurnPID.getOutput(curAngle);
-		if (within(curAngle, setP, 1.25)) {
-			ticks++;
-			turnSpeed = 0;
-			angleReset = true;
-			System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
-			autoDrive(0, 0);
-			return true;
-		} else {
-			System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
-					+ totalTicks);
-
-			autoDrive(turnSpeed, -turnSpeed);
-
-		}
-	}
-	return false;
-}
-
-
-public boolean angleRelTurn(double setP, Runnable func) {
-	if (angleReset) {
-		totalTicks = 0;// test, delete this
-		navx.resetAngle();
-		Timer.delay(0.05);
-		ticks = 0;
-		driveTurnPID.setSetpoint(setP);
-		angleReset = false;
-		System.out.println("turn reset complete");
-		return false;
-	} else {
-		func.run();
-		totalTicks++;// test, delete this
-		double curAngle = navx.getAngle() % 360;
-		double turnSpeed = driveTurnPID.getOutput(curAngle);
-		if (within(curAngle, setP, 1.25)) {
-			ticks++;
-			turnSpeed = 0;
-		} else
-			ticks = 0;
-		System.out.println("ticks " + ticks);
-		if (ticks > 5) {
-			angleReset = true;
-			System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
-			autoDrive(0, 0);
-			return true;
-		} else {
-			System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
-					+ totalTicks);
-
-			autoDrive(turnSpeed, -turnSpeed);
-
-		}
-	}
-	return false;
-}
-*/

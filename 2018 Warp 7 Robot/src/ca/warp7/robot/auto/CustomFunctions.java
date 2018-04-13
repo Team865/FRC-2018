@@ -54,6 +54,27 @@ public class CustomFunctions {
 			lift.setLoc(0);
 	}
 	
+	public void outtakeAngle_outtakeSpeed_dropLift(double outAngle,double outSpeed, double angleDrop) {
+		double curAngle = navx.getAngle() % 360;
+		if (outAngle>0) {
+			if (curAngle>outAngle) {
+				intake.setSpeed(outSpeed);
+				if (curAngle>angleDrop) {
+					lift.setLoc(0);
+				}
+			}
+		}
+		else if (outAngle<0) {
+			if (curAngle<outAngle) {
+				intake.setSpeed(outSpeed);
+				if (curAngle<angleDrop) {
+					lift.setLoc(0);
+				}
+			}
+		}
+	}
+	
+	
 	private boolean withinMiddle(double angle, double setAngle, double thresh) {
 		return (setAngle - thresh) < angle && (setAngle + thresh) > angle;
 	}

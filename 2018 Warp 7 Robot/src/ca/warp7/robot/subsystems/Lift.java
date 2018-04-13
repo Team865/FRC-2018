@@ -29,7 +29,7 @@ public class Lift {
 	
 	private Intake intake = Robot.intake;
 	private Drive drive = Robot.drive;
-	
+	public boolean overrideIntake=false;
 	public boolean disableSpeedLimit = false;
 	
 	public Lift(){
@@ -42,8 +42,8 @@ public class Lift {
 		liftEncoder.setDistancePerPulse(1);
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
-		liftPID = new MiniPID(11.5,0,35);
-		liftPID.setOutputLimits(-0.45,1);
+		liftPID = new MiniPID(6.5,0,10);
+		liftPID.setOutputLimits(-0.6,1);
 	}
 	
 	private double ramp = 0;
@@ -75,8 +75,9 @@ public class Lift {
 		if (isBottom()) //zero switch is active zero encoder
 			zeroEncoder();
 		else
-			if (intake.getSpeed() >= 0)
+			if (intake.getSpeed() >= 0 && !(overrideIntake)) //added intake override for auto
 				intake.rampSpeed(0.3);
+			
 		
 		double scaledLift = getEncoderVal()/LIFT_HEIGHT;
 		double speed = liftPID.getOutput(scaledLift);
@@ -84,12 +85,12 @@ public class Lift {
 			System.out.println("speed= "+speed + " height= "+scaledLift +"setP= "+targetH);
 		
 		if (!disableSpeedLimit) {
-			double speedLimit = Math.pow(0.25,scaledLift);
+			double speedLimit = Math.pow(0.30,scaledLift);
 			drive.setSpeedLimit(speedLimit);
 		}else
 			drive.setSpeedLimit(1);
 		
-		rampSpeed(-speed);
+		rampSpeed(speed);
 	}
 	
 	public double getEncoderVal() {
