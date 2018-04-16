@@ -27,6 +27,7 @@ public class AutonomousBase {
 	public Lift lift = Robot.lift;
 	public static AutoFunctions autoFunc = new AutoFunctions();
 	private static CustomFunctions customFunc = new CustomFunctions();
+	
 
 	private int step = 0;
 
@@ -34,25 +35,24 @@ public class AutonomousBase {
 		if (pin == 0) { // None
 			// System.out.println("pin 0 active :None:");
 			if (gameData.equals("RRR")) {
-				//stuffs();
-				LeftStart_singleScaleRight();
+				baseLine();
 			} else if (gameData.equals("LLL")) {
-				LeftStart_singleScaleLeft();
+				baseLine();
 			} else if (gameData.equals("LRL")) {
-				LeftStart_singleScaleRight();
+				baseLine();
 			} else if (gameData.equals("RLR")) {
-				LeftStart_singleScaleLeft();
+				baseLine();
 			}
 		} else if (pin == 1) { // Left
 			// System.out.println("pin 1 active :Left:");
 			if (gameData.equals("RRR")) {
-				baseLine();
+				LeftStart_doubleScaleRight();
 			} else if (gameData.equals("LLL")) {
-				baseLine();
+				LeftStart_doubleScaleLeft();
 			} else if (gameData.equals("LRL")) {
-				baseLine();
+				LeftStart_doubleScaleRight();
 			} else if (gameData.equals("RLR")) {
-				baseLine();
+				LeftStart_doubleScaleLeft();
 			}
 		} else if (pin == 2) { // Middle
 			System.out.println("pin 2 active :Middle:");
@@ -79,12 +79,44 @@ public class AutonomousBase {
 
 	// SINGLE SCALE AUTOS
 
-	private void LeftStart_singleScaleRight() {
+	private void switchLeft() {
+		// TODO Auto-generated method stub
+		switch (step) { // turn
+		case (0):
+			lift.zeroEncoder();
+			Timer.delay(0.01);
+			intake.setSpeed(0.45); // INTAKE
+			lift.disableSpeedLimit = true;
+			autoFunc.setSpeedLimit(0.65); // SPEEDLIMIT
+			lift.setLoc(0.5);
+			step++;
+			break;
+			
+		case (1):
+			if (autoFunc.driveDistance(420, 0,15,true))
+				step++;
+			break;
+		case (2):
+			if (autoFunc.angleRelTurnLiftUpNoShoot(90,true)) {
+				step++;
+			
+			}
+			break;
+		case (3):
+			if (autoFunc.driveDistance(30, 0,15,true)) {
+				step++;
+				intake.setSpeed(-0.5);
+			}
+			break;
+		}
+		
+	}
+
+	private void LeftStart_doubleScaleRight() {
 		switch (step) {
 		case (0): {
 			lift.zeroEncoder();
 			Timer.delay(0.01);
-			lift.setLoc(0.4); // LIFT
 			intake.setSpeed(0.45); // INTAKE
 			lift.disableSpeedLimit = true;
 			autoFunc.setSpeedLimit(1); // SPEEDLIMIT
@@ -92,31 +124,31 @@ public class AutonomousBase {
 			break;
 		}
 		case (1):
-			if (autoFunc.driveDistanceNoStop(340, 0,true)) { // DRIVE
+			if (autoFunc.driveDistanceNoStop(350, 0,true)) { // DRIVE
 				step++;
 				autoFunc.setSpeedLimit(0.7); // SPEEDLIMIT
-				lift.setLoc(1); // LIFT
+				lift.setLoc(0.55); // LIFT
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(570, 90,true)) { // DRIVE, TURN
-				autoFunc.setSpeedLimit(0.5); // DONT TOUCH THIS SPEEDLIMIT, IT EFFEFCTS THE RADIUS OF THE CURVE
+			if (autoFunc.driveDistanceNoStop(510, 90,true)) { // DRIVE, TURN
+				autoFunc.setSpeedLimit(0.6); // DONT TOUCH THIS SPEEDLIMIT, IT EFFEFCTS THE RADIUS OF THE CURVE
+				lift.setLoc(1); // LIFT
 				step++;
 			}
 			break;
-		case (3):
-			if (autoFunc.driveDistanceNoStop(291, -247,false, () -> customFunc.turnDrop(-122, -145))) { // TURN, SHOOT, DROP
-				autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
+		case (3): //!!!add 40 CM TO THIS (DONE ALREADY) (so change the 291 to 331) !!!
+			if (autoFunc.driveDistanceNoStop(335, -254,false, () -> customFunc.turnDrop(-130, -140))) { // TURN, SHOOT, DROP
+				autoFunc.setSpeedLimit(0.4); // SPEEDLIMIT
 				lift.overrideIntake=true;
 				intake.setSpeed(1); // INTAKE
-				Timer.delay(0.05);
+				Timer.delay(0.01);
 				step++;
 			}
 			break;
-			//DOUBLE SCALE TESTING STARTS HERE REMEMBER TO CHANGE CASE
-		case (4):
-			if (autoFunc.alignIntakeCube(150, 4, true)) { // DRIVE, ALIGN
-				Timer.delay(0.2); // DELAY WHILE INTAKE RUNS TO FINISH INTAKING
+		case (4): //!!!remove 40 CM from this (DONE ALREADY) (so change the 158 to 118) !!!
+			if (autoFunc.alignIntakeCube(185, 4, true)) { // DRIVE, ALIGN
+				Timer.delay(0.01); // DELAY WHILE INTAKE RUNS TO FINISH INTAKING
 				step++;
 			}
 			break;
@@ -124,22 +156,22 @@ public class AutonomousBase {
 		case (5):
 			if (autoFunc.driveDistance(-15, 0,15,true)) { // DRIVE BACK
 				intake.setSpeed(0.3); // INTAKE
-				lift.setLoc(1); // LIFT
-				autoFunc.setSpeedLimit(0.85); // SPEEDLIMIT
-				Timer.delay(0.7); // DELAY TO LET THE LIFT GO UP
+				lift.setLoc(0.25); // LIFT
+				autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
+				Timer.delay(1); // DELAY TO LET THE LIFT GO UP
 				step++;
 			}
 			break;
 		case (6):
-			if (autoFunc.driveDistanceNoStop(-60, 0,true)) { // DRIVE BACK
-				autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
+			if (autoFunc.driveDistanceNoStop(-75, 0,true)) { // DRIVE BACK
+				autoFunc.setSpeedLimit(0.45); // SPEEDLIMIT
 				step++;
 			}
 			break;
 		case (7):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(123,true)) { // TURN RIGHT WITHOUT DRIVING
+			if (autoFunc.angleRelTurnLiftUpNoShoot(118,true)) { // TURN RIGHT WITHOUT DRIVING
 				autoFunc.setSpeedLimit(0.58); // SET SPEED LIMIT
-				intake.setSpeed(-1); // OUTTAKE
+				//intake.setSpeed(-1); // OUTTAKE
 				step++;
 				lift.overrideIntake=false;
 			}
@@ -156,7 +188,7 @@ case ():
 	}
 break;
 */
-	private void LeftStart_singleScaleLeft() {
+	private void LeftStart_doubleScaleLeft() {
 		switch (step) {
 		case (0): // SETUP-RIGHT SIDE OF THE ROBOT SHOULD HAVE ONE FOOT OF CLEARANCE FROM SWITCH
 			lift.disableSpeedLimit = true; // DISABLE SPEEDLIMIT LIFT OVERRIDE
@@ -171,7 +203,7 @@ break;
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistance(315, 15, 15,true)) { // drive until intake overhangs the line, measured at 630cm
+			if (autoFunc.driveDistance(327.5, 15, 15,true)) { // drive until intake overhangs the line, measured at 630cm
 				step++;
 				autoFunc.setSpeedLimit(0.65);
 			}
@@ -184,13 +216,13 @@ break;
 			Timer.delay(0.4);
 			step++;
 		case (4):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(151.5,true)){
+			if (autoFunc.angleRelTurnLiftUpNoShoot(148.5,true)){
 				step++;
 			}
 			break;
 		
 		case (5):
-			if (autoFunc.driveDistanceNoStop(95,0,true)) {
+			if (autoFunc.driveDistanceNoStop(90,0,true)) {
 				autoFunc.setSpeedLimit(0.27);
 				lift.overrideIntake=true;
 				intake.setSpeed(1);
@@ -198,7 +230,7 @@ break;
 			}
 			break; 
 		case (6):
-			if (autoFunc.alignIntakeCube(40, 4, true)){
+			if (autoFunc.alignIntakeCube(70, 4, true)){
 				step++;
 				lift.setLoc(1);
 				Timer.delay(0.4);
@@ -216,7 +248,7 @@ break;
 			}
 			break;
 		case (8):
-			if (autoFunc.angleRelTurnLiftUpNoShoot(-95,true)) { // TURN FIX SPDLIMITS
+			if (autoFunc.angleRelTurnLiftUpNoShoot(-105,true)) { // TURN FIX SPDLIMITS
 				autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
 				intake.setSpeed(-1);
 				step++;
@@ -224,7 +256,7 @@ break;
 			break;
 			
 		case (9):
-			if (autoFunc.angleRelTurnLiftUpRunnable(95,true, () -> customFunc.outtakeAngle_outtakeSpeed_dropLift(1,-1, 45))) { 
+			if (autoFunc.angleRelTurnLiftUpRunnable(105,true, () -> customFunc.outtakeAngle_outtakeSpeed_dropLift(1,-1, 65))) { 
 				autoFunc.setSpeedLimit(0.5);
 				lift.overrideIntake=true;
 				step++;
@@ -233,16 +265,7 @@ break;
 			
 		} // end switch statement
 	}
-	
-	//DOUBLE SCALE AUTOS
-	
-	private void LeftStart_doubleScaleLeft() {
-		
-	}
-	
-	private void LeftStart_doubleScaleRight() {
-		
-	}
+
 	
 	//SWITCH AUTOS ONLY BELOW HERE
 	
@@ -294,7 +317,7 @@ break;
 			}
 			break;
 		case (5):
-			if (autoFunc.alignIntakeCube(132, 4, false)) {// DRIVE, ALIGN
+			if (autoFunc.alignIntakeCube(135, 4, false)) {// DRIVE, ALIGN
 				step++;
 				Timer.delay(0.1);
 				intake.setSpeed(1); // INTAKE
