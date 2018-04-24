@@ -25,8 +25,7 @@ public class AutoFunctions {
 	private Limelight limelight = Robot.limelight;
 	private boolean angleReset;
 	private boolean distanceReset;
-	private boolean angleCurveReset=true;
-	private double[] dFCaFC;
+	private boolean radiusCurveReset;
 	public int totalTicks = 0;// for testing, delete this
 	private static final double speed = 1;
 	private double speedLimit = 1;
@@ -49,7 +48,12 @@ public class AutoFunctions {
 //STOP TURN PID------------------------------
 		//Practice bot values:   (0.0175, 0.3, 0.27)
 		//These values undershoot at low voltage (0.0255, 0.3, 0.3);
-		stopTurnPID = new MiniPID(0.0268, 0.3, 0.28); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
+		stopTurnPID = new MiniPID(0.0268, 0.3, 0.4); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
+		
+		//APRIL 21 HAD TO PUT THE D VALUE HIGHER ON COMP BOT BCZ IT OVERSHOOTS
+		
+		//AT DISTRICTS THE D VALUE WAS 0.28
+		
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		stopTurnPID.setMaxIOutput(0.3);
 		//Practice bot value:    (0.24)
@@ -69,87 +73,129 @@ public class AutoFunctions {
 
 		angleReset = true;
 		distanceReset = true;
+		radiusCurveReset=true;
 //radiusCurve PID ---------------------------------
-		radiusCurvePID=new MiniPID(0.1,0,0);
+		radiusCurvePID=new MiniPID(0.05,0,0.3);
 	}
 	
 	
 	//radiusCurve
 	//new curve method by Kaelan. may or may not use. 
 	//has zero effect on any of the other autos obviously
-	public double radiusCurve(double masterDistSP, double radius, double angle, char direction, boolean noStop) {
-		if (angleCurveReset) {
+	//im finished writing this, just need to test it
+	public boolean radiusCurve(double masterDistSP, double radius, double angle, char direction, boolean noStop) {
+		if (radiusCurveReset) {
 			if (angle > 0) {
-				masterDistSP = 2 * Math.PI * radius / (360 / angle);
+				masterDistSP = 100 * 2 * Math.PI * radius / (360 / angle);
+				System.out.println("masterDistSP= "+masterDistSP);//testing
 			}
 			navx.resetAngle();
 			drive.resetDistance();
-			
+			ticks=0;
 			if (direction == 'L') {
 				angleSetpointSign = -1;
 			} else {
 				angleSetpointSign = 1;
 			}
 			ticks = 0;
-			angleCurveReset = false;
+			radiusCurveReset = false;
 			radiusCurvePID.reset();
 			radiusCurvePID.setOutputLimits(2 * speedLimit);
+			radiusCurvePID.setOutputRampRate(0.15);
 			radiusCurvePID.setSetpoint(0);
 			if (!(noStop)) {
-			distancePID.reset();
+				distancePID.reset();
 				distancePID.setSetpoint(masterDistSP);
+				distancePID.setP(0.035);
+				distancePID.setOutputLimits(speedLimit);
 			}
+			System.out.println("rc reset");//testing
 		}
+		if (angle > 0) {
+			masterDistSP = 100 * 2 * Math.PI * radius / (360 / angle);
+		}
+		//TODO assign the angle based on other var
 		double lDist = drive.getLeftDistance();
+		System.out.println(drive.getLeftDistance());
+		System.out.println(drive.getRightDistance());
 		double rDist = drive.getRightDistance();
 		double masterDistCur;
-		if (direction=='L') {
-			masterDistCur=rDist;
+		if (direction == 'L') {
+			masterDistCur = rDist;
 			angleSetpointSign = -1;
-		}
-		else {
+		} else {
 			angleSetpointSign = 1;
-			masterDistCur=lDist;
+			masterDistCur = lDist;
 		}
-		double absValCurAngSetP=Math.abs((masterDistCur/(2 * Math.PI * radius))*360);
-		double curAng=navx.getAngle();
-		double absValCurAng=Math.abs(curAng%360);
+		double absValCurAngSetP = Math.abs((masterDistCur / (100*2 * Math.PI * radius)) * 360);
+		if (angle>0) {
+			if (absValCurAngSetP>angle) {
+				absValCurAngSetP=angle;
+			}
+		}
+		double curAng = navx.getAngle();
+		double absValCurAng = Math.abs(curAng % 360);
 		int gyroSign;
-		if (curAng%360>=0) {
-			gyroSign=1;
-		}
-		else {
-			gyroSign=-1;
+		if (curAng % 360 >= 0) {
+			gyroSign = 1;
+		} else {
+			gyroSign = -1;
 		}
 		double undershootDegrees;
-		if (gyroSign==angleSetpointSign) {
-			undershootDegrees=absValCurAngSetP-absValCurAng;
+		if (gyroSign == angleSetpointSign) {
+			undershootDegrees = absValCurAngSetP - absValCurAng;
+		} else {
+			undershootDegrees = absValCurAngSetP + absValCurAng;
+		} // constant divided by radius
+		double velocitySubtract = radiusCurvePID.getOutput(-undershootDegrees);
+		//velocitySubtract=0;//REMEMBER TO DELETE
+		System.out.println("velocitysubtract="+velocitySubtract);
+		if (!(absValCurAngSetP>(angle-7))) {
+			velocitySubtract+=(speedLimit*1.14 / radius);
 		}
-		else {
-			undershootDegrees=absValCurAngSetP+absValCurAng;
-		}//constant divided by radius
-		radiusCurvePID.setF(0.4/radius);
-		double velocitySubtract=radiusCurvePID.getOutput(undershootDegrees);
-		if (velocitySubtract<0) {
-			System.out.println("there is a fuckup. either an incorrect sign or a big overcorrection");
-			angleSetpointSign*=-1;
+		/*if (ticks<3) {
+			velocitySubtract+=0.2*(ticks+1);
 		}
+		else if (ticks<9)
+			velocitySubtract+=(9-ticks)*speedLimit/40;
+			*/
+		//velocitySubtract=0.5/radius;//RMRMBER TO DELETE
+		//if (velocitySubtract < 0) {
+		//	System.out.println("there is a fuckup. either an incorrect sign or a big overcorrection");
+		//	angleSetpointSign *= -1;
+		//}
+		System.out.println("velocitysubtract="+velocitySubtract);
 		double masterVelocity;
 		if (noStop) {
-			masterVelocity=speedLimit;
+			masterVelocity = speedLimit;
+		} else {
+			masterVelocity = distancePID.getOutput(masterDistCur);
 		}
-		else {
-			masterVelocity=distancePID.getOutput(masterDistCur);
-		}
-		double slaveVelocity=masterVelocity-velocitySubtract;
-		
-		if (angleSetpointSign==1) {//turn right
+		double slaveVelocity = masterVelocity - velocitySubtract;
+		System.out.println("rc run: mV="+masterVelocity+" sV="+slaveVelocity+"masterDSP="+masterDistSP+" masterDCur="+masterDistCur+" angSPSign="+angleSetpointSign);//testing
+		System.out.println("angle: absValCurAng="+absValCurAng+" absValCurAngSetP="+absValCurAngSetP +" undershoot="+undershootDegrees);
+
+		if (angleSetpointSign == 1) {// turn right
 			drive.tankDrive(masterVelocity, slaveVelocity);
-		}
-		else { //turn left
+		} else { // turn left
 			drive.tankDrive(slaveVelocity, masterVelocity);
 		}
-		return (masterDistSP-masterDistCur);
+		ticks++;
+		if (within(absValCurAng,angle,5)) {
+			radiusCurveReset=true;
+			drive.tankDrive(0, 0);
+			return true;
+		}
+		
+		else if ((Math.abs(masterDistSP) - Math.abs(masterDistCur))<=0) {
+			radiusCurveReset=true;
+						drive.tankDrive(0, 0);
+			return true;
+		}
+		
+		return false;
+		
+		
 	}
 	
 	//DRIVE DIST NO STOP
@@ -273,7 +319,7 @@ public class AutoFunctions {
 			ticks++;
 		else
 			ticks = 0;
-		if ((within(curDistance, dist, tol)) && ticks > 20) {
+		if ((within(curDistance, dist, tol)) && ticks > 17) {
 			autoDrive(0, 0);
 			distanceReset = true;
 			System.out.println("driving complete");

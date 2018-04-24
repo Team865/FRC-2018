@@ -1,7 +1,7 @@
 package ca.warp7.robot;
 
 import static ca.warp7.robot.Constants.*;
-
+//import static ca.warp7.robot.ConstantsPrac.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -84,6 +84,8 @@ public class Robot extends IterativeRobot  {
 		lift.setLoc(0);
 		auto = new AutonomousBase();
 		pin = autoSelector();
+		pin=1;//REMEMBER TO DELETE THIS AT THE COMP!!! THIS IS THE ONLY LINE CHANGED FOR PINSELECT
+		System.out.println("HARDCODED PINSELECT FOR PRACTICE BOT. REMEMBER TO ADD PINSELECTOR BACK");
 		drive.resetDistance();
 		navx.resetAngle();
 		}

@@ -43,7 +43,7 @@ public class Lift {
 		liftHallaffect = new DigitalInput(HALL_DIO);
 		zeroEncoder();
 		liftPID = new MiniPID(6.5,0,10);
-		liftPID.setOutputLimits(-0.6,1);
+		liftPID.setOutputLimits(-0.75,1); //kaelan--i changed this on april 24 to let the lift go further down before turning during auto. used to be limited to -0.55
 	}
 	
 	private double ramp = 0;
