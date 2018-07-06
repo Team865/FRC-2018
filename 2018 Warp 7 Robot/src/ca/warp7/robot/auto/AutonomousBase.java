@@ -47,7 +47,7 @@ public class AutonomousBase {
 	//LeftStart_doubleScaleRight()	: DEPRECATED double scale, mostly new curves one old curve. second cube inconsistent due to curve
 	//LeftStart_doubleScaleLeft()	: double scale, all new curves. quite consistent, last cube missed once
 	//stuffs()	: literally just drives 4 meters
-
+/*
 		if (pin == 0) { // None
 			if (gameData.equals("RRR")) {
 				baseLine();
@@ -61,11 +61,11 @@ public class AutonomousBase {
 		} else if (pin == 1) { // Left
 			// System.out.println("pin 1 active :Left:");
 			if (gameData.equals("RRR")) {
-				RADIUS_LeftStart_doubleScaleRight();
+				LeftStart_doubleScaleRight();
 			} else if (gameData.equals("LLL")) {
 				V2_LeftStart_doubleScaleLeft();
 			} else if (gameData.equals("LRL")) {
-				RADIUS_LeftStart_doubleScaleRight();
+				LeftStart_doubleScaleRight();
 			} else if (gameData.equals("RLR")) {
 				V2_LeftStart_doubleScaleLeft();
 			}
@@ -87,6 +87,9 @@ public class AutonomousBase {
 			} else if (gameData.equals("RLR")) {
 			}
 		}
+		*/
+		stuffs();
+	
 	}
 
 	/*STUFF TO COPY AND PASTE TO MAKE AUTO METHODS QUICKLY
@@ -239,7 +242,7 @@ public class AutonomousBase {
 				}
 				break;
 			case (2):
-				if (autoFunc.driveDistance(327.5, 24, 15,true)) { //angle changed from 15 to 18
+				if (autoFunc.driveDistance(327.5, 22, 15,true)) { //angle changed from 15 to 18
 					step++;
 					autoFunc.setSpeedLimit(0.7);
 				}
@@ -251,21 +254,22 @@ public class AutonomousBase {
 				Timer.delay(0.4);
 				step++;
 			case (4):
-				if (autoFunc.angleRelTurnLiftUpNoShoot(135,true)){
+				if (autoFunc.angleRelTurnLiftUpNoShoot(141,true)){
 					step++;
 					intake.setSpeed(0.3);
 				}
 				break;
 			
 			case (5):
-				if (autoFunc.driveDistanceNoStop(90,0,true)) {
+				if (autoFunc.driveDistanceNoStop(110,0,true)) {
 					autoFunc.setSpeedLimit(0.5);
 					intake.setSpeed(1);
 					step++;
 				}
 				break; 
+				
 			case (6):
-				if (autoFunc.driveDistance(42, 0, 20, true)){
+				if (autoFunc.alignIntakeCube(42, 4, true)){
 					step++;
 					lift.setLoc(1);
 					autoFunc.setSpeedLimit(0.8);
@@ -273,7 +277,7 @@ public class AutonomousBase {
 				break;
 
 			case (7):
-				if (autoFunc.driveDistanceNoStop(-60,0, true)) { // DRIVE BACKWARDS
+				if (autoFunc.driveDistanceNoStop(-70,0, true)) { // DRIVE BACKWARDS
 					autoFunc.setSpeedLimit(0.75); // SPEEDLIMIT
 					step++;
 					intake.setSpeed(0.35);
@@ -294,28 +298,28 @@ public class AutonomousBase {
 				}
 				break;
 			case (10):
-				if (autoFunc.angleRelTurnLiftUpNoShoot(105,true)) { 
+				if (autoFunc.angleRelTurnLiftUpNoShoot(101.5,true)) { 
 					autoFunc.setSpeedLimit(0.9);
 					intake.setSpeed(0.3);
 					step++;
 				}
 				break;
 			case (11):
-				if (autoFunc.driveDistanceNoStop(128,0,true)) {
+				if (autoFunc.driveDistanceNoStop(148,0,true)) {
 					autoFunc.setSpeedLimit(0.5);
 					intake.setSpeed(1);
 					step++;
 				}
 				break; 
 			case (12):
-				if (autoFunc.driveDistance(42, 0, 20, true)){
+				if (autoFunc.alignIntakeCube(42, 4, true)){
 					step++;
 					autoFunc.setSpeedLimit(0.8);
 					lift.setLoc(0.8);
 				}
 			break;
 			case(13):
-				if (autoFunc.driveDistanceNoStop(-120,0,true)){
+				if (autoFunc.driveDistanceNoStop(-130,0,true)){
 					intake.setSpeed(0.3);
 					step++;
 				}
@@ -359,7 +363,7 @@ public class AutonomousBase {
 	
 	
 	//--------------------------------------------------------------WE DONT USE THIS AUTO, WE USE THE RADIUS VERSION
-	/*
+	
 	//DOUBLE SCALE RIGHT
 	private void LeftStart_doubleScaleRight() {
 		switch (step) {
@@ -376,16 +380,17 @@ public class AutonomousBase {
 			if (autoFunc.driveDistanceNoStop(350, 0,true)) { // DRIVE
 				step++;
 				autoFunc.setSpeedLimit(0.7); // SPEEDLIMIT
-				lift.setLoc(0.55); // LIFT
+				lift.setLoc(0.11); // LIFT
 			}
 			break;
 		case (2):
-			if (autoFunc.driveDistanceNoStop(510, 90,true)) { // DRIVE, TURN
+			if (autoFunc.driveDistanceNoStop(250, 90,true)) { // DRIVE, TURN
 				autoFunc.setSpeedLimit(0.6); // DONT TOUCH THIS SPEEDLIMIT, IT EFFEFCTS THE RADIUS OF THE CURVE
-				lift.setLoc(1); // LIFT
+				//lift.setLoc(1); // LIFT
 				step++;
 			}
 			break;
+		/*
 		case (3): //!!!add 40 CM TO THIS (DONE ALREADY) (so change the 291 to 331) !!!
 			if (autoFunc.driveDistanceNoStop(335, -254,false, () -> customFunc.turnDrop(-130, -140))) { // TURN, SHOOT, DROP
 				autoFunc.setSpeedLimit(0.4); // SPEEDLIMIT
@@ -425,11 +430,11 @@ public class AutonomousBase {
 				lift.overrideIntake=false;
 			}
 			break;
+			*/
 		// TODO Possibly add a drive backwards if we overhang the scale
-
 		} // end switch(step)
 	} // end method
-	*/
+	
 	
 	
 	//DOUBLE SCALE LEFT
@@ -872,7 +877,7 @@ public class AutonomousBase {
 			autoFunc.setSpeedLimit(0.7);
 			switch (step) { // turn
 			case (0):
-				if (autoFunc.driveDistance(400, 0,15,true))
+				if (autoFunc.driveDistance(300,0,15,true))
 					step++;
 				break;
 			}

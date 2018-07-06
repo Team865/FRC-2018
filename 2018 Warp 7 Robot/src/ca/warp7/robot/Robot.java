@@ -84,10 +84,10 @@ public class Robot extends IterativeRobot  {
 		lift.setLoc(0);
 		auto = new AutonomousBase();
 		pin = autoSelector();
-		pin=1;//REMEMBER TO DELETE THIS AT THE COMP!!! THIS IS THE ONLY LINE CHANGED FOR PINSELECT
-		System.out.println("HARDCODED PINSELECT FOR PRACTICE BOT. REMEMBER TO ADD PINSELECTOR BACK");
 		drive.resetDistance();
 		navx.resetAngle();
+		lift.disableSpeedLimit = true;
+		drive.setGear(false);
 		}
 	
 	public void autonomousPeriodic(){
@@ -129,8 +129,9 @@ public class Robot extends IterativeRobot  {
 			SmartDashboard.putNumber("1", a1.getAverageVoltage());
 			SmartDashboard.putNumber("2", a2.getAverageVoltage());
 			SmartDashboard.putNumber("3", a3.getAverageVoltage());
-			System.out.println("Lift:"+a);
+			System.out.println("Lift:"+a);	
 			SmartDashboard.putNumber("Lift", a);
+			SmartDashboard.putNumber("Lift raw", b);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
 			SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
@@ -205,7 +206,7 @@ public class Robot extends IterativeRobot  {
 		double voltage = 0;
 		int number = 0;
 		if (a0.getAverageVoltage() > voltage) {
-			number = 1;
+			number = 3;
 			voltage = a0.getAverageVoltage();
 		}
 		if (a1.getAverageVoltage() > voltage) {
@@ -217,7 +218,7 @@ public class Robot extends IterativeRobot  {
 			voltage = a2.getAverageVoltage();
 		}
 		if (a3.getAverageVoltage() > voltage) {
-			number = 3;
+			number = 1;
 			voltage = a3.getAverageVoltage();
 		}
 		System.out.println("volt: "+voltage);

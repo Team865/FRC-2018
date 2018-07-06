@@ -18,7 +18,11 @@ public class DualRemote extends ControlsBase {
 			intake.rampSpeed(0.75);
 		}else if (driver.getTrigger(kLeft) == DOWN) {//out take
 			intake.rampSpeed(-0.5);
-		}else {
+		}else if (driver.getDpad(90) == DOWN){
+			intake.setSpeedRev(0.75);
+		}else if (driver.getDpad(270) == DOWN){
+			intake.setSpeedRev(-0.75);
+		}else{
 			intake.rampSpeed(0);
 		}
 		
@@ -32,6 +36,7 @@ public class DualRemote extends ControlsBase {
 				Robot.limelight.switchCamera();
 				System.out.println("switching camera");
 		}
+		
 		if(operator.getBackButton() == PRESSED){
 			
 		}
@@ -44,17 +49,17 @@ public class DualRemote extends ControlsBase {
 			lift.setLoc(0.4);
 		}
 		
-		if (operator.getDpad(90) == DOWN){
-			
-		}
-		
 		if(operator.getAButton() == DOWN)
 			lift.setLoc(operator.getY(kLeft));
 		
 		if(operator.getBButton() == DOWN)
 			climber.setSpeed(operator.getY(kRight)*-1);
 		
-		 //drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
-		drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
+		if(driver.getBButton() == DOWN){
+			climber.setSpeed(driver.getY(kLeft)*-1);
+		}else {
+			//drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
+			drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
+		}
 	}
 }

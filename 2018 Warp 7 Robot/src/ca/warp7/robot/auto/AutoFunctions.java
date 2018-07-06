@@ -48,11 +48,12 @@ public class AutoFunctions {
 //STOP TURN PID------------------------------
 		//Practice bot values:   (0.0175, 0.3, 0.27)
 		//These values undershoot at low voltage (0.0255, 0.3, 0.3);
-		stopTurnPID = new MiniPID(0.0268, 0.3, 0.4); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
+		stopTurnPID = new MiniPID(0.0268, 0.3, 0.35); //TUNE TURNING ON THE SPOT WITHOUT DRIVING FORWARD/BACKWARD WITH THESE
 		
 		//APRIL 21 HAD TO PUT THE D VALUE HIGHER ON COMP BOT BCZ IT OVERSHOOTS
 		
 		//AT DISTRICTS THE D VALUE WAS 0.28
+		//PRACTICE BOT BEFORE CHAMPS THE D VALUE WAS 0.4
 		
 		//MAX I OUTPUT IMPORTANT FOR OVERCOMING FRICTION BUT WILL CAUSE OVERSHOOTS IF D ISNT ADJUSTED
 		stopTurnPID.setMaxIOutput(0.3);
@@ -492,6 +493,6 @@ public class AutoFunctions {
 	}
 
 	private double getOverallDistance() {
-		return (drive.getLeftDistance() + drive.getRightDistance()) / 2;
+		return (drive.getLeftDistance() + drive.getRightDistance()) / -2;
 	}
 }

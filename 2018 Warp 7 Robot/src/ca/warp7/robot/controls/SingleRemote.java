@@ -10,78 +10,54 @@ import ca.warp7.robot.misc.DataPool;
 
 public class SingleRemote extends ControlsBase{
 	
-	/*
-	private double rpm = 4450;
-	
-	
-	public SingleRemote() {
-		super();
-		
-		rpm = 4450;
-	}
-	*/
-	@SuppressWarnings("unused")
-	@Override
 	public void periodic() {
-		if(driver.getTrigger(kLeft) == UP || true){ // are we doing auto stuff
-			
-			if(driver.getStickButton(kRight) == PRESSED)
-				drive.setDrivetrainReversed(!drive.driveReversed());
-			
-			if(driver.getTrigger(kRight) == DOWN){
-				
-			}else if(driver.getTrigger(kRight) == UP){
-				
-			}
-			
-			if (driver.getBumper(kLeft)==PRESSED) {
+		
+		if(driver.getTrigger(kRight) == DOWN){//intake
+			intake.rampSpeed(0.75);
+		}else if (driver.getTrigger(kLeft) == DOWN) {//out take
+			intake.rampSpeed(-0.5);
+		}else if (driver.getDpad(90) == DOWN){
+				intake.setSpeedRev(0.75);
+		}else if (driver.getDpad(270) == DOWN){
+			intake.setSpeedRev(-0.75);
+		}else{
+			intake.rampSpeed(0);
+		}
+		
+		if(driver.getStickButton(kRight) == PRESSED)
+			drive.setDrivetrainReversed(!drive.driveReversed());
+		
+		if (driver.getAButton() == PRESSED)
+			intake.pistonToggle();
+		
+		if(driver.getXButton() == PRESSED){
 				Robot.limelight.switchCamera();
 				System.out.println("switching camera");
-			}
+		}
+		
+		if(operator.getBackButton() == PRESSED){
 			
-			if(driver.getYButton() == DOWN){
-				
-			}
-				
-			
-			if(driver.getBackButton() == PRESSED){
-				
-			}
-			
-			if(driver.getBButton() == DOWN){
-				
-			}else if(driver.getDpad(270) == DOWN){
-				
-			}else if(driver.getBButton() == UP){
-				
-			}
-			
-			if (driver.getDpad(90) == DOWN){
-				
-			}
-			 
-			// vvvv for testing rpm's only don't use this during an actually comp
-			/*
-			 if(driver.getDpad(0) == DOWN)
-				rpm += 5;
-			else if (driver.getDpad(180) == DOWN)
-				rpm -= 5;
-			else if (driver.getDpad(270) == DOWN)
-				rpm = 4425;
-			 */
-			 
-			//drive.tankDrive(driver.getY(kLeft), driver.getY(kRight));
-			drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, driver.getTrigger(kLeft) == DOWN, driver.getBumper(kRight) != DOWN);
-		}else{
-			try{
-				if(DataPool.getBooleanData("vision", "found")){
-					drive.tankDrive(DataPool.getDoubleData("vision", "left"), DataPool.getDoubleData("vision", "right"));
-				}else{
-					drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, driver.getTrigger(kLeft) == DOWN, driver.getBumper(kRight) != DOWN);
-				}
-			}catch(Exception e){
-				System.out.println("me no work no moar");
-			}
+		}
+		
+		if(operator.getXButton() == DOWN){
+			lift.setLoc(0.11);
+		}
+		
+		if(operator.getTrigger(kRight) == DOWN){
+			lift.setLoc(0.4);
+		}
+		
+		if(operator.getAButton() == DOWN)
+			lift.setLoc(operator.getY(kLeft));
+		
+		if(operator.getBButton() == DOWN)
+			climber.setSpeed(operator.getY(kRight)*-1);
+		
+		if(driver.getBButton() == DOWN){
+			climber.setSpeed(driver.getY(kLeft)*-1);
+		}else {
+			//drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
+			drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
 		}
 	}
 

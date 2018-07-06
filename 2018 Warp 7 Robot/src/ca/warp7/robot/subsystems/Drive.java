@@ -219,11 +219,11 @@ public class Drive {
 	}
 	
 	public double getLeftDistance(){
-		return leftEncoder.getDistance()*2.54;
+		return -leftEncoder.getDistance()*2.54;
 	}
 	
 	public double getRightDistance(){
-		return rightEncoder.getDistance()*2.54;
+		return -rightEncoder.getDistance()*2.54;
 	}
 	
 	public void resetDistance(){

@@ -41,6 +41,13 @@ public class Intake {
 		intakeMotorRight.set(speed);
 	}
 	
+	public void setSpeedRev(double speed){
+		intakeMotorLeft.set(speed);
+		intakeMotorRight.set(-speed*0.95);
+	}
+	
+	
+	
 	public double getSpeed() {
 		return intakeMotorRight.get();
 	}
