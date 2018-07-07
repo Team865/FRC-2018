@@ -12,15 +12,27 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class DualRemote extends ControlsBase {
 	
+	private boolean intakeTracking = false;
+	
 	@Override
 	public void periodic() {
 		if(driver.getTrigger(kRight) == DOWN){//intake
 			intake.rampSpeed(0.75);
 		}else if (driver.getTrigger(kLeft) == DOWN) {//out take
 			intake.rampSpeed(-0.5);
-		}else {
+		}else if (driver.getDpad(90) == DOWN){
+			lift.overrideIntake = true;
+			intake.rampSpeed(0.75);
+		}else if (driver.getDpad(270) == DOWN){
+			lift.overrideIntake = true;
+			intake.rampSpeed(-0.75);
+		}else{
+			lift.overrideIntake = false;
 			intake.rampSpeed(0);
 		}
+		
+		if (driver.getDpad(180) == PRESSED)
+			intakeTracking = !intakeTracking;
 		
 		if(driver.getStickButton(kRight) == PRESSED)
 			drive.setDrivetrainReversed(!drive.driveReversed());
@@ -32,23 +44,13 @@ public class DualRemote extends ControlsBase {
 				Robot.limelight.switchCamera();
 				System.out.println("switching camera");
 		}
-		if(operator.getBackButton() == PRESSED){
-			
-		}
 		
 		if(operator.getXButton() == DOWN){
 			lift.setLoc(0.11);
 		}
 		
-		else if(operator.getTrigger(kLeft) == DOWN){
-			
-		}
-		else if(operator.getTrigger(kLeft) == UP){
-			
-		}
-		
-		if (operator.getDpad(90) == DOWN){
-			
+		if(operator.getTrigger(kRight) == DOWN){
+			lift.setLoc(0.4);
 		}
 		
 		if(operator.getAButton() == DOWN)
@@ -57,7 +59,14 @@ public class DualRemote extends ControlsBase {
 		if(operator.getBButton() == DOWN)
 			climber.setSpeed(operator.getY(kRight)*-1);
 		
-		 //drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
-		drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
+		if(driver.getBButton() == DOWN){
+			climber.setSpeed(driver.getY(kLeft)*-1);
+		}else {
+			//drive.tankDrive(driver.getY(Hand.kLeft), driver.getY(Hand.kLeft));
+			if (intakeTracking && lift.isBottom() && intake.getSpeed() > 0.4)
+				drive.trackCube(driver.getY(kLeft),4);
+	        else
+	        	drive.cheesyDrive(-driver.getX(kRight), driver.getY(kLeft), driver.getBumper(kLeft) == DOWN, false, driver.getBumper(kRight) != DOWN);
+		}
 	}
 }

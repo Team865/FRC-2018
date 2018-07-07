@@ -39,7 +39,7 @@ public class Intake {
 	public void setSpeed(double speed){
 		intakeMotorLeft.set(speed);
 		intakeMotorRight.set(speed);
-	}
+	}	
 	
 	public double getSpeed() {
 		return intakeMotorRight.get();

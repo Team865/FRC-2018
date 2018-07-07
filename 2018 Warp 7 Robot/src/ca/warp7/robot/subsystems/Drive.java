@@ -10,6 +10,7 @@ import ca.warp7.robot.misc.MotorGroupCAN;
 import ca.warp7.robot.misc.Util;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Talon;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.Talon;
 public class Drive {
 	
 	private Navx navx = Robot.navx;
+	private Limelight limelight = Robot.limelight;
 	
 	public static DataPool drivePool;
 	
@@ -31,8 +33,7 @@ public class Drive {
 	private double old_wheel = 0;
     private boolean driveReversed = true;
     
-    private double speedLimit = 0.999;
-    
+    private double speedLimit = 0.999;    
     
     public Drive() {
 		drivePool = new DataPool("Drive");
@@ -60,10 +61,23 @@ public class Drive {
 			shifter.set(gear);
 	}
 	
+	public void trackCube(double driveSpeed, double angleThresh){
+		double cubeAngleOffset = limelight.getXOffset();
+		double turnSpeed = 1 - Math.abs(cubeAngleOffset / angleThresh);
+		if (turnSpeed < 0)
+			turnSpeed = 0;
+		System.out.println(cubeAngleOffset + ":" + turnSpeed);
+		if (cubeAngleOffset >= 0)// turn right
+			tankDrive(driveSpeed, driveSpeed * turnSpeed);
+		else { // turn left
+			tankDrive(driveSpeed * turnSpeed, driveSpeed);
+		}
+	}
+	
 	public void tankDrive(double left, double right) {
-		double scaledBalance = autoBalance();
-		left = limit(left+scaledBalance,speedLimit);
-		right = limit(right+scaledBalance,speedLimit);
+		//double scaledBalance = autoBalance();
+		left = limit(left,speedLimit);
+		right = limit(right,speedLimit);
 		leftDrive.set(left*LEFT_DRIFT_OFFSET);
 		rightDrive.set(right*RIGHT_DRIFT_OFFSET);
 	}
@@ -165,6 +179,10 @@ public class Drive {
 		} else {
 			moveRamped(left_pwm, right_pwm);
 		}
+		SmartDashboard.putNumber("teleop leftV=",leftEncoder.getRate());
+		SmartDashboard.putNumber("teleop rightV=",rightEncoder.getRate());
+		SmartDashboard.putNumber("teleop left distance=",getLeftDistance());
+		SmartDashboard.putNumber("teleop right distance=",getRightDistance());
 	}
 
 	private double limit(double wheel, double d) {
@@ -198,11 +216,11 @@ public class Drive {
     }
 	
 	public double leftVelocity() {
-		return leftEncoder.getRate();
+		return -leftEncoder.getRate();
 	}
 	
 	public double rightVelocity() {
-		return rightEncoder.getRate();
+		return -rightEncoder.getRate();
 	}
 	
 	public boolean driveReversed() {
@@ -214,11 +232,11 @@ public class Drive {
 	}
 	
 	public double getLeftDistance(){
-		return leftEncoder.getDistance()*2.54;
+		return -leftEncoder.getDistance()*2.54;
 	}
 	
 	public double getRightDistance(){
-		return rightEncoder.getDistance()*2.54;
+		return -rightEncoder.getDistance()*2.54;
 	}
 	
 	public void resetDistance(){

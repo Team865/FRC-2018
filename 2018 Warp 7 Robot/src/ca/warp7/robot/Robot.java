@@ -1,7 +1,7 @@
 package ca.warp7.robot;
 
 import static ca.warp7.robot.Constants.*;
-
+//import static ca.warp7.robot.ConstantsPrac.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -79,29 +79,27 @@ public class Robot extends IterativeRobot  {
 	
 	private int pin = -1;
 	public void autonomousInit(){
-		System.out.println("test");
+		System.out.println("robot.java autonomousInit()");
 		lift.zeroEncoder();
 		lift.setLoc(0);
 		auto = new AutonomousBase();
-		pin = 0;//autoSelector()
+		pin = autoSelector();
 		drive.resetDistance();
 		navx.resetAngle();
-		//if (pin==0) {
-			//trajectory.load()
-			//}
+		lift.disableSpeedLimit = true;
+		drive.setGear(false);
 		}
 	
 	public void autonomousPeriodic(){
 		String gameData = driverStation.getGameSpecificMessage();
-		//if (!(pin==0)) {
-		System.out.println("aaa");
-		auto.autonomousPeriodic(gameData, 0);//pin
-		//}
+		auto.autonomousPeriodic(gameData, pin);//pin
 	}
 	
 	public void teleopInit() {
-		auto.trajA.notifier.stop();
+		//if (auto.trajA.notifierRunning)
+		//	auto.trajA.notifier.stop();
 		lift.disableSpeedLimit = false;
+		lift.overrideIntake=false;
 		drive.setSpeedLimit(1);
 		drive.tankDrive(0,0);
 		//navx.startUpdateDisplacement(60);
@@ -111,7 +109,7 @@ public class Robot extends IterativeRobot  {
 	}
 	
 	public void teleopPeriodic(){
-		
+
         controls = new DualRemote();
 		double a = 0;
 		 while (isOperatorControl() && isEnabled()) {
@@ -124,15 +122,15 @@ public class Robot extends IterativeRobot  {
 				a = b;
 			SmartDashboard.putNumber("pipeline id", limelight.getPipeline());
 			SmartDashboard.putBoolean("inake hasCube", intake.hasCube());
-			lift.periodic();
 			//drive.periodic();
 			
 			SmartDashboard.putNumber("0", a0.getAverageVoltage());
 			SmartDashboard.putNumber("1", a1.getAverageVoltage());
 			SmartDashboard.putNumber("2", a2.getAverageVoltage());
 			SmartDashboard.putNumber("3", a3.getAverageVoltage());
-			System.out.println("Lift:"+a);
+			System.out.println("Lift:"+a);	
 			SmartDashboard.putNumber("Lift", a);
+			SmartDashboard.putNumber("Lift raw", b);
 			SmartDashboard.putNumber("Drive Right Dist", drive.getRightDistance());
 			SmartDashboard.putNumber("Drive Left Dist", drive.getLeftDistance());
 			SmartDashboard.putNumber("pitch", navx.getPitch());
@@ -207,7 +205,7 @@ public class Robot extends IterativeRobot  {
 		double voltage = 0;
 		int number = 0;
 		if (a0.getAverageVoltage() > voltage) {
-			number = 1;
+			number = 3;
 			voltage = a0.getAverageVoltage();
 		}
 		if (a1.getAverageVoltage() > voltage) {
@@ -219,7 +217,7 @@ public class Robot extends IterativeRobot  {
 			voltage = a2.getAverageVoltage();
 		}
 		if (a3.getAverageVoltage() > voltage) {
-			number = 3;
+			number = 1;
 			voltage = a3.getAverageVoltage();
 		}
 		System.out.println("volt: "+voltage);
