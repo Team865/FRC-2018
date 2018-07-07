@@ -22,7 +22,7 @@ public class Drive {
 	
 	public static DataPool drivePool;
 	
-	private MotorGroup rightDrive;
+	private MotorGroup rightDrive; 
 	private MotorGroup leftDrive;
 	private Solenoid shifter;
 
