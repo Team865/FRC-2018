@@ -54,6 +54,14 @@ public class CustomFunctions {
 			lift.setLoc(0);
 	}
 	
+	public void outtakeDistance_outtakeSpeed(double outDist,double outSpeed){
+		double dist = getOverallDistance();
+		if (withinFront(dist,outDist,25))
+			intake.setSpeed(outSpeed);
+		else
+			intake.setSpeed(0.2);
+	}
+	
 	public void outtakeAngle_outtakeSpeed_dropLift(double outAngle,double outSpeed, double angleDrop) {
 		double curAngle = navx.getAngle() % 360;
 		if (outAngle>0) {
@@ -72,8 +80,7 @@ public class CustomFunctions {
 				}
 			}
 		}
-	}
-	
+	}	
 	
 	private boolean withinMiddle(double angle, double setAngle, double thresh) {
 		return (setAngle - thresh) < angle && (setAngle + thresh) > angle;
@@ -84,7 +91,7 @@ public class CustomFunctions {
 	}
 
 	private double getOverallDistance() {
-		return (-drive.getLeftDistance() + -drive.getRightDistance()) / 2;
+		return (drive.getLeftDistance() + drive.getRightDistance()) / -2;
 	}
 
 	private double distancePredictor(double area) {

@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 
-public class AutonomousBase {
+public class AutonomousBaseBackup {
 	public static DataPool autoPool = new DataPool("auto");
 	private Drive drive = Robot.drive;
 	private Navx navx = Robot.navx;
@@ -233,8 +233,6 @@ public class AutonomousBase {
 				lift.disableSpeedLimit = true; // DISABLE SPEEDLIMIT LIFT OVERRIDE
 				lift.setLoc(1); // LIFT
 				autoFunc.setSpeedLimit(1); // SPEEDLIMIT
-				lift.overrideIntake=true;
-				intake.setSpeed(0.2);
 				step++;
 				break;
 			case (1):
@@ -244,21 +242,17 @@ public class AutonomousBase {
 				}
 				break;
 			case (2):
-				if (autoFunc.driveDistance(327.5, 22, 15,true, () -> customFunc.outtakeDistance_outtakeSpeed(300,-0.8) )) { //angle changed from 15 to 18
+				if (autoFunc.driveDistance(327.5, 22, 15,true)) { //angle changed from 15 to 18
 					step++;
 					autoFunc.setSpeedLimit(0.7);
 				}
 				break;
-				
 			case (3): 
-				/*lift.overrideIntake=true;
+				lift.overrideIntake=true;
 				intake.setSpeed(-0.6);
 				lift.setLoc(0);
-				Timer.delay(0.4);*/
-				lift.setLoc(0);
+				Timer.delay(0.4);
 				step++;
-				break;
-				
 			case (4):
 				if (autoFunc.angleRelTurnLiftUpNoShoot(141,true)){
 					step++;
@@ -267,7 +261,7 @@ public class AutonomousBase {
 				break;
 			
 			case (5):
-				if (autoFunc.driveDistanceNoStop(100,0,true)) {
+				if (autoFunc.driveDistanceNoStop(110,0,true)) {
 					autoFunc.setSpeedLimit(0.5);
 					intake.setSpeed(1);
 					step++;
@@ -283,66 +277,53 @@ public class AutonomousBase {
 				break;
 
 			case (7):
-				if (autoFunc.driveDistanceNoStop(-75,0, true)) { // DRIVE BACKWARDS
-					autoFunc.setSpeedLimit(0.85); // SPEEDLIMIT
+				if (autoFunc.driveDistanceNoStop(-70,0, true)) { // DRIVE BACKWARDS
+					autoFunc.setSpeedLimit(0.75); // SPEEDLIMIT
 					step++;
 					intake.setSpeed(0.35);
 				}
 				break;
 			case (8):
-				if (autoFunc.angleRelTurnLiftUpNoShoot(-125,true, () -> customFunc.outtakeAngle_outtakeSpeed_dropLift(-118, -0.85, -122) )) { // TURN FIX SPDLIMITS
+				if (autoFunc.angleRelTurnLiftUpNoShoot(-125,true)) { // TURN FIX SPDLIMITS
 					autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
-					//intake.setSpeed(-0.85);
 					step++;
 				}
 				break;
 			case (9):
-				/*if (autoFunc.driveDistance(30,0,15, true)) { // DRIVE BACKWARDS
+				if (autoFunc.driveDistance(30,0,15, true)) { // DRIVE BACKWARDS
 					autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
 					step++;
 					intake.setSpeed(-0.6);
 					lift.setLoc(0);
-				}*/
-				//lift.setLoc(0);
-				step++;
+				}
 				break;
-				
 			case (10):
-				if (autoFunc.angleRelTurnLiftUpNoShoot(100,true)) { 
-					autoFunc.setSpeedLimit(1);
+				if (autoFunc.angleRelTurnLiftUpNoShoot(101.5,true)) { 
+					autoFunc.setSpeedLimit(0.9);
 					intake.setSpeed(0.3);
 					step++;
 				}
 				break;
 			case (11):
-				if (autoFunc.driveDistanceNoStop(135,0,true)) {
+				if (autoFunc.driveDistanceNoStop(148,0,true)) {
 					autoFunc.setSpeedLimit(0.5);
 					intake.setSpeed(1);
 					step++;
 				}
 				break; 
 			case (12):
-				if (autoFunc.alignIntakeCube(32, 4, true)){
+				if (autoFunc.alignIntakeCube(42, 4, true)){
 					step++;
-					autoFunc.setSpeedLimit(1);
-					lift.setLoc(1);
+					autoFunc.setSpeedLimit(0.8);
+					lift.setLoc(0.8);
 				}
 			break;
 			case(13):
 				if (autoFunc.driveDistanceNoStop(-130,0,true)){
 					intake.setSpeed(0.3);
-					autoFunc.setSpeedLimit(0.85);
 					step++;
 				}
 			break;
-			
-			case (14):
-				if (autoFunc.angleRelTurnLiftUpNoShoot(-101,true, () -> customFunc.outtakeAngle_outtakeSpeed_dropLift(-94, -1, -98) )) { // TURN FIX SPDLIMITS
-					autoFunc.setSpeedLimit(0.5); // SPEEDLIMIT
-					//intake.setSpeed(-0.85);
-					step++;
-				}
-				break;
 			
 			} // end switch statement
 		}

@@ -261,7 +261,6 @@ public class AutoFunctions {
 			//in here, we used to manually set the p value to 0.36 but ONLY for the runnable. hopefully we dont need to
 			distanceReset = false;
 			System.out.println("drive reset complete");
-			return false;
 		}
 		double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360);
 		double curDistance = getOverallDistance();
@@ -337,6 +336,51 @@ public class AutoFunctions {
 		return false;
 	}
 	
+	//DRIVE DIST with RUNNABLE
+		public boolean driveDistance(double dist, double angle, double tol, boolean usingPIDLimit, Runnable func) {
+			if (distanceReset) {
+				navx.resetAngle();
+				drive.resetDistance();
+				distancePID.setSetpoint(dist);
+				ticks = 0;
+				driveTurnPID.setSetpoint(angle);
+				
+				if (usingPIDLimit)
+					distancePID.setOutputLimits(speedLimit);
+				else
+					distancePID.setOutputLimits(1);
+				 
+				distanceReset = false;
+				System.out.println("drive reset complete");
+				return false;
+			}
+			double turnSpeed = driveTurnPID.getOutput(navx.getAngle() % 360);
+			double curDistance = getOverallDistance();
+			double driveSpeed = distancePID.getOutput(curDistance);
+			func.run();
+			System.out.println("driving. curDist= " + curDistance + "setPoint= " + dist + " deltaAng= "
+					+ (angle - (navx.getAngle() % 360)));
+			if (within(curDistance, dist, tol))
+				ticks++;
+			else
+				ticks = 0;
+			if ((within(curDistance, dist, tol)) && ticks > 17) {
+				autoDrive(0, 0);
+				distanceReset = true;
+				System.out.println("driving complete");
+				return true;
+			} else {
+				//turnSpeed=0;// REMEMBER TO REMOVE THIS AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+				if (turnSpeed < 0) {// turn left
+					turnSpeed = -(turnSpeed);
+					autoDrive(driveSpeed - turnSpeed, driveSpeed);
+				} else { // turn right
+					autoDrive(driveSpeed, driveSpeed - turnSpeed);
+				}
+			}
+			return false;
+		}
+	
 	//ANGLE REL TURN LIFT UP NO SHOOT
 	//this is tuned with the lift up, so it might be out of tune for lift down
 	public boolean angleRelTurnLiftUpNoShoot(double setP, boolean usingPIDLimit) {
@@ -381,6 +425,53 @@ public class AutoFunctions {
 		}
 		return false;
 	}
+	
+	//ANGLE REL TURN LIFT UP NO SHOOT wit runnable
+		//this is tuned with the lift up, so it might be out of tune for lift down
+		public boolean angleRelTurnLiftUpNoShoot(double setP, boolean usingPIDLimit, Runnable func) {
+			if (angleReset) {
+				totalTicks = 0;// test, delete this
+				navx.resetAngle();
+				Timer.delay(0.05);
+				ticks = 0;
+				angleReset = false;
+				if (usingPIDLimit)
+					stopTurnPID.setOutputLimits(speedLimit);
+				else
+					stopTurnPID.setOutputLimits(1);			
+				stopTurnPID.setSetpoint(setP);
+				
+				
+				
+				System.out.println("turn reset complete");
+				return false;
+			} else {
+				totalTicks++;// test, delete this
+				double curAngle = navx.getAngle() % 360;
+				double turnSpeed = stopTurnPID.getOutput(curAngle);
+				func.run();
+				if (within(curAngle, setP, 2.5)) {
+					ticks++;
+					turnSpeed = 0;
+				} else
+					ticks = 0;
+				System.out.println("ticks " + ticks);
+				if (ticks > 5) {
+					angleReset = true;
+					System.out.println("turn complete after ticks=" + totalTicks); // test, delete this
+					autoDrive(0, 0);
+					return true;
+				} else {
+					System.out.println("turning. cAn= " + curAngle + " setP= " + setP + " TS=" + turnSpeed + "totTicks= "
+							+ totalTicks);
+
+					autoDrive(turnSpeed, -turnSpeed);
+
+				}
+			}
+			return false;
+		}
+	
 	//ANGLE REL TURN LIFT UP WITH RUNNABLE
 		//this is tuned with the lift up, so it might be out of tune for lift down
 		public boolean angleRelTurnLiftUpRunnable(double setP, boolean usingPIDLimit, Runnable func) {
